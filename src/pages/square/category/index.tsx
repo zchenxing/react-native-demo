@@ -1,14 +1,11 @@
 import React from 'react';
 import {
     StyleSheet,
-    ScrollView,
-    Text,
     View,
-    Image,
-    TouchableHighlight,
     FlatList,
 } from 'react-native';
 import WeiboItem from './weibo-item';
+import AwePicturePreview from "../../../components/awe-picture-preview";
 
 const DATA = Array.from(new Array(31).keys()).map(data => {
     return {
@@ -18,12 +15,30 @@ const DATA = Array.from(new Array(31).keys()).map(data => {
 });
 
 const SquareCategory: React.FC = () => {
+    const [visible, setVisible] = React.useState(false)
+    const [startIndex, setStartIndex] = React.useState(0)
+    const [pictures, setPictures] = React.useState<any[]>([])
+
+    const onPreviewPicture = (index: number, pictureList: any[]) => {
+        setStartIndex(index)
+        setPictures(pictureList)
+        setVisible(true)
+    }
+
     return (
         <View style={styles.container}>
+            {/*<WeiboItem />*/}
             <FlatList
                 data={DATA}
-                renderItem={WeiboItem}
+                renderItem={() => <WeiboItem onPicturePress={onPreviewPicture} />}
                 keyExtractor={(item: any) => item.id}
+            />
+
+            <AwePicturePreview
+                visible={visible}
+                startIndex={startIndex}
+                onClick={() => setVisible(false)}
+                imageUrls={pictures.map(data => ({url: data.uri}))}
             />
         </View>
     );

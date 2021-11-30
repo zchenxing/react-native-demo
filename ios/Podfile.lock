@@ -281,11 +281,15 @@ PODS:
   - React-jsinspector (0.66.3)
   - React-logger (0.66.3):
     - glog
+  - react-native-cameraroll (4.1.2):
+    - React-Core
   - react-native-image-picker (4.3.0):
     - React-Core
   - react-native-pager-view (5.4.9):
     - React-Core
   - react-native-safe-area-context (3.3.2):
+    - React-Core
+  - react-native-webview (11.14.3):
     - React-Core
   - React-perflogger (0.66.3)
   - React-RCTActionSheet (0.66.3):
@@ -358,6 +362,15 @@ PODS:
     - SDWebImageWebPCoder (~> 0.8.4)
   - RNGestureHandler (1.10.3):
     - React-Core
+  - RNImageCropPicker (0.37.2):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.37.2)
+    - TOCropViewController
+  - RNImageCropPicker/QBImagePickerController (0.37.2):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController
   - RNReanimated (2.2.4):
     - DoubleConversion
     - FBLazyVector
@@ -390,16 +403,15 @@ PODS:
   - RNScreens (3.9.0):
     - React-Core
     - React-RCTImage
-  - RNSyanImagePicker (0.5.3):
-    - React
-    - TZImagePickerController
+  - RNVectorIcons (9.0.0):
+    - React-Core
   - SDWebImage (5.11.1):
     - SDWebImage/Core (= 5.11.1)
   - SDWebImage/Core (5.11.1)
   - SDWebImageWebPCoder (0.8.4):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - TZImagePickerController (3.6.7)
+  - TOCropViewController (2.6.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -445,9 +457,11 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -462,9 +476,10 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
-  - RNSyanImagePicker (from `../node_modules/react-native-syan-image-picker`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -485,7 +500,7 @@ SPEC REPOS:
     - OpenSSL-Universal
     - SDWebImage
     - SDWebImageWebPCoder
-    - TZImagePickerController
+    - TOCropViewController
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -523,12 +538,16 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-cameraroll:
+    :path: "../node_modules/@react-native-community/cameraroll"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-pager-view:
     :path: "../node_modules/react-native-pager-view"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -557,12 +576,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-image"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
-  RNSyanImagePicker:
-    :path: "../node_modules/react-native-syan-image-picker"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -598,9 +619,11 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 433a691aee158533a6a6ee9c86cb4a1684fa2853
   React-jsinspector: d9c8eb0b53f0da206fed56612b289fec84991157
   React-logger: e522e76fa3e9ec3e7d7115b49485cc065cf4ae06
+  react-native-cameraroll: 2957f2bce63ae896a848fbe0d5352c1bd4d20866
   react-native-image-picker: 869530859570f2af86ae57bc48886a5e2367a825
   react-native-pager-view: 3ee7d4c7697fb3ef788346e834a60cca97ed8540
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-webview: b83cf1aa6b4453fe53ffcc5896c36cdf37f0383f
   React-perflogger: 73732888d37d4f5065198727b167846743232882
   React-RCTActionSheet: 96c6d774fa89b1f7c59fc460adc3245ba2d7fd79
   React-RCTAnimation: 8940cfd3a8640bd6f6372150dbdb83a79bcbae6c
@@ -615,15 +638,16 @@ SPEC CHECKSUMS:
   ReactCommon: 9bac022ab71596f2b0fde1268272543184c63971
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNImageCropPicker: 448d3c6e923fde3466b49caf3c2457c2a0ba02dd
   RNReanimated: 65583befd5706cc9c86ae9a081786181ced37b93
   RNScreens: 4d79118be80f79fa1f4aa131909a1d6e86280af3
-  RNSyanImagePicker: 5c650d33f16f7cd59c47d9269f6c4856b30d7616
+  RNVectorIcons: 4143ba35feebab8fdbe6bc43d1e776b393d47ac8
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
-  TZImagePickerController: 679ae9fa11e189a9a81291ae96f0a4463be8edc1
+  TOCropViewController: 3105367e808b7d3d886a74ff59bf4804e7d3ab38
   Yoga: 32a18c0e845e185f4a2a66ec76e1fd1f958f22fa
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: fd69469176361ed8b09175a009d0f716acfe29f2
+PODFILE CHECKSUM: 55fe753c0c5a7ef86ceaa26fcea967efc96bfe0c
 
 COCOAPODS: 1.11.2

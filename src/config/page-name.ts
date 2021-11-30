@@ -5,6 +5,9 @@ export const PAGE_NAME = {
     SQUARE: 'Square',
     PUBLISH: 'Publish',
     TOPIC: 'Topic',
+    MY_NAVIGATION: 'MyNavigation',
+    STORE_DATA: 'StoreData',
+    MY_TAB: 'MyTab',
 };
 
 

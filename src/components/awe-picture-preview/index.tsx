@@ -19,6 +19,7 @@ const AwePicturePreview: React.FC<AwePicturePreviewProps> = (props: AwePicturePr
                 onSaveToCamera={(e) => console.log(e)}
                 onSave={e => console.log('e = ', e)}
             />
+
         </Modal>
     );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import { StatusBar, View } from "react-native";
 import AweButton from '../../components/awe-button';
 import {PAGE_NAME} from '../../config/page-name';
 import {NavigateProps} from '../../interface';
@@ -12,6 +12,7 @@ const Home: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     return (
         <SafeAreaProvider style={{flex: 1}}>
+            <StatusBar barStyle={'dark-content'} backgroundColor={'#fff'} />
             <View style={{height: '100%'}}>
                 <AweButton
                     backgroundColor="#ad6800"
@@ -29,8 +30,30 @@ const Home: React.FC<NavigateProps> = (props: NavigateProps) => {
                     backgroundColor="#ad6800"
                     color="#fcffe6"
                     onPress={() => onPageNavigation(PAGE_NAME.TOPIC)}>
-                    主题
+                    话题
                 </AweButton>
+
+                <AweButton
+                    backgroundColor="green"
+                    color="#fcffe6"
+                    onPress={() => onPageNavigation(PAGE_NAME.MY_NAVIGATION)}>
+                    自定义导航
+                </AweButton>
+
+                <AweButton
+                    backgroundColor="#87CEFA"
+                    color="#000"
+                    onPress={() => onPageNavigation(PAGE_NAME.MY_TAB)}>
+                    react-native-elemnt-tabs
+                </AweButton>
+
+                <AweButton
+                    backgroundColor="yellow"
+                    color="#000"
+                    onPress={() => onPageNavigation(PAGE_NAME.STORE_DATA)}>
+                    状态管理
+                </AweButton>
+
             </View>
         </SafeAreaProvider>
 

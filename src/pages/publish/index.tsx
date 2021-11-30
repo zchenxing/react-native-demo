@@ -1,30 +1,35 @@
 import React from 'react';
-import {Image, View, StyleSheet, TextInput} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import AweButton from '../../components/awe-button';
-import SyanImagePicker from 'react-native-syan-image-picker';
+import * as ImagePicker from 'react-native-image-picker';
+import * as CropImagePicker from 'react-native-image-crop-picker';
+import { Button } from "react-native-elements";
 
 const Publish: React.FC = () => {
-    const [pictures, setPictures] = React.useState<any[]>([]);
 
+    const openPhotoLibrary2 = () => {
+        ImagePicker.launchImageLibrary(
+            {
+                mediaType: 'photo',
+                includeBase64: true,
+            },
+            response => {
+                console.log(response);
+            },
+        );
+    };
 
-    const openPhotoLibrary = () => {
-        // promise-then
-        SyanImagePicker.asyncShowImagePicker({
-            compress: true,
-            minimumCompressSize: 1024
-            // enableBase64: true
-        })
-            .then(photos => {
-                // 选择成功
-                console.log(photos);
-                setPictures(photos)
-            })
-            .catch(err => {
-                console.log(err);
-                // 取消选择，err.message为"取消"
-            })
+    const openPhotoLibrary3 = () => {
+        CropImagePicker.openPicker({
+            mediaType: 'photo',
+            multiple: true,
+        }).then(image => {
+            console.log(image);
+        });
+    };
 
+    const openPhotoLibrary4 = () => {
     }
 
     return (
@@ -37,17 +42,15 @@ const Publish: React.FC = () => {
                 textAlignVertical={'top'}
             />
 
-            <AweButton onPress={openPhotoLibrary}>打开相册</AweButton>
+            <AweButton onPress={openPhotoLibrary2}>image-picker</AweButton>
+            <AweButton onPress={openPhotoLibrary3}>image-crop-picker</AweButton>
 
-            <View style={styles.pictureView}>
-                {pictures.map(picture => (
-                    <Image
-                        key={picture.uri}
-                        style={{width: 100, height: 100}}
-                        source={{uri: picture.uri}}
-                    />
-                ))}
-            </View>
+            <Button
+                title={'react-native-customized-image-picker'}
+                type={'solid'}
+                onPress={openPhotoLibrary4}
+            />
+
         </SafeAreaProvider>
     );
 };
@@ -65,10 +68,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
 
-    pictureView: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
+
 });
 
 export default Publish;

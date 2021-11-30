@@ -6,7 +6,13 @@ project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
 ]
 
+project.ext.vectoricons = [
+    iconFontNames: [ 'FontAwesome.ttf', 'MaterialIcons.ttf'] // Name of the font files you want to copy
+]
+
 apply from: "../../node_modules/react-native/react.gradle"
+
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 def enableSeparateBuildPerCPUArchitecture = false
 
@@ -20,13 +26,19 @@ def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitect
 
 android {
     ndkVersion rootProject.ext.ndkVersion
-
     compileSdkVersion rootProject.ext.compileSdkVersion
+
+    compileSdkVersion 30
+    buildToolsVersion '30.0.2'
 
     defaultConfig {
         applicationId "com.myapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+
+        vectorDrawables.useSupportLibrary = true
+        targetSdkVersion 30
+
         versionCode 1
         versionName "1.0"
     }

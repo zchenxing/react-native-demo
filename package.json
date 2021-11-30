@@ -11,21 +11,29 @@
         "pod": "cd ios && arch -x86_64 pod install"
     },
     "dependencies": {
+        "@babel/plugin-proposal-decorators": "^7.16.4",
+        "@react-native-community/cameraroll": "^4.1.2",
         "@react-navigation/material-top-tabs": "^6.0.6",
         "@react-navigation/native": "^6.0.4",
         "@react-navigation/native-stack": "^6.2.5",
+        "mobx": "^4.15.5",
+        "mobx-react": "^6.2.5",
         "react": "17.0.2",
         "react-native": "0.66.3",
+        "react-native-elements": "^3.4.2",
         "react-native-fast-image": "^8.5.11",
         "react-native-gesture-handler": "^1.10.3",
+        "react-native-image-crop-picker": "^0.37.2",
         "react-native-image-picker": "^4.3.0",
         "react-native-image-zoom-viewer": "^3.0.1",
+        "react-native-keyboard-accessory": "^0.1.15",
         "react-native-pager-view": "^5.4.9",
         "react-native-reanimated": "^2.2.4",
         "react-native-safe-area-context": "^3.3.2",
         "react-native-screens": "^3.9.0",
-        "react-native-syan-image-picker": "^0.5.3",
-        "react-native-tab-view": "^3.1.1"
+        "react-native-tab-view": "^3.1.1",
+        "react-native-vector-icons": "^9.0.0",
+        "react-native-webview": "^11.14.3"
     },
     "devDependencies": {
         "@babel/core": "^7.12.9",

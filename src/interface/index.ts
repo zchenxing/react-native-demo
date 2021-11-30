@@ -1,6 +1,8 @@
+
 export interface NavigateProps {
     navigation: {
-        addListener: () => void;
+        // addListener: (event: string, func: (e: any) => void) => void;
+        addListener: any;
         canGoBack: () => void;
         dispatch: () => void;
         getParent: () => void;
@@ -14,7 +16,7 @@ export interface NavigateProps {
         removeListener: () => void;
         replace: () => void;
         reset: () => void;
-        setOptions: () => void;
+        setOptions: any;
         setParams: () => void;
     };
     route: {

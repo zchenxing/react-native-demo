@@ -35,7 +35,8 @@ const Square: React.FC<NavigateProps> = (props: NavigateProps) => {
                             height: 45
                         },
                         tabBarScrollEnabled: true,
-                        lazy: true
+                        lazy: true,
+                        lazyPreloadDistance: 1111
                     }}>
                     {CategoryList.map(text => (
                         <Tab.Screen

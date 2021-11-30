@@ -9,18 +9,20 @@ import {
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {articleStr, pictureList} from '../../../mock';
+import { WebView } from "react-native-webview";
+import AweButton from '../../../components/awe-button';
 
 const pictureSize: number = Dimensions.get('window').width / 3 - 14;
 const content: string = articleStr;
 
 interface WeiboItemProps {
-    onPicturePress: (startIndex: number, pictureList: any[]) => void
+    onPicturePress?: (startIndex: number, pictureList: any[]) => void
 }
 
 const WeiboItem: React.FC<WeiboItemProps> = (props: WeiboItemProps) => {
 
     const onPreviewPicture = (index: number) => {
-        props.onPicturePress(index - 1, pictureList)
+        props.onPicturePress && props.onPicturePress(index - 1, pictureList)
     }
 
     return (
@@ -73,6 +75,17 @@ const WeiboItem: React.FC<WeiboItemProps> = (props: WeiboItemProps) => {
                         </TouchableHighlight>
                     );
                 })}
+            </View>
+            <View style={{height: 300, width: Dimensions.get('window').width}}>
+                <WebView
+                    automaticallyAdjustContentInsets={false}
+                    source={{
+                        uri: 'https://leafletjs.com/examples/quick-start/example.html'
+                    }}
+                />
+            </View>
+            <View>
+                <AweButton>评论</AweButton>
             </View>
         </View>
     );

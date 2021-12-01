@@ -50,7 +50,6 @@ const Publish: React.FC = () => {
                 type={'solid'}
                 onPress={openPhotoLibrary4}
             />
-
         </SafeAreaProvider>
     );
 };
@@ -66,9 +65,7 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         backgroundColor: '#fff',
         justifyContent: 'flex-start',
-    },
-
-
+    }
 });
 
 export default Publish;

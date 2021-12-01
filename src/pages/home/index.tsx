@@ -54,6 +54,13 @@ const Home: React.FC<NavigateProps> = (props: NavigateProps) => {
                     状态管理
                 </AweButton>
 
+                <AweButton
+                    backgroundColor="#2F4F4F"
+                    color="#fff"
+                    onPress={() => onPageNavigation(PAGE_NAME.IMAGE_VIEWING)}>
+                    Image View
+                </AweButton>
+
             </View>
         </SafeAreaProvider>
 

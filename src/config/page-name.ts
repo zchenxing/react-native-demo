@@ -8,6 +8,7 @@ export const PAGE_NAME = {
     MY_NAVIGATION: 'MyNavigation',
     STORE_DATA: 'StoreData',
     MY_TAB: 'MyTab',
+    IMAGE_VIEWING: 'ImageViewing',
 };
 
 

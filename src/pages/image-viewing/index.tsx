@@ -3,13 +3,12 @@ import {View} from 'react-native';
 import ImageView from 'react-native-image-viewing';
 import {Button} from 'react-native-elements';
 import {pictureList} from '../../mock';
+import AweImageRank from '../../components/awe-image-rank';
 
-const ImageViewing: React.FC = props => {
+const imageUrl: string[] = pictureList.map(picture => picture.uri)
+
+const ImageViewing: React.FC = () => {
     const [visible, setIsVisible] = React.useState(false);
-
-    const openCamera = () => {
-
-    };
 
     return (
         <View>
@@ -19,7 +18,7 @@ const ImageViewing: React.FC = props => {
                 onPress={() => setIsVisible(true)}
             />
 
-            <Button title={'打开相机'} type={'solid'} onPress={openCamera} />
+            <AweImageRank images={imageUrl} />
 
             <ImageView
                 images={pictureList}

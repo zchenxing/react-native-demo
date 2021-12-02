@@ -13,6 +13,8 @@ target 'MyApp' do
   )
 
 
+  pod 'react-native-multiple-image-picker', :path => '../node_modules/@baronha/react-native-multiple-image-picker'
+
   target 'MyAppTests' do
     inherit! :complete
     # Pods for testing

@@ -1,36 +1,55 @@
 import React from 'react';
-import {StyleSheet, TextInput} from 'react-native';
+import { Image, StyleSheet, TextInput, View } from "react-native";
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import AweButton from '../../components/awe-button';
 import * as ImagePicker from 'react-native-image-picker';
-import * as CropImagePicker from 'react-native-image-crop-picker';
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import { Button } from "react-native-elements";
+import { isIOS } from "../../config/page-name";
 
 const Publish: React.FC = () => {
+
+    const [imageUri, setImageUri] = React.useState<string[]>([])
 
     const openPhotoLibrary2 = () => {
         ImagePicker.launchImageLibrary(
             {
                 mediaType: 'photo',
-                includeBase64: true,
+                // includeBase64: true,
             },
-            response => {
+            (response: any) => {
                 console.log(response);
+                setImageUri(response.assets[0].uri)
             },
         );
     };
 
-    const openPhotoLibrary3 = () => {
-        CropImagePicker.openPicker({
-            mediaType: 'photo',
-            multiple: true,
-        }).then(image => {
-            console.log(image);
-        });
-    };
+    const openCamera = async () => {
+        try {
+            const response: any = await MultipleImagePicker.openPicker({
+                mediaType: 'image',
+                isPreview: true,
+                numberOfColumn: 3,
+                maxSelectedAssets: 5,
+                usedCameraButton: false,
+                // singleSelectedMode: true,
+            });
 
-    const openPhotoLibrary4 = () => {
-    }
+            const urls: string[] = response.map((item: any) => {
+                if (isIOS) {
+                    return item.path.replace('file://', '')
+                } else {
+                    return `file://${item.realPath}`
+                }
+            })
+
+            setImageUri(urls)
+
+        } catch (e: any) {
+            console.log('error：', e.code, e.message);
+        }
+
+    };
 
     return (
         <SafeAreaProvider style={styles.container}>
@@ -43,13 +62,19 @@ const Publish: React.FC = () => {
             />
 
             <AweButton onPress={openPhotoLibrary2}>image-picker</AweButton>
-            <AweButton onPress={openPhotoLibrary3}>image-crop-picker</AweButton>
 
             <Button
-                title={'react-native-customized-image-picker'}
+                title={'multiple-image-picker'}
                 type={'solid'}
-                onPress={openPhotoLibrary4}
+                onPress={openCamera}
             />
+
+            {
+                imageUri.length ? imageUri.map(img => {
+                    return <Image key={img} source={{uri: img}} style={{width: 100, height: 100}} />
+                }) : <View />
+            }
+
         </SafeAreaProvider>
     );
 };

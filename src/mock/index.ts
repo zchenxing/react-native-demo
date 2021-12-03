@@ -7,22 +7,22 @@ export const pictureList = [
         index: 2,
         uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.sc.enterdesk.com%2Fedpic%2Fd0%2F8e%2F1d%2Fd08e1d6bfe904fb7ac03006b4a3b9a33.jpg&refer=http%3A%2F%2Fup.sc.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=fb9b77e526f9ad3abfffd818e3d630ae'
     },
-    {
-        index: 3,
-        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fstatic.pptstore.net%2Fpicture%2F24%2F52%2F9be8fdf92f91a688b32e_s.jpg&refer=http%3A%2F%2Fstatic.pptstore.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=dce4c4cb83d22e26567ca5b5aaec99b2'
-    },
-    {
-        index: 4,
-        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg2.fengniao.com%2Fproduct%2F51%2F172%2FcemxOLSitBNLk.jpg&refer=http%3A%2F%2Fimg2.fengniao.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=f1d9520f8fa17e2f74bfce8ffb41b319'
-    },
-    {
-        index: 5,
-        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fabc.2008php.com%2F09_Website_appreciate%2F10-07-07%2F1278508427_8.jpg&refer=http%3A%2F%2Fabc.2008php.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=fb5e90c416bd41959eb4de41c4cb5f7d'
-    },
-    {
-        index: 6,
-        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fs9.knowsky.com%2Fbizhi%2Fl%2F15001-25000%2F20095292455296181916.jpg&refer=http%3A%2F%2Fs9.knowsky.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=d6d4df9cad4e09887a5e4eef404f9ca4'
-    },
+    // {
+    //     index: 3,
+    //     uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fstatic.pptstore.net%2Fpicture%2F24%2F52%2F9be8fdf92f91a688b32e_s.jpg&refer=http%3A%2F%2Fstatic.pptstore.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=dce4c4cb83d22e26567ca5b5aaec99b2'
+    // },
+    // {
+    //     index: 4,
+    //     uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg2.fengniao.com%2Fproduct%2F51%2F172%2FcemxOLSitBNLk.jpg&refer=http%3A%2F%2Fimg2.fengniao.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=f1d9520f8fa17e2f74bfce8ffb41b319'
+    // },
+    // {
+    //     index: 5,
+    //     uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fabc.2008php.com%2F09_Website_appreciate%2F10-07-07%2F1278508427_8.jpg&refer=http%3A%2F%2Fabc.2008php.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=fb5e90c416bd41959eb4de41c4cb5f7d'
+    // },
+    // {
+    //     index: 6,
+    //     uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fs9.knowsky.com%2Fbizhi%2Fl%2F15001-25000%2F20095292455296181916.jpg&refer=http%3A%2F%2Fs9.knowsky.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=d6d4df9cad4e09887a5e4eef404f9ca4'
+    // },
 ]
 
 

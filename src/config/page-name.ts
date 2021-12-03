@@ -12,5 +12,9 @@ export const PAGE_NAME = {
 };
 
 
+export const INTELINK_SCREEN_NAME = {
+    SCREEN_HOME: 'HomeScreen'
+}
 
-export const isIOS = Platform.OS === 'ios'
+
+

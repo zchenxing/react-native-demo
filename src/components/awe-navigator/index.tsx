@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, TextInput, TouchableHighlight, Text } from "react-native";
 import {AweNavigatorProps} from './data';
-import {isIOS} from '../../config/page-name';
+import {isIOS} from '../../config/contant';
 
 const AweNavigator: React.FC<AweNavigatorProps> = (
     props: AweNavigatorProps,

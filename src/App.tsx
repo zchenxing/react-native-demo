@@ -3,7 +3,8 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {elRoutes} from './routes';
+import {elRoutes} from './routes/test-routes';
+import { intelinkRoute } from "./routes";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,7 +16,7 @@ const App = () => {
                     screenOptions={{
                         headerShown: true,
                     }}>
-                    {elRoutes.map(screen => {
+                    {intelinkRoute.map(screen => {
                         return (
                             <Stack.Screen
                                 key={screen.name}

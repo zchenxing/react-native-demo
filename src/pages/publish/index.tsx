@@ -5,7 +5,7 @@ import AweButton from '../../components/awe-button';
 import * as ImagePicker from 'react-native-image-picker';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import { Button } from "react-native-elements";
-import { isIOS } from "../../config/page-name";
+import { isIOS } from "../../config/contant";
 
 const Publish: React.FC = () => {
 

@@ -44,6 +44,17 @@ const PostPicture: React.FC<PostPictureProps> = (props: PostPictureProps) => {
         props.onPressPicture(index);
     };
 
+
+    const onLoadError = (index: number) => {
+        const list = [...pictureList]
+        list.splice(
+            index,
+            1,
+            'https://img2.baidu.com/it/u=283216396,3208798936&fm=26&fmt=auto',
+        );
+        setPictureList(list)
+    }
+
     return (
         <View style={styles.container}>
             {pictureList.map((uri, index) => {
@@ -57,7 +68,7 @@ const PostPicture: React.FC<PostPictureProps> = (props: PostPictureProps) => {
                                 styles.imageView,
                                 {width: size.width, height: size.height},
                             ]}>
-                            <FastImage source={{uri}} style={styles.image}>
+                            <FastImage source={{uri}} style={styles.image} onError={() => onLoadError(index)}>
                                 <View
                                     style={[
                                         styles.moreView,

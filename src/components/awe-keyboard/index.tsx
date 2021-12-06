@@ -5,12 +5,18 @@ import {
     TextInput,
     TouchableHighlight,
     View,
+    Keyboard
 } from 'react-native';
 import {KeyboardAccessoryView} from 'react-native-keyboard-accessory';
 
 const AweKeyboard: React.FC = () => {
     const inputRef = React.useRef<any>(null)
     const [inputHeight, setInputHeight] = React.useState(40);
+
+
+    const onPressSend = () => {
+        Keyboard.dismiss()
+    }
 
     return (
         <KeyboardAccessoryView
@@ -34,7 +40,7 @@ const AweKeyboard: React.FC = () => {
                         );
                     }}
                 />
-                <TouchableHighlight onPress={() => {}}>
+                <TouchableHighlight onPress={onPressSend}>
                     <View style={styles.textInputButton}>
                         <Text>Send</Text>
                     </View>
@@ -51,7 +57,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-end',
         position: 'relative',
-        zIndex: 999
+        zIndex: 9999
     },
     textInput: {
         flex: 1,

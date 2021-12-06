@@ -1,10 +1,21 @@
-import React from "react";
-import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
-import { Image } from "react-native-elements";
+import React from 'react';
+import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
+import {Image} from 'react-native-elements';
+import Toast from 'react-native-simple-toast';
 
-const PostHeader: React.FC = (props) => {
-
+const PostHeader: React.FC = props => {
     const [following, setFollowing] = React.useState(false);
+
+    const onPressFollow = (followStatus: boolean) => {
+        setFollowing(followStatus);
+
+        Toast.showWithGravity(
+            followStatus ? '已关注' : '已取消关注',
+            1,
+            Toast.TOP
+        )
+
+    };
 
     return (
         <View style={postHeaderStyles.header}>
@@ -17,23 +28,21 @@ const PostHeader: React.FC = (props) => {
                 />
 
                 <View style={{justifyContent: 'space-between'}}>
-                    <Text style={postHeaderStyles.nickname}>Donald John Trump</Text>
+                    <Text style={postHeaderStyles.nickname}>
+                        Donald John Trump
+                    </Text>
                     <View style={{flexDirection: 'row'}}>
                         <Text style={postHeaderStyles.tag}>Birds</Text>
                     </View>
                 </View>
             </View>
 
-            <TouchableHighlight
-                onPress={() => setFollowing(!following)}
-                underlayColor="none">
+            <TouchableHighlight onPress={() => onPressFollow(!following)} underlayColor="none">
                 <View
                     style={[
                         postHeaderStyles.follow,
                         {
-                            backgroundColor: following
-                                ? '#f7f7f7'
-                                : '#bbe1e6',
+                            backgroundColor: following ? '#f7f7f7' : '#bbe1e6',
                         },
                     ]}>
                     <Text
@@ -51,9 +60,7 @@ const PostHeader: React.FC = (props) => {
     );
 };
 
-
 const postHeaderStyles = StyleSheet.create({
-
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -86,8 +93,7 @@ const postHeaderStyles = StyleSheet.create({
     },
     followText: {
         textAlign: 'center',
-    }
+    },
 });
-
 
 export default React.memo(PostHeader);

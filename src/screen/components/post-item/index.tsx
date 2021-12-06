@@ -5,6 +5,7 @@ import PostHeader from './post-header';
 import PostArticle from './post-article';
 import { pictureList } from "../../../mock";
 import PostPicture from './post-picture';
+import PostFooter from './post-footer';
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
@@ -27,6 +28,8 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                 pictureUri={pictureList}
                 onPressPicture={onPressPicture}
             />
+
+            <PostFooter />
 
         </View>
     );

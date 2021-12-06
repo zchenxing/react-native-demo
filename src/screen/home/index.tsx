@@ -7,7 +7,8 @@ import { ActivityIndicator, FlatList, RefreshControl, Text, View } from "react-n
 import ScreenBase from '../components/screen-base';
 import { postList } from "../../mock";
 import PostItem from '../components/post-item';
-import AwePicturePreview from "../../components/awe-picture-preview";
+import AwePicturePreview from '../../components/awe-picture-preview';
+import PostComment from "../components/post-comments";
 
 
 const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
@@ -55,13 +56,14 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     };
 
 
-    const onPressPicture = (pictureList: any[], startIndex: number) => {
+    const onPressPicture = (pictures: any[], startIndex: number) => {
         setPictureVisible(true)
         setPictureStartIndex(startIndex)
 
-        const list = pictureList.map(picture => ({url: picture.uri}))
+        const list = pictures.map(picture => ({url: picture.uri}))
         setPictureList(list)
     }
+
 
     return (
         <SafeAreaProvider style={[globalStyles.container]}>
@@ -69,6 +71,7 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             <ScreenBase>
                 <FlatList
                     data={postList}
+                    removeClippedSubviews={true}
                     renderItem={(item: any) => (
                         <PostItem {...item} onPressPicture={onPressPicture} />
                     )}
@@ -92,6 +95,9 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 imageUrls={pictureList}
                 startIndex={pictureStartIndex}
             />
+
+
+            <PostComment />
 
         </SafeAreaProvider>
     );

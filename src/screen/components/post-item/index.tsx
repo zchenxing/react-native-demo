@@ -4,13 +4,17 @@ import {PostItemProps} from './type';
 import PostHeader from './post-header';
 import PostArticle from './post-article';
 import { pictureList } from "../../../mock";
-import PostPicture from "./post-picture";
-
-
-const pictureUri: string[] = pictureList.map(pic => pic.uri)
+import PostPicture from './post-picture';
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
+    React.useEffect(() => {
+        // console.log(props);
+    }, [])
+
+    const onPressPicture = (startIndex: number) => {
+        props.onPressPicture(pictureList, startIndex)
+    }
 
     return (
         <View style={styles.itemContent}>
@@ -19,7 +23,10 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
             <PostArticle />
 
-            <PostPicture pictureUri={pictureUri} />
+            <PostPicture
+                pictureUri={pictureList}
+                onPressPicture={onPressPicture}
+            />
 
         </View>
     );

@@ -1,37 +1,81 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {Image} from 'react-native-elements';
+import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
+import FastImage from 'react-native-fast-image'
 import {screenWidth} from '../../../config/contant';
 
 interface PostPictureProps {
-    pictureUri: string[];
+    pictureUri: any[];
+    onPressPicture: (startIndex: number) => void;
 }
 
+const pictureWrapperWidth = screenWidth - 20;
+
 const PostPicture: React.FC<PostPictureProps> = (props: PostPictureProps) => {
+    const [pictureList, setPictureList] = React.useState<string[]>([]);
     const [size, setSize] = React.useState<{width: number; height: number}>({
-        width: 1,
-        height: 190,
+        width: pictureWrapperWidth,
+        height: pictureWrapperWidth / 1.7,
     });
 
     React.useEffect(() => {
-        setSize({
-            height: (1 / props.pictureUri.length) * (screenWidth - 20),
-            width: (1 / props.pictureUri.length) * (screenWidth - 20),
-        });
-    }, []);
+        if (props.pictureUri.length) {
+            const list: string[] = [...props.pictureUri]
+                .slice(0, 4)
+                .map(pic => pic.uri);
+            list.slice(0, 4);
+
+            setPictureList(list);
+
+            if (list.length === 4) {
+                setSize({
+                    height: pictureWrapperWidth / 2,
+                    width: pictureWrapperWidth / 2,
+                });
+            } else if (list.length > 1) {
+                setSize({
+                    height: (1 / props.pictureUri.length) * pictureWrapperWidth,
+                    width: (1 / props.pictureUri.length) * pictureWrapperWidth,
+                });
+            }
+        }
+    }, [props.pictureUri]);
+
+    const onPressPicture = (index: number) => {
+        props.onPressPicture(index);
+    };
 
     return (
         <View style={styles.container}>
-            {props.pictureUri.map(uri => {
+            {pictureList.map((uri, index) => {
                 return (
-                    <View
+                    <TouchableHighlight
                         key={uri}
-                        style={[
-                            styles.imageView,
-                            {width: size.width, height: size.height},
-                        ]}>
-                        <Image source={{uri}} style={styles.image} />
-                    </View>
+                        onPress={() => onPressPicture(index)}
+                        underlayColor={'none'}>
+                        <View
+                            style={[
+                                styles.imageView,
+                                {width: size.width, height: size.height},
+                            ]}>
+                            <FastImage source={{uri}} style={styles.image}>
+                                <View
+                                    style={[
+                                        styles.moreView,
+                                        {
+                                            display:
+                                                index === 3 &&
+                                                props.pictureUri.length > 4
+                                                    ? 'flex'
+                                                    : 'none',
+                                        },
+                                    ]}>
+                                    <Text style={styles.moreText}>
+                                        +{props.pictureUri.length - 4}
+                                    </Text>
+                                </View>
+                            </FastImage>
+                        </View>
+                    </TouchableHighlight>
                 );
             })}
         </View>
@@ -41,14 +85,36 @@ const PostPicture: React.FC<PostPictureProps> = (props: PostPictureProps) => {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
     },
     imageView: {
-        paddingRight: 10,
+        paddingRight: 8,
+        paddingBottom: 6,
+        position: 'relative',
     },
     image: {
         width: '100%',
         height: '100%',
-        borderRadius: 10,
+        borderRadius: 8,
+        overflow: 'hidden',
+        borderColor: '#eee',
+        borderWidth: 1
+    },
+    moreView: {
+        backgroundColor: 'rgba(10, 10, 10, .3)',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end',
+        padding: 10,
+    },
+    moreText: {
+        fontSize: 40,
+        color: '#fff',
+        fontWeight: '300',
     },
 });
 

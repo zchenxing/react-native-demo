@@ -1,5 +1,6 @@
 import {INTELINK_SCREEN_NAME} from '../config/page-name';
 import HomeScreen from '../screen/home';
+import SearchScreen from '../screen/search';
 
 export const intelinkRoute = [
     {
@@ -9,4 +10,11 @@ export const intelinkRoute = [
             headerShown: false
         },
     },
+    {
+        name: INTELINK_SCREEN_NAME.SCREEN_SEARCH,
+        component: SearchScreen,
+        options: {
+            headerShown: false
+        },
+    }
 ];

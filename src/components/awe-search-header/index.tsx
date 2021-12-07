@@ -12,8 +12,8 @@ import {
 import {Header} from 'react-native-elements';
 import {AweSearchNavigatorProps} from './type';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { screenWidth } from "../../config/contant";
 
-const width = Dimensions.get('window').width;
 
 const AweSearchNavigator: React.FC<AweSearchNavigatorProps> = (
     props: AweSearchNavigatorProps,
@@ -34,12 +34,15 @@ const AweSearchNavigator: React.FC<AweSearchNavigatorProps> = (
             <StatusBar barStyle={'dark-content'} backgroundColor="#fff" />
             <Header
                 backgroundColor={'#fff'}
+                leftComponent={
+                    <TouchableHighlight underlayColor={'none'} onPress={props.onRightPress}>
+                        <View style={{width: 100, paddingLeft: 10}}>
+                            <Icon name={'angle-left'} style={{fontSize: 30, color: '#aaa'}} />
+                        </View>
+                    </TouchableHighlight>
+                }
                 centerComponent={
                     <View style={styles.searchBase}>
-                        <Icon
-                            name={'search'}
-                            style={{color: '#979797', fontSize: 16}}
-                        />
                         <TextInput
                             style={styles.searchInput}
                             value={searchValue}
@@ -59,16 +62,9 @@ const AweSearchNavigator: React.FC<AweSearchNavigatorProps> = (
                         )}
                     </View>
                 }
-                rightComponent={
-                    <TouchableHighlight>
-                        <View style={styles.publishBase}>
-                            <Image
-                                style={styles.publishPlus}
-                                source={require('../../assets/images/icons/add.png')}
-                            />
-                        </View>
-                    </TouchableHighlight>
-                }
+                rightContainerStyle={{
+                    display: 'none'
+                }}
             />
         </>
     );
@@ -77,14 +73,15 @@ const AweSearchNavigator: React.FC<AweSearchNavigatorProps> = (
 const styles = StyleSheet.create({
     searchBase: {
         height: 35,
-        width: width - 70,
+        width: screenWidth - 70,
         alignItems: 'center',
         justifyContent: 'space-between',
         flexDirection: 'row',
         borderRadius: 20,
-        paddingLeft: 10,
+        // marginLeft: 30,
+        marginRight: 50,
+        paddingLeft: 5,
         paddingRight: 10,
-        marginRight: 40,
         backgroundColor: '#f8f8f8',
     },
     searchInput: {

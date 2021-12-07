@@ -30,6 +30,7 @@ export const pictureList = [
 export const articleStr: string =
     '啃啃覅， 器我觉得🙃群殴我级景区我，看嘛hi较为较为我赔款平都去我品偶读， 器我觉得🙃群殴我级景区我，请勿断开强迫我看到破。器我觉得迫切我飓风破集卡片群殴我看发迫切我看的前雾灯看破我驱蚊扣 。却无法几千万破旧房迫切我驱蚊，驱蚊大秦网的剧情片我 ， 器我觉得🙃群殴我级景区我，器我觉得破孔雀窝破 ， 器我觉得🙃群殴我级景区我，强迫我就都抛弃我开疾跑哦';
 
+export const avatarUrl: string = 'https://img1.baidu.com/it/u=1765464561,3100748160&fm=26&fmt=auto'
 
 export const postList = [
     {

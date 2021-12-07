@@ -13,7 +13,8 @@ export const PAGE_NAME = {
 
 
 export const INTELINK_SCREEN_NAME = {
-    SCREEN_HOME: 'HomeScreen'
+    SCREEN_HOME: 'HomeScreen',
+    SCREEN_SEARCH: 'SearchScreen',
 }
 
 

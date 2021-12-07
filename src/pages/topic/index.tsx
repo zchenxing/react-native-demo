@@ -34,7 +34,6 @@ const Topic: React.FC<NavigateProps> = (props: NavigateProps) => {
                 <ScrollView style={styles.container}>
                     <WeiboItem />
                 </ScrollView>
-                <AweKeyboard />
             </View>
         </SafeAreaView>
     );

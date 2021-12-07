@@ -4,13 +4,18 @@ import Utils from '../../../utils';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Toast from 'react-native-simple-toast';
 
-const PostFooter: React.FC = props => {
+interface PostFooterProps {
+    onPressComment: () => void
+}
+
+const PostFooter: React.FC<PostFooterProps> = (props: PostFooterProps) => {
     const [collection, setCollection] = React.useState(false);
 
     const onPressCollect = (status: boolean) => {
         Toast.show(status ? '收藏' : '取消收藏');
         setCollection(status);
     };
+
 
     return (
         <View style={styles.container}>
@@ -31,7 +36,7 @@ const PostFooter: React.FC = props => {
                         )}
                     </View>
                 </TouchableHighlight>
-                <TouchableHighlight>
+                <TouchableHighlight underlayColor={'none'} onPress={props.onPressComment}>
                     <View style={{padding: 5, flexDirection: 'row'}}>
                         <Icon
                             name={'commenting-o'}

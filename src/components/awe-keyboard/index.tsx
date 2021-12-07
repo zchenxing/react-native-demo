@@ -5,77 +5,133 @@ import {
     TextInput,
     TouchableHighlight,
     View,
-    Keyboard
+    Keyboard,
+    Modal,
 } from 'react-native';
+import {AweKeyboardProps} from './data';
+import { screenHeight, screenWidth } from "../../config/contant";
+import { useLanguage } from "../../language";
 import {KeyboardAccessoryView} from 'react-native-keyboard-accessory';
+import { themeColor } from "../../assets/styles";
 
-const AweKeyboard: React.FC = () => {
-    const inputRef = React.useRef<any>(null)
-    const [inputHeight, setInputHeight] = React.useState(40);
+const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
+    const inputRef = React.useRef<any>(null);
+    const [inputHeight, setInputHeight] = React.useState(80);
+    const [textValue, setTextValue] = React.useState<string>('')
+
+    React.useEffect(() => {
+        if (props.visible) {
+
+            setTimeout(() => {
+                inputRef.current.focus();
+            }, 100);
+
+            setTimeout(() => {
+                setTextValue(props.contentText)
+            }, 150)
+        }
 
 
-    const onPressSend = () => {
-        Keyboard.dismiss()
+        const keyboardDidHidden = Keyboard.addListener(
+            'keyboardDidHide',
+            onClose,
+        );
+
+        return () => {
+            keyboardDidHidden.remove()
+        }
+
+    }, [props.visible]);
+
+    const onChangeText = (text: string) => {
+        props.onChangeText(text)
+        setTextValue(text)
     }
 
+    const onPressSend = () => {
+        Keyboard.dismiss();
+    };
+
+    const onClose = () => {
+        props.onClose();
+        setTextValue('')
+        Keyboard.dismiss();
+    };
+
+
     return (
-        <KeyboardAccessoryView
-            alwaysVisible={true}
-            avoidKeyboard={true}
-            androidAdjustResize={true}>
-            <View style={styles.textInputView}>
-                <TextInput
-                    ref={inputRef}
-                    placeholder="Write your message"
-                    underlineColorAndroid="transparent"
-                    clearButtonMode={'while-editing'}
-                    style={[styles.textInput, {height: inputHeight}]}
-                    multiline={true}
-                    onContentSizeChange={event => {
-                        setInputHeight(
-                            Math.max(
-                                40,
-                                event.nativeEvent.contentSize.height,
-                            ),
-                        );
-                    }}
-                />
-                <TouchableHighlight onPress={onPressSend}>
-                    <View style={styles.textInputButton}>
-                        <Text>Send</Text>
-                    </View>
+        <Modal transparent={true} visible={props.visible}>
+            <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, .2)'}}>
+
+                <TouchableHighlight onPress={onClose} underlayColor={'none'}>
+                    <View style={{width: screenWidth, height: screenHeight}} />
                 </TouchableHighlight>
             </View>
-        </KeyboardAccessoryView>
+
+
+            <KeyboardAccessoryView
+                alwaysVisible={true}
+                avoidKeyboard={true}
+                androidAdjustResize={true}>
+                <View style={styles.textInputView}>
+                    <TextInput
+                        ref={inputRef}
+                        value={textValue}
+                        placeholder={useLanguage.say_something}
+                        underlineColorAndroid="transparent"
+                        clearButtonMode={'while-editing'}
+                        style={[styles.textInput, {height: inputHeight}]}
+                        multiline={true}
+                        clearTextOnFocus={true}
+                        onChangeText={onChangeText}
+                        textAlignVertical={'top'}
+                        // onContentSizeChange={event => {
+                        //     setInputHeight(
+                        //         Math.max(
+                        //             40,
+                        //             event.nativeEvent.contentSize.height,
+                        //         ),
+                        //     );
+                        // }}
+                    />
+                    <TouchableHighlight onPress={onPressSend} underlayColor={'none'}>
+                        <View style={[styles.textInputButton, {opacity: textValue ? 1 : 0.7}]}>
+                            <Text style={{color: '#fff'}}>{useLanguage.comment}</Text>
+                        </View>
+                    </TouchableHighlight>
+                </View>
+            </KeyboardAccessoryView>
+        </Modal>
     );
 };
 
 const styles = StyleSheet.create({
     textInputView: {
-        padding: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
         position: 'relative',
-        zIndex: 9999
+        backgroundColor: '#fff',
+        padding: 10,
+        paddingBottom: 20,
     },
     textInput: {
         flex: 1,
-        backgroundColor: 'yellow',
-        borderWidth: 1,
         borderRadius: 10,
         paddingLeft: 10,
-        borderColor: '#CCC',
         fontSize: 16,
         alignItems: 'center',
-        // textAlignVertical: 'center',
+        backgroundColor: '#f8f8f8'
     },
     textInputButton: {
+        height: 35,
         width: 'auto',
-        height: 40,
-        paddingLeft: 5,
-        paddingRight: 5,
-        backgroundColor: 'green',
+        backgroundColor: themeColor,
+        justifyContent: 'center',
+        marginLeft: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
+        borderRadius: 20,
     },
 });
 

@@ -1,23 +1,28 @@
 import React from 'react';
-import {Image, Text, StyleSheet, View} from 'react-native';
+import {Image, Text, StyleSheet, View, ActivityIndicator} from 'react-native';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {screenWidth} from '../../../config/contant';
 
 enum NetworkStatus {
-    Unknow,
+    // 未知类型
+    Unknown,
+    // 有网
     Working,
+    // 没有网
     None,
 }
 
 interface ScreenBaseProps {
     showNothing?: boolean;
     children?: React.ReactNode;
+    initLoading?: boolean;
 }
 
 const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
     const netInfo = useNetInfo();
+    const [initLoading, setInitLoading] = React.useState(!!props.initLoading);
     const [networking, setNetworking] = React.useState<NetworkStatus>(
-        NetworkStatus.Unknow,
+        NetworkStatus.Unknown,
     );
 
     React.useEffect(() => {
@@ -26,6 +31,10 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
             setNetworking(NetworkStatus.None);
         } else {
             setNetworking(NetworkStatus.Working);
+        }
+
+        if (initLoading) {
+            setTimeout(() => setInitLoading(false), 300);
         }
     }, [netInfo]);
 
@@ -50,6 +59,11 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
                         source={require('../../../assets/images/status/nothing.png')}
                     />
                     <Text style={styles.noNetworkText}>Nothing here</Text>
+                </View>
+            ) : initLoading ? (
+                <View
+                    style={styles.loading}>
+                    <ActivityIndicator size="large" />
                 </View>
             ) : (
                 props.children
@@ -79,6 +93,11 @@ const styles = StyleSheet.create({
         color: '#999',
         fontSize: 16,
     },
+    loading: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 });
 
 export default ScreenBase;

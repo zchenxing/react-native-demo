@@ -15,7 +15,7 @@ const AwePicturePreview: React.FC<AwePicturePreviewProps> = (
         <Modal visible={props.visible} transparent={props.transparent}>
             <StatusBar backgroundColor={'#000'} />
             {
-                props.imageUrls?.length ?
+                props.imageUrls?.length &&
                 <ImageViewer
                     imageUrls={props.imageUrls}
                     failImageSource={{
@@ -29,7 +29,7 @@ const AwePicturePreview: React.FC<AwePicturePreviewProps> = (
                     onSaveToCamera={(e) => console.log(e)}
                     onSave={e => console.log('e = ', e)}
                     // enablePreload={true}
-                /> : <View />
+                />
             }
 
         </Modal>

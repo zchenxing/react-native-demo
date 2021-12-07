@@ -8,8 +8,8 @@ import ScreenBase from '../components/screen-base';
 import { postList } from "../../mock";
 import PostItem from '../components/post-item';
 import AwePicturePreview from '../../components/awe-picture-preview';
-import PostComment from "../components/post-comments";
-
+import PostComment from '../components/post-comments';
+import { INTELINK_SCREEN_NAME } from "../../config/page-name";
 
 const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
@@ -18,9 +18,10 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const [pictureVisible, setPictureVisible] = React.useState(false)
     const [pictureStartIndex, setPictureStartIndex] = React.useState<number>(0)
     const [pictureList, setPictureList] = React.useState<any[]>([])
+    const [commentVisible, setCommentVisible] = React.useState(false)
 
-    const onSearch = () => {
-
+    const onPressSearch = () => {
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_SEARCH)
     }
 
 
@@ -55,7 +56,11 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         }, 3000);
     };
 
-
+    /**
+     * 浏览图片
+     * @param pictures
+     * @param startIndex
+     */
     const onPressPicture = (pictures: any[], startIndex: number) => {
         setPictureVisible(true)
         setPictureStartIndex(startIndex)
@@ -65,16 +70,20 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     }
 
 
+    /**
+     * 查看评论
+     */
+    const onPressComment = () => {
+        setCommentVisible(true)
+    }
+
     return (
         <SafeAreaProvider style={[globalStyles.container]}>
-            <HomeHeader onSearch={onSearch} onPublish={onPublish} />
+            <HomeHeader onSearch={onPressSearch} onPublish={onPublish} />
             <ScreenBase>
                 <FlatList
                     data={postList}
                     removeClippedSubviews={true}
-                    renderItem={(item: any) => (
-                        <PostItem {...item} onPressPicture={onPressPicture} />
-                    )}
                     keyExtractor={(item) => item.id}
                     refreshControl={
                         <RefreshControl
@@ -82,6 +91,9 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                             onRefresh={onRefreshData}
                         />
                     }
+                    renderItem={(item: any) => (
+                        <PostItem {...item} onPressPicture={onPressPicture} onPressComment={onPressComment} />
+                    )}
                     ListFooterComponent={() => loadMore()}
                     onEndReached={() => onLoadMore()}
                 />
@@ -97,7 +109,10 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             />
 
 
-            <PostComment />
+            <PostComment
+                visible={commentVisible}
+                onClose={() => setCommentVisible(false)}
+            />
 
         </SafeAreaProvider>
     );

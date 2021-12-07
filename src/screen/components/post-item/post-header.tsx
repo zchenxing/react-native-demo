@@ -2,6 +2,8 @@ import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import {Image} from 'react-native-elements';
 import Toast from 'react-native-simple-toast';
+import { avatarUrl } from "../../../mock";
+import { themeColor } from "../../../assets/styles";
 
 const PostHeader: React.FC = props => {
     const [following, setFollowing] = React.useState(false);
@@ -23,7 +25,7 @@ const PostHeader: React.FC = props => {
                 <Image
                     style={postHeaderStyles.avatar}
                     source={{
-                        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fbig5.taiwan.cn%2Fxwzx%2Fgj%2F201608%2FW020160823312274505897.jpg&refer=http%3A%2F%2Fbig5.taiwan.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1641116419&t=85aad9729189094f17726a8427de4b32',
+                        uri: avatarUrl
                     }}
                 />
 
@@ -49,7 +51,7 @@ const PostHeader: React.FC = props => {
                         style={[
                             postHeaderStyles.followText,
                             {
-                                color: following ? '#ccc' : '#69BECB',
+                                color: following ? '#ccc' : themeColor,
                             },
                         ]}>
                         {following ? 'Following' : 'Follow'}
@@ -78,9 +80,9 @@ const postHeaderStyles = StyleSheet.create({
     },
     tag: {
         borderWidth: 1,
-        borderColor: '#69BECB',
+        borderColor: themeColor,
         borderRadius: 3,
-        color: '#69BECB',
+        color: themeColor,
         fontSize: 12,
         paddingLeft: 5,
         paddingRight: 5,

@@ -29,7 +29,7 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                 onPressPicture={onPressPicture}
             />
 
-            <PostFooter />
+            <PostFooter onPressComment={props.onPressComment} />
 
         </View>
     );

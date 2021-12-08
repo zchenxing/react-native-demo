@@ -7,9 +7,9 @@ import {
     Image,
     StatusBar,
 } from 'react-native';
-import {Header} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Header } from 'react-native-elements';
 import { screenWidth } from "../../config/contant";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 interface HomeHeaderProps {
@@ -17,14 +17,18 @@ interface HomeHeaderProps {
     onPublish: () => void;
 }
 
+
+const searchWidth = screenWidth - 80
+
 const HomeHeader: React.FC<HomeHeaderProps> = (props: HomeHeaderProps) => {
     return (
         <>
             <StatusBar barStyle={'dark-content'} backgroundColor="#fff" />
             <Header
                 backgroundColor={'#fff'}
-                centerComponent={
+                leftComponent={
                     <TouchableHighlight
+                        style={{width: searchWidth}}
                         onPress={props.onSearch}
                         underlayColor="none">
                         <View style={styles.searchBase}>
@@ -36,6 +40,9 @@ const HomeHeader: React.FC<HomeHeaderProps> = (props: HomeHeaderProps) => {
                         </View>
                     </TouchableHighlight>
                 }
+                centerContainerStyle={{
+                    display: 'none'
+                }}
                 rightComponent={
                     <TouchableHighlight
                         onPress={props.onPublish}
@@ -56,13 +63,13 @@ const HomeHeader: React.FC<HomeHeaderProps> = (props: HomeHeaderProps) => {
 const styles = StyleSheet.create({
     searchBase: {
         height: 35,
-        width: screenWidth - 70,
+        width: searchWidth,
         alignItems: 'center',
         flexDirection: 'row',
         borderRadius: 20,
         paddingLeft: 10,
         paddingRight: 10,
-        marginRight: 40,
+        marginLeft: 5,
         backgroundColor: '#f8f8f8',
     },
     searchInput: {
@@ -71,7 +78,7 @@ const styles = StyleSheet.create({
         color: '#999',
     },
     publishBase: {
-        width: 30,
+        width: 50,
         height: 30,
         alignItems: 'center',
         justifyContent: 'center',

@@ -8,7 +8,7 @@ interface PostPictureProps {
     onPressPicture: (startIndex: number) => void;
 }
 
-const pictureWrapperWidth = screenWidth - 20;
+const pictureWrapperWidth = screenWidth - 40;
 
 const PostPicture: React.FC<PostPictureProps> = (props: PostPictureProps) => {
     const [pictureList, setPictureList] = React.useState<string[]>([]);

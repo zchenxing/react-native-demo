@@ -1,8 +1,8 @@
 export const pictureList = [
     {
         index: 1,
-        // uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic.vjshi.com%2F2018-04-08%2F3c40e1f7a2c67c65f444122a0cefee7a%2F00004.jpg%3Fx-oss-process%3Dstyle%2Fwatermark&refer=http%3A%2F%2Fpic.vjshi.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=62f954c58898814fb4d9201372c892eb'
-        uri: 'https://r=http%3A%2F%2Fpic.vjshi.com&app=2002&size=f9999'
+        uri: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic.vjshi.com%2F2018-04-08%2F3c40e1f7a2c67c65f444122a0cefee7a%2F00004.jpg%3Fx-oss-process%3Dstyle%2Fwatermark&refer=http%3A%2F%2Fpic.vjshi.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640138045&t=62f954c58898814fb4d9201372c892eb'
+        // uri: 'https://r=http%3A%2F%2Fpic.vjshi.com&app=2002&size=f9999'
     },
     {
         index: 2,

@@ -9,7 +9,7 @@ import {
 import FastImage from 'react-native-fast-image';
 import {avatarUrl, postList} from '../../../mock';
 import Utils from '../../../utils';
-import {PostCommentsItemProps} from './data';
+import {PostCommentsItemProps} from './type';
 
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,

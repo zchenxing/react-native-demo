@@ -6,7 +6,7 @@ export interface AwePicturePreviewProps {
     /** 透明度 */
     transparent?: boolean
 
-    imageUrls?: { url: string, props?: any }[]
+    imageUrls: string[]
 
     onClick: () => void
 }

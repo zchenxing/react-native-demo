@@ -1,12 +1,12 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {elRoutes} from './routes/test-routes';
 import { intelinkRoute } from "./routes";
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 const App = () => {
     return (
@@ -14,7 +14,7 @@ const App = () => {
             <NavigationContainer>
                 <Stack.Navigator
                     screenOptions={{
-                        headerShown: true,
+                        headerShown: false,
                     }}>
                     {intelinkRoute.map(screen => {
                         return (
@@ -22,7 +22,11 @@ const App = () => {
                                 key={screen.name}
                                 name={screen.name}
                                 component={screen.component}
-                                options={screen.options ? screen.options : {}}
+                                options={{
+                                    cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                                    ...screen.options
+
+                                }}
                             />
                         );
                     })}

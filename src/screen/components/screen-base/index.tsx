@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Text, StyleSheet, View, ActivityIndicator} from 'react-native';
+import {Image, Text, StyleSheet, View} from 'react-native';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {screenWidth} from '../../../config/contant';
 
@@ -13,14 +13,15 @@ enum NetworkStatus {
 }
 
 interface ScreenBaseProps {
-    showNothing?: boolean;
     children?: React.ReactNode;
-    initLoading?: boolean;
+    nothingPage?: {
+        picture: any;
+        title?: string;
+    };
 }
 
 const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
     const netInfo = useNetInfo();
-    const [initLoading, setInitLoading] = React.useState(!!props.initLoading);
     const [networking, setNetworking] = React.useState<NetworkStatus>(
         NetworkStatus.Unknown,
     );
@@ -33,9 +34,6 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
             setNetworking(NetworkStatus.Working);
         }
 
-        if (initLoading) {
-            setTimeout(() => setInitLoading(false), 300);
-        }
     }, [netInfo]);
 
     return (
@@ -51,19 +49,16 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
                         Abnormal network connection
                     </Text>
                 </View>
-            ) : props.showNothing ? (
+            ) : props.nothingPage ? (
                 <View style={styles.noNetwork}>
                     <Image
                         style={styles.noNetworkImg}
                         resizeMode={'contain'}
-                        source={require('../../../assets/images/status/nothing.png')}
+                        source={props.nothingPage.picture}
                     />
-                    <Text style={styles.noNetworkText}>Nothing here</Text>
-                </View>
-            ) : initLoading ? (
-                <View
-                    style={styles.loading}>
-                    <ActivityIndicator size="large" />
+                    <Text style={styles.noNetworkText}>
+                        {props.nothingPage.title || ''}
+                    </Text>
                 </View>
             ) : (
                 props.children
@@ -87,7 +82,9 @@ const styles = StyleSheet.create({
     },
     noNetworkImg: {
         height: screenWidth / 2.8,
-        transform: [{translateY: -40}],
+        transform: [
+            {translateY: -40}
+        ],
     },
     noNetworkText: {
         color: '#999',
@@ -97,7 +94,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
 });
 
 export default ScreenBase;

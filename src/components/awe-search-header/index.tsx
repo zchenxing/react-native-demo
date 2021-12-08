@@ -6,22 +6,21 @@ import {
     TextInput,
     View,
     Text,
-    Image,
     StatusBar,
 } from 'react-native';
 import {Header} from 'react-native-elements';
 import {AweSearchNavigatorProps} from './type';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { screenWidth } from "../../config/contant";
-
+import {screenWidth} from '../../config/contant';
 
 const AweSearchNavigator: React.FC<AweSearchNavigatorProps> = (
     props: AweSearchNavigatorProps,
 ) => {
-    const [searchValue, setSearchValue] = React.useState<string>('');
+    const [searchValue, setSearchValue] = React.useState<string>(
+        props.defaultValue || '',
+    );
 
     const cleanSearch = () => {
-        console.log('清空');
         setSearchValue('');
     };
 
@@ -35,21 +34,32 @@ const AweSearchNavigator: React.FC<AweSearchNavigatorProps> = (
             <Header
                 backgroundColor={'#fff'}
                 leftComponent={
-                    <TouchableHighlight underlayColor={'none'} onPress={props.onRightPress}>
+                    <TouchableHighlight
+                        underlayColor={'none'}
+                        onPress={props.onLeftPress}>
                         <View style={{width: 100, paddingLeft: 10}}>
-                            <Icon name={'angle-left'} style={{fontSize: 30, color: '#aaa'}} />
+                            <Icon
+                                name={'angle-left'}
+                                style={{fontSize: 30, color: '#aaa'}}
+                            />
                         </View>
                     </TouchableHighlight>
                 }
                 centerComponent={
                     <View style={styles.searchBase}>
                         <TextInput
+                            editable={!props.editDisable}
                             style={styles.searchInput}
                             value={searchValue}
                             onChangeText={onChangeText}
                             placeholder={'Find content'}
+                            returnKeyType={'search'}
+                            onSubmitEditing={() =>
+                                props.onSearchDone &&
+                                props.onSearchDone(searchValue)
+                            }
                         />
-                        {searchValue ? (
+                        {!!searchValue && !props.editDisable && (
                             <TouchableHighlight
                                 underlayColor="none"
                                 onPress={cleanSearch}>
@@ -57,13 +67,11 @@ const AweSearchNavigator: React.FC<AweSearchNavigatorProps> = (
                                     <Text style={{color: '#fff'}}>×</Text>
                                 </View>
                             </TouchableHighlight>
-                        ) : (
-                            <React.Fragment />
                         )}
                     </View>
                 }
                 rightContainerStyle={{
-                    display: 'none'
+                    display: 'none',
                 }}
             />
         </>

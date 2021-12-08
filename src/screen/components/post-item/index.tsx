@@ -38,7 +38,7 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
 const styles = StyleSheet.create({
     itemContent: {
-        padding: 10,
+        padding: 20,
         paddingBottom: 20,
     },
 })

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar, View } from "react-native";
 import AweButton from '../../components/awe-button';
-import {PAGE_NAME} from '../../config/page-name';
+import {PAGE_NAME} from '../../routes/screen-name';
 import {NavigateProps} from '../../interface';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 

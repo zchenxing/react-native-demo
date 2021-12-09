@@ -1,10 +1,8 @@
 import React from 'react';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {globalStyles} from '../../assets/styles';
-import HomeHeader from './header';
+import HomeNavigator from './navigator';
 import {NavigateProps} from '../../interface';
 import ScreenBase from '../components/screen-base';
-import {INTELINK_SCREEN_NAME} from '../../config/page-name';
+import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import PostList from '../components/post-list';
 import { postList } from "../../mock";
 
@@ -41,19 +39,26 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PUBLISH)
     };
 
+    const onPressDetail = () => {
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL, {
+            id: '124012750128740912804912'
+        })
+    }
+
     return (
-        <SafeAreaProvider style={globalStyles.container}>
-            <HomeHeader onSearch={onPressSearch} onPublish={onPublish} />
+        <>
+            <HomeNavigator onSearch={onPressSearch} onPublish={onPublish} />
             <ScreenBase>
                 <PostList
                     dataSource={postList}
                     refreshing={refreshing}
                     moreLoading={moreLoading}
+                    onPressDetail={onPressDetail}
                     onRefreshData={onRefreshData}
                     onLoadMoreData={onLoadMoreData}
                 />
             </ScreenBase>
-        </SafeAreaProvider>
+        </>
     );
 };
 

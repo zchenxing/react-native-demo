@@ -32,6 +32,8 @@ export const articleStr: string =
 
 export const avatarUrl: string = 'https://img1.baidu.com/it/u=1765464561,3100748160&fm=26&fmt=auto'
 
+export const birdCard: string = 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fgss0.baidu.com%2F-Po3dSag_xI4khGko9WTAnF6hhy%2Fzhidao%2Fpic%2Fitem%2F9825bc315c6034a8c5ef78d4c713495409237652.jpg&refer=http%3A%2F%2Fgss0.baidu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1641636831&t=493a87c4c3fe331c19e22e63889ac308'
+
 export const postList = [
     {
         id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',

@@ -69,6 +69,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 renderItem={(item: any) => (
                     <PostItem
                         {...item}
+                        onPressDetail={props.onPressDetail}
                         onPressPicture={onPressPicture}
                         onPressComment={onPressComment}
                     />

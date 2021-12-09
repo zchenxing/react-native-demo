@@ -2,7 +2,7 @@ import React from 'react';
 import {Text, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {globalStyles} from '../../../assets/styles';
-import AweSearchNavigator from '../../../components/awe-search-header';
+import SearchNavigator from '../search-navigator';
 import {NavigateProps} from '../../../interface';
 import ScreenBase from '../../components/screen-base';
 import PostList from '../../components/post-list';
@@ -40,7 +40,7 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     return (
         <SafeAreaProvider style={globalStyles.container}>
-            <AweSearchNavigator
+            <SearchNavigator
                 defaultValue={params.searchResult}
                 editDisable={true}
                 onLeftPress={props.navigation.goBack}

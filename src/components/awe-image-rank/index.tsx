@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, Dimensions, StyleSheet} from 'react-native';
+import { View, Dimensions, StyleSheet} from 'react-native';
 import {AweImageRankProps} from './type';
 import FastImage from 'react-native-fast-image';
 

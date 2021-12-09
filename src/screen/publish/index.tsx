@@ -8,30 +8,46 @@ import {
     TouchableHighlight,
     View,
 } from 'react-native';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {globalStyles, themeColor, themeLightColor} from '../../assets/styles';
-import PublishHeader from './header';
-import { NavigateProps, PictureProps } from "../../interface";
+import {themeColor, themeLightColor} from '../../assets/styles';
+import {NavigateProps, PictureProps} from '../../interface';
 import {isIOS, screenWidth} from '../../config/contant';
 import {DragSortableView} from 'react-native-drag-sort';
-import MultipleImagePicker from "@baronha/react-native-multiple-image-picker";
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import AwePicturePreview from '../../components/awe-picture-preview';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
+import AweSimpleNavigator from '../../components/awe-simple-navigator';
+import {observer} from 'mobx-react';
+import {useSmartDataStore} from '../../mobx/provider';
 
 const pictureWidth = (screenWidth - 20) / 3;
 
-const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
+const __AddPictureName__ = 'addPicture';
+const AddPicture = {
+    fileName: __AddPictureName__,
+    uri: require('../../assets/images/icons/add_picture.png'),
+};
 
-    const [selectedAssets, setSelectedAssets] = React.useState<any[]>([])
+const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
+    const {publishTagId} = useSmartDataStore();
+    const [selectedAssets, setSelectedAssets] = React.useState<any[]>([]);
     const [startIndex, setStartIndex] = React.useState(0);
     const [preview, setPreview] = React.useState(false);
 
     const onPreviewPicture = (data: any[], item: any, index: number) => {
-        setStartIndex(index);
-        setPreview(true);
+        if (item.fileName === __AddPictureName__) {
+            openCamera();
+        } else {
+            setStartIndex(index);
+            setPreview(true);
+        }
     };
 
-    const onPressChooseTag = () => {};
+    const onPressChooseTag = () => {
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PUBLISH_TAG, {
+            tag: '',
+        });
+    };
 
     const openCamera = async () => {
         try {
@@ -40,46 +56,52 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 mediaType: 'image',
                 isPreview: true,
                 numberOfColumn: 3,
-                maxSelectedAssets: 9 - selectedAssets.length,
+                maxSelectedAssets: 9,
                 usedCameraButton: false,
-                allowedLivePhotos: false
+                allowedLivePhotos: false,
             });
 
             const select = response.map((item: PictureProps) => {
-                const uri = isIOS ? item.path.replace('file://', '') : `file://${item.realPath}`;
+                const uri = isIOS
+                    ? item.path.replace('file://', '')
+                    : `file://${item.realPath}`;
                 return {
                     ...item,
-                    uri
-                }
-            })
+                    uri,
+                };
+            });
 
-            setSelectedAssets(select)
-
+            setSelectedAssets(select);
         } catch (e: any) {
             console.log('error：', e.code, e.message);
         }
     };
 
     const onDeletePicture = (item: PictureProps) => {
-
-        const uris = selectedAssets.map(picture => picture.uri)
+        const uris = selectedAssets.map(picture => picture.uri);
         const deleteIndex = uris.indexOf(item.uri);
 
         const selected = [...selectedAssets];
         selected.splice(deleteIndex, 1);
-        setSelectedAssets(selected)
-
+        setSelectedAssets(selected);
     };
 
     return (
-        <SafeAreaProvider style={globalStyles.container}>
-            <PublishHeader goBack={props.navigation.goBack} />
+        <>
+            <AweSimpleNavigator
+                centerTitle={'Publish'}
+                goBack={props.navigation.goBack}
+                rightActionTitle={'Post'}
+                rightActionEvent={() => console.log('发布')}
+            />
 
             <TouchableHighlight
                 underlayColor={themeLightColor}
                 onPress={onPressChooseTag}>
                 <View style={styles.labelHeader}>
-                    <Text style={styles.labelText}>Choose category</Text>
+                    <Text style={styles.labelText}>
+                        {publishTagId ? publishTagId : 'Choose category'}
+                    </Text>
                 </View>
             </TouchableHighlight>
 
@@ -95,7 +117,11 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 <View style={styles.pictureList}>
                     <DragSortableView
                         isDragFreely={true}
-                        dataSource={selectedAssets}
+                        dataSource={
+                            selectedAssets.length === 9
+                                ? selectedAssets
+                                : [...selectedAssets, AddPicture]
+                        }
                         parentWidth={screenWidth - 20}
                         childrenHeight={pictureWidth}
                         childrenWidth={pictureWidth}
@@ -104,11 +130,11 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                         renderItem={item => RenderItem(item, onDeletePicture)}
                     />
 
-                    <TouchableHighlight
-                        onPress={openCamera}
-                        underlayColor={'#f8f8f8'}>
-                        <View style={styles.add} />
-                    </TouchableHighlight>
+                    {/*<TouchableHighlight*/}
+                    {/*    onPress={openCamera}*/}
+                    {/*    underlayColor={'#f8f8f8'}>*/}
+                    {/*    <View style={styles.add} />*/}
+                    {/*</TouchableHighlight>*/}
                 </View>
             </ScrollView>
 
@@ -118,23 +144,34 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 imageUrls={selectedAssets.map(item => item.uri)}
                 startIndex={startIndex}
             />
-        </SafeAreaProvider>
+        </>
     );
 };
 
-const RenderItem = (item: PictureProps, onDeleteItem: (item: PictureProps) => void) => {
-
+const RenderItem = (
+    item: PictureProps,
+    onDeleteItem: (item: PictureProps) => void,
+) => {
     return (
         <View style={styles.pictureItem}>
-            <Image source={{uri: item.uri}} style={styles.picture} />
-            <TouchableHighlight
-                style={styles.deleteButton}
-                underlayColor={'none'}
-                onPress={() => onDeleteItem(item)}>
-                <View style={styles.deleteView}>
-                    <Icon name={'close'} style={{color: '#fff'}} />
-                </View>
-            </TouchableHighlight>
+            <Image
+                source={
+                    item.fileName === __AddPictureName__
+                        ? item.uri
+                        : {uri: item.uri}
+                }
+                style={styles.picture}
+            />
+            {item.fileName !== __AddPictureName__ && (
+                <TouchableHighlight
+                    style={styles.deleteButton}
+                    underlayColor={'none'}
+                    onPress={() => onDeleteItem(item)}>
+                    <View style={styles.deleteView}>
+                        <Icon name={'close'} style={{color: '#fff'}} />
+                    </View>
+                </TouchableHighlight>
+            )}
         </View>
     );
 };
@@ -200,4 +237,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PublishScreen;
+export default observer(PublishScreen);

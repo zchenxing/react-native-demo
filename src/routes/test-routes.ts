@@ -1,5 +1,5 @@
 import Home from '../pages/home';
-import {PAGE_NAME} from '../config/page-name';
+import {PAGE_NAME} from './screen-name';
 import Square from '../pages/square';
 import Publish from '../pages/publish';
 import Topic from '../pages/topic';

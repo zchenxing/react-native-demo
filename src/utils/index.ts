@@ -13,12 +13,16 @@ const Utils = {
      * 是否为今年             显示 MM-DD
      * 其余                  显示 YYYY-MM-DD
      */
-    getPostTime: (time: string) => {
+    getPostTime: (time: string, show?: boolean) => {
 
         const seconds = dayjs().diff(time, 'seconds')
 
         const postYear = dayjs(time).format('YYYY')
         const thisYear = dayjs().format('YYYY')
+
+
+        const day = dayjs().diff(dayjs(time).format('YYYY-MM-DD'), 'day')
+
 
 
 
@@ -38,11 +42,11 @@ const Utils = {
             return useLanguage.x_hour_ago(hours)
         }
         // 24h <= time < 48h    显示 昨天
-        else if (seconds >= 3600 * 24 && seconds < 3600 * 48) {
+        else if (day === 1) {
             return useLanguage.yesterday
         }
         // 48h <= time < 168h   发布当天到现在间隔n天, 显示 n+1天前
-        else if (seconds >= 3600 * 48 && seconds < 3600 * 168) {
+        else if (day > 1) {
             const days = dayjs().diff(time, 'days')
             return useLanguage.x_day_ago(days)
         }

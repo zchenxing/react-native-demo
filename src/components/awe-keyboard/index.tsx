@@ -24,11 +24,11 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
 
             setTimeout(() => {
                 inputRef.current.focus();
-            }, 100);
+            }, 10);
 
             setTimeout(() => {
                 setTextValue(props.contentText)
-            }, 150)
+            }, 140)
         }
 
 

@@ -1,4 +1,3 @@
-import { Results } from "@baronha/react-native-multiple-image-picker";
 
 export interface NavigateProps {
     navigation: {
@@ -19,13 +18,15 @@ export interface NavigateProps {
         reset: () => void;
         setOptions: any;
         setParams: () => void;
+        [propName: string]: any;
     };
     route: {
         key: string;
         name: string;
         params: any;
         path: string;
-    };
+    },
+
 }
 
 
@@ -44,6 +45,6 @@ export interface PictureProps {
     parentFolderName?: string;
     thumbnail?: string;
     creationDate?: string;
-    uri: string
+    uri: string | any
 
 }

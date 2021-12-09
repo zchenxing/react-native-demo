@@ -5,12 +5,14 @@ import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {elRoutes} from './routes/test-routes';
 import { intelinkRoute } from "./routes";
+import { globalStyles } from "./assets/styles";
+import { View } from "react-native";
 
 const Stack = createStackNavigator();
 
 const App = () => {
     return (
-        <SafeAreaProvider>
+        <View style={globalStyles.container}>
             <NavigationContainer>
                 <Stack.Navigator
                     screenOptions={{
@@ -32,7 +34,7 @@ const App = () => {
                     })}
                 </Stack.Navigator>
             </NavigationContainer>
-        </SafeAreaProvider>
+        </View>
     );
 };
 

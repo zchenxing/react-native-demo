@@ -12,7 +12,7 @@ import { screenWidth } from "../../config/contant";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
-interface HomeHeaderProps {
+interface HomeNavigatorProps {
     onSearch: () => void;
     onPublish: () => void;
 }
@@ -20,7 +20,7 @@ interface HomeHeaderProps {
 
 const searchWidth = screenWidth - 80
 
-const HomeHeader: React.FC<HomeHeaderProps> = (props: HomeHeaderProps) => {
+const HomeNavigator: React.FC<HomeNavigatorProps> = (props: HomeNavigatorProps) => {
     return (
         <>
             <StatusBar barStyle={'dark-content'} backgroundColor="#fff" />
@@ -89,4 +89,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default React.memo(HomeHeader);
+export default React.memo(HomeNavigator);

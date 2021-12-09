@@ -2,7 +2,7 @@ import React from 'react';
 import {View, SafeAreaView, StatusBar} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import SquareCategory from './category';
-import AweNavigator from '../../components/awe-navigator';
+import SearchNavigator from '../navigator';
 import {NavigateProps} from '../../interface';
 
 const Tab = createMaterialTopTabNavigator();
@@ -20,7 +20,7 @@ const Square: React.FC<NavigateProps> = (props: NavigateProps) => {
     return (
         <SafeAreaView style={{flex: 1}}>
             <StatusBar backgroundColor={'#fff'} barStyle={'dark-content'} />
-            <AweNavigator
+            <SearchNavigator
                 title={'搜索'}
                 actionRight={() => props.navigation.goBack()}
             />

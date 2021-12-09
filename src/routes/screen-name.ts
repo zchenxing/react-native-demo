@@ -20,6 +20,10 @@ export const INTELINK_SCREEN_NAME = {
     SCREEN_SEARCH_RESULT: 'SearchResultScreen',
     // 发布页面
     SCREEN_PUBLISH: 'PublishScreen',
+    // 发布页面 -> 选择标签
+    SCREEN_PUBLISH_TAG: 'PublishTagScreen',
+    // 内容详情
+    SCREEN_POST_DETAIL: 'PostDetailScreen',
 }
 
 

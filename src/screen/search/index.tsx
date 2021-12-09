@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import ScreenBase from '../components/screen-base';
-import AweSearchNavigator from '../../components/awe-search-header';
+import SearchNavigator from './search-navigator';
 import {NavigateProps} from '../../interface';
 import {
     FlatList,
@@ -15,7 +15,7 @@ import {useLanguage} from '../../language';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import druidStorage from '../../storage';
 import { StorageType } from "../../storage/storage-type";
-import { INTELINK_SCREEN_NAME } from "../../config/page-name";
+import { INTELINK_SCREEN_NAME } from "../../routes/screen-name";
 
 const SearchScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
@@ -86,8 +86,8 @@ const SearchScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     }
 
     return (
-        <SafeAreaProvider style={[globalStyles.container]}>
-            <AweSearchNavigator onLeftPress={props.navigation.goBack} onSearchDone={showSearchResult} />
+        <>
+            <SearchNavigator onLeftPress={props.navigation.goBack} onSearchDone={showSearchResult} />
 
             <ScreenBase>
                 <View style={{flex: 1}}>
@@ -141,7 +141,7 @@ const SearchScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     </View>
                 </View>
             </ScreenBase>
-        </SafeAreaProvider>
+        </>
     );
 };
 

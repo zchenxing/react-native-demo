@@ -45,12 +45,14 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
 
             {props.subComment && (
                 <View style={{paddingLeft: 40}}>
-                    <FlatList
-                        data={postList}
-                        keyExtractor={item => item.id}
-                        removeClippedSubviews={true}
-                        renderItem={() => <CommentItem />}
-                    />
+                    {/*<FlatList*/}
+                    {/*    data={postList}*/}
+                    {/*    keyExtractor={item => item.id}*/}
+                    {/*    removeClippedSubviews={true}*/}
+                    {/*    renderItem={() => <CommentItem />}*/}
+                    {/*/>*/}
+
+                    <CommentItem />
                 </View>
             )}
 
@@ -94,4 +96,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CommentItem;
+export default React.memo(CommentItem);

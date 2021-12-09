@@ -1,4 +1,4 @@
-export interface AweNavigatorProps {
+export interface SearchNavigatorProps {
     title: string
     actionRight: () => void
 }

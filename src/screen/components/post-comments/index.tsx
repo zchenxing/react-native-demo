@@ -4,58 +4,82 @@ import {
     View,
     StyleSheet,
     FlatList,
-    TouchableHighlight,
-} from 'react-native';
+    TouchableHighlight, ScrollView
+} from "react-native";
 import {screenHeight, screenWidth} from '../../../config/contant';
 import {Image} from 'react-native-elements';
 import {useLanguage} from '../../../language';
-import {Overlay} from 'react-native-elements';
 import AweKeyboard from '../../../components/awe-keyboard';
 import {PostCommentsProps} from './type';
 import {avatarUrl, postList} from '../../../mock';
 import CommentItem from './comment-item';
 import { themeColor } from "../../../assets/styles";
+import ActionSheet from 'react-native-actions-sheet';
 
 const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
-    const sheetRef = React.createRef<any>();
+    const actionSheetRef = React.createRef<any>();
 
     const [contentText, setContentText] = React.useState<string>('');
     const [keyboardVisible, setKeyboardVisible] = React.useState(false);
 
     React.useEffect(() => {
-        openComments();
-    }, []);
+
+        if (props.visible) {
+            openComments();
+        }
+
+    }, [props.visible]);
 
     const openComments = () => {
-        sheetRef.current?.setModalVisible(true);
+        actionSheetRef.current?.setModalVisible(true);
     };
 
     return (
-        <Overlay
-            isVisible={props.visible}
-            fullScreen={true}
-            overlayStyle={{backgroundColor: 'rgba(0, 0, 0, 0)'}}>
-            <View>
-                <TouchableHighlight
-                    underlayColor={'none'}
-                    onPress={props.onClose}>
-                    <View style={{height: screenHeight}} />
-                </TouchableHighlight>
-            </View>
+        <ActionSheet
+            ref={actionSheetRef}
+            gestureEnabled={false}
+            keyboardHandlerEnabled={false}
+            onClose={props.onClose}
+            springOffset={150}
+        >
+
+            <View style={{height: screenHeight * 0.7 }} />
 
             <View style={styles.sheetView}>
+
                 <View style={styles.sheetHeader}>
                     <Text style={{color: '#777'}}>33 comments</Text>
                 </View>
 
-                <FlatList
-                    style={styles.sheetContent}
-                    data={postList}
-                    keyExtractor={item => item.id}
-                    removeClippedSubviews={true}
-                    renderItem={() => (
-                        <CommentItem showSeparator={true} subComment={[]} />
-                    )} />
+
+                <ScrollView
+                    style={{flex: 1}}
+                    scrollEnabled={true}
+                    nestedScrollEnabled={true}
+                    onScrollEndDrag={() =>
+                        actionSheetRef.current?.handleChildScrollEnd()
+                    }
+                    onScrollAnimationEnd={() =>
+                        actionSheetRef.current?.handleChildScrollEnd()
+                    }
+                    onMomentumScrollEnd={() =>
+                        actionSheetRef.current?.handleChildScrollEnd()
+                    }
+                >
+                    {
+                        Array.from(new Array(30).keys()).map((i) => (
+                            <CommentItem key={i} showSeparator={true} subComment={[]} />
+                        ))
+                    }
+                </ScrollView>
+                {/*<FlatList*/}
+                {/*    style={styles.sheetContent}*/}
+                {/*    data={postList}*/}
+                {/*    scrollEnabled={true}*/}
+                {/*    keyExtractor={item => item.id}*/}
+                {/*    renderItem={() => (*/}
+                {/*        <CommentItem showSeparator={true}  />*/}
+                {/*    )} />*/}
 
                 <TouchableHighlight
                     underlayColor={'none'}
@@ -103,7 +127,7 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
                 onClose={() => setKeyboardVisible(false)}
                 onChangeText={setContentText}
             />
-        </Overlay>
+        </ActionSheet>
     );
 };
 
@@ -116,7 +140,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 15,
         position: 'absolute',
         left: 0,
-        bottom: 0,
+        bottom: 4,
     },
     sheetHeader: {
         width: screenWidth,
@@ -130,6 +154,8 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         paddingTop: 10,
+        // overflow: 'hidden',
+        borderWidth: 2,
     },
     sheetFooter: {
         flexDirection: 'row',
@@ -140,6 +166,7 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         borderTopWidth: 1,
         borderTopColor: '#ebebeb',
+        backgroundColor: '#fff'
     },
     avatar: {
         width: 32,

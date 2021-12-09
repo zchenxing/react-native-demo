@@ -1,10 +1,12 @@
 import {createContext, useContext} from 'react';
 import {ListStore} from './list-store';
-import {LIST_DATA} from './constant';
+import {LIST_DATA, SMART_DATA} from './constant';
+import {SmartDataStore} from './smart-data';
 
 function createStores() {
     return {
         [LIST_DATA]: new ListStore(),
+        [SMART_DATA]: new SmartDataStore(),
     };
 }
 
@@ -17,6 +19,20 @@ function useListDataStore() {
     return list_data;
 }
 
-const listDataStore = stores[LIST_DATA];
+function useSmartDataStore() {
+    const {smart_data} = useStores();
+    return smart_data;
+}
 
-export {stores, StoresContext, useStores, listDataStore, useListDataStore};
+const listDataStore = stores[LIST_DATA];
+const smartDataStore = stores[SMART_DATA];
+
+export {
+    stores,
+    StoresContext,
+    useStores,
+    listDataStore,
+    useListDataStore,
+    smartDataStore,
+    useSmartDataStore,
+};

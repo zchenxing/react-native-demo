@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleSheet, View, TextInput, TouchableHighlight, Text } from "react-native";
-import {AweNavigatorProps} from './data';
+import {SearchNavigatorProps} from './data';
 import {isIOS} from '../../config/contant';
 
-const AweNavigator: React.FC<AweNavigatorProps> = (
-    props: AweNavigatorProps,
+const SearchNavigator: React.FC<SearchNavigatorProps> = (
+    props: SearchNavigatorProps,
 ) => {
 
     return (
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default AweNavigator;
+export default SearchNavigator;

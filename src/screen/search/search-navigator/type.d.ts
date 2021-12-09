@@ -1,4 +1,4 @@
-export interface AweSearchNavigatorProps {
+export interface SearchNavigatorProps {
     defaultValue?: string
     /** 禁止编辑 */
     editDisable?: boolean

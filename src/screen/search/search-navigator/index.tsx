@@ -9,12 +9,12 @@ import {
     StatusBar,
 } from 'react-native';
 import {Header} from 'react-native-elements';
-import {AweSearchNavigatorProps} from './type';
+import {SearchNavigatorProps} from './type';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {screenWidth} from '../../config/contant';
+import {screenWidth} from '../../../config/contant';
 
-const AweSearchNavigator: React.FC<AweSearchNavigatorProps> = (
-    props: AweSearchNavigatorProps,
+const SearchNavigator: React.FC<SearchNavigatorProps> = (
+    props: SearchNavigatorProps,
 ) => {
     const [searchValue, setSearchValue] = React.useState<string>(
         props.defaultValue || '',
@@ -121,4 +121,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AweSearchNavigator;
+export default SearchNavigator;

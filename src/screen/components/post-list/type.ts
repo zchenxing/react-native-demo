@@ -6,4 +6,5 @@ interface PostListProps {
     onPressDetail: () => void
     onRefreshData: () => void
     onLoadMoreData: () => void
+    onPressPersonal: () => void
 }

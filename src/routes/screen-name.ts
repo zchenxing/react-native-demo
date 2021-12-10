@@ -24,6 +24,8 @@ export const INTELINK_SCREEN_NAME = {
     SCREEN_PUBLISH_TAG: 'PublishTagScreen',
     // 内容详情
     SCREEN_POST_DETAIL: 'PostDetailScreen',
+    // 个人主页
+    SCREEN_PERSONAL: 'PersonalScreen'
 }
 
 

@@ -2,10 +2,14 @@ import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import {Image} from 'react-native-elements';
 import Toast from 'react-native-simple-toast';
-import { avatarUrl } from "../../../mock";
-import { themeColor } from "../../../assets/styles";
+import {avatarUrl} from '../../../mock';
+import {themeColor} from '../../../assets/styles';
 
-const PostHeader: React.FC = props => {
+interface IProps {
+    handleUser: () => void;
+}
+
+const PostHeader: React.FC<IProps> = (props: IProps) => {
     const [following, setFollowing] = React.useState(false);
 
     const onPressFollow = (followStatus: boolean) => {
@@ -14,32 +18,38 @@ const PostHeader: React.FC = props => {
         Toast.showWithGravity(
             followStatus ? '已关注' : '已取消关注',
             1,
-            Toast.TOP
-        )
-
+            Toast.TOP,
+        );
     };
 
     return (
         <View style={postHeaderStyles.header}>
-            <View style={{flexDirection: 'row'}}>
-                <Image
-                    style={postHeaderStyles.avatar}
-                    source={{
-                        uri: avatarUrl
-                    }}
-                />
+            <TouchableHighlight
+                style={{flexDirection: 'row'}}
+                underlayColor={'none'}
+                onPress={props.handleUser}>
+                <>
+                    <Image
+                        style={postHeaderStyles.avatar}
+                        source={{
+                            uri: avatarUrl,
+                        }}
+                    />
 
-                <View style={{justifyContent: 'space-between'}}>
-                    <Text style={postHeaderStyles.nickname}>
-                        Donald John Trump
-                    </Text>
-                    <View style={{flexDirection: 'row'}}>
-                        <Text style={postHeaderStyles.tag}>Birds</Text>
+                    <View style={{justifyContent: 'space-between'}}>
+                        <Text style={postHeaderStyles.nickname}>
+                            Donald John Trump
+                        </Text>
+                        <View style={{flexDirection: 'row'}}>
+                            <Text style={postHeaderStyles.tag}>Birds</Text>
+                        </View>
                     </View>
-                </View>
-            </View>
+                </>
+            </TouchableHighlight>
 
-            <TouchableHighlight onPress={() => onPressFollow(!following)} underlayColor="none">
+            <TouchableHighlight
+                onPress={() => onPressFollow(!following)}
+                underlayColor="none">
                 <View
                     style={[
                         postHeaderStyles.follow,

@@ -13,17 +13,14 @@ const Utils = {
      * 是否为今年             显示 MM-DD
      * 其余                  显示 YYYY-MM-DD
      */
-    getPostTime: (time: string, show?: boolean) => {
+    getPostTime: (time: string) => {
 
         const seconds = dayjs().diff(time, 'seconds')
 
         const postYear = dayjs(time).format('YYYY')
         const thisYear = dayjs().format('YYYY')
 
-
         const day = dayjs().diff(dayjs(time).format('YYYY-MM-DD'), 'day')
-
-
 
 
         // 0 < time <120s       显示 刚刚
@@ -57,10 +54,22 @@ const Utils = {
         else {
             return dayjs(time).format('YYYY-MM-DD')
         }
+    },
 
-        return seconds
+
+    /**
+     * 去掉空格和回车
+     */
+    removeSpaceAndEnter: (text: string): string => {
+        const spaceReg = /\s+/g;
+        const enterReg = /\n+/g;
+
+        text = text.replace(enterReg, '_e_n_t_e_r_')
+        text = text.replace(spaceReg, ' ')
+        text = text.replace(/_e_n_t_e_r_/g, '\n')
+        return text
+
     }
-
 }
 
 

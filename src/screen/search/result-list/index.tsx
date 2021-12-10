@@ -7,6 +7,7 @@ import {NavigateProps} from '../../../interface';
 import ScreenBase from '../../components/screen-base';
 import PostList from '../../components/post-list';
 import { postList } from "../../../mock";
+import { INTELINK_SCREEN_NAME } from "../../../routes/screen-name";
 
 const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
@@ -38,6 +39,10 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     }
 
 
+    const onPressDetail = () => {
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL)
+    }
+
     return (
         <SafeAreaProvider style={globalStyles.container}>
             <SearchNavigator
@@ -56,6 +61,7 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     dataSource={postList}
                     refreshing={refreshing}
                     moreLoading={moreLoading}
+                    onPressDetail={onPressDetail}
                     onRefreshData={onRefreshData}
                     onLoadMoreData={onLoadMoreData}
                 />

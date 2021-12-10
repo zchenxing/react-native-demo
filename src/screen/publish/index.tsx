@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {themeColor, themeLightColor} from '../../assets/styles';
 import {NavigateProps, PictureProps} from '../../interface';
-import {isIOS, screenWidth} from '../../config/contant';
+import { isIOS, screenHeight, screenWidth } from "../../config/contant";
 import {DragSortableView} from 'react-native-drag-sort';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import AwePicturePreview from '../../components/awe-picture-preview';
@@ -19,6 +19,7 @@ import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import AweSimpleNavigator from '../../components/awe-simple-navigator';
 import {observer} from 'mobx-react';
 import {useSmartDataStore} from '../../mobx/provider';
+import {useSetState} from 'ahooks'
 
 const pictureWidth = (screenWidth - 20) / 3;
 
@@ -28,18 +29,29 @@ const AddPicture = {
     uri: require('../../assets/images/icons/add_picture.png'),
 };
 
+interface IState {
+    selectedAssets: any[]
+    startIndex: number
+    preview: boolean
+}
+
 const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const {publishTagId} = useSmartDataStore();
-    const [selectedAssets, setSelectedAssets] = React.useState<any[]>([]);
-    const [startIndex, setStartIndex] = React.useState(0);
-    const [preview, setPreview] = React.useState(false);
+
+    const [state, setState] = useSetState<IState>({
+        selectedAssets: [],
+        startIndex: 0,
+        preview: false
+    })
 
     const onPreviewPicture = (data: any[], item: any, index: number) => {
         if (item.fileName === __AddPictureName__) {
             openCamera();
         } else {
-            setStartIndex(index);
-            setPreview(true);
+            setState({
+                startIndex: index,
+                preview: true
+            })
         }
     };
 
@@ -52,7 +64,7 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const openCamera = async () => {
         try {
             const response: any[] = await MultipleImagePicker.openPicker({
-                selectedAssets: selectedAssets,
+                selectedAssets: state.selectedAssets,
                 mediaType: 'image',
                 isPreview: true,
                 numberOfColumn: 3,
@@ -61,7 +73,7 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 allowedLivePhotos: false,
             });
 
-            const select = response.map((item: PictureProps) => {
+            const selectedAssets = response.map((item: PictureProps) => {
                 const uri = isIOS
                     ? item.path.replace('file://', '')
                     : `file://${item.realPath}`;
@@ -71,19 +83,21 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 };
             });
 
-            setSelectedAssets(select);
+            console.log(selectedAssets);
+
+            setState({ selectedAssets })
         } catch (e: any) {
             console.log('error：', e.code, e.message);
         }
     };
 
     const onDeletePicture = (item: PictureProps) => {
-        const uris = selectedAssets.map(picture => picture.uri);
+        const uris = state.selectedAssets.map(picture => picture.uri);
         const deleteIndex = uris.indexOf(item.uri);
 
-        const selected = [...selectedAssets];
+        const selected = [...state.selectedAssets];
         selected.splice(deleteIndex, 1);
-        setSelectedAssets(selected);
+        setState({ selectedAssets: selected })
     };
 
     return (
@@ -118,15 +132,15 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     <DragSortableView
                         isDragFreely={true}
                         dataSource={
-                            selectedAssets.length === 9
-                                ? selectedAssets
-                                : [...selectedAssets, AddPicture]
+                            state.selectedAssets.length === 9
+                                ? state.selectedAssets
+                                : [...state.selectedAssets, AddPicture]
                         }
                         parentWidth={screenWidth - 20}
                         childrenHeight={pictureWidth}
                         childrenWidth={pictureWidth}
                         onClickItem={onPreviewPicture}
-                        onDataChange={result => setSelectedAssets(result)}
+                        onDataChange={result => setState({selectedAssets: result})}
                         renderItem={item => RenderItem(item, onDeletePicture)}
                     />
 
@@ -139,10 +153,10 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             </ScrollView>
 
             <AwePicturePreview
-                visible={preview}
-                onClick={() => setPreview(false)}
-                imageUrls={selectedAssets.map(item => item.uri)}
-                startIndex={startIndex}
+                visible={state.preview}
+                onClick={() => setState({preview: false})}
+                imageUrls={state.selectedAssets.map(item => item.uri)}
+                startIndex={state.startIndex}
             />
         </>
     );

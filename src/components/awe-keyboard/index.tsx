@@ -13,10 +13,10 @@ import { screenHeight, screenWidth } from "../../config/contant";
 import { useLanguage } from "../../language";
 import {KeyboardAccessoryView} from 'react-native-keyboard-accessory';
 import { themeColor } from "../../assets/styles";
+import Utils from "../../utils";
 
 const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
     const inputRef = React.useRef<any>(null);
-    const [inputHeight, setInputHeight] = React.useState(80);
     const [textValue, setTextValue] = React.useState<string>('')
 
     React.useEffect(() => {
@@ -24,7 +24,7 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
 
             setTimeout(() => {
                 inputRef.current.focus();
-            }, 10);
+            }, 70);
 
             setTimeout(() => {
                 setTextValue(props.contentText)
@@ -32,23 +32,24 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
         }
 
 
-        const keyboardDidHidden = Keyboard.addListener(
-            'keyboardDidHide',
+        const keyboardHidden = Keyboard.addListener('keyboardDidHide',
             onClose,
         );
 
         return () => {
-            keyboardDidHidden.remove()
+            keyboardHidden.remove()
         }
 
     }, [props.visible]);
 
     const onChangeText = (text: string) => {
+
         props.onChangeText(text)
         setTextValue(text)
     }
 
     const onPressSend = () => {
+        setTextValue(Utils.removeSpaceAndEnter(textValue))
         Keyboard.dismiss();
     };
 
@@ -80,7 +81,7 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
                         placeholder={useLanguage.say_something}
                         underlineColorAndroid="transparent"
                         clearButtonMode={'while-editing'}
-                        style={[styles.textInput, {height: inputHeight}]}
+                        style={[styles.textInput, {height: 80}]}
                         multiline={true}
                         clearTextOnFocus={true}
                         onChangeText={onChangeText}

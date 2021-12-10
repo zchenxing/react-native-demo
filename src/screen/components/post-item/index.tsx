@@ -6,7 +6,7 @@ import PostArticle from './post-article';
 import {pictureList} from '../../../mock';
 import PostPicture from './post-picture';
 import PostFooter from './post-footer';
-import PostAnimalCard from "./post-animal-card";
+import PostAnimalCard from './post-animal-card';
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
     React.useEffect(() => {
@@ -21,23 +21,20 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
         <TouchableHighlight
             style={styles.itemContent}
             onPress={props.onPressDetail}
-            underlayColor={'#eee'}
-        >
+            underlayColor={'#eee'}>
             <>
-                <PostHeader />
+                <PostHeader handleUser={props.onPressPersonal} />
 
                 <PostArticle />
 
-                {
-                    props.index % 2 !== 0 ?
-                        <PostPicture
-                            pictureUri={pictureList}
-                            onPressPicture={onPressPicture}
-                        />:
-                        <PostAnimalCard />
-                }
-
-
+                {props.index % 2 !== 0 ? (
+                    <PostPicture
+                        pictureUri={pictureList}
+                        onPressPicture={onPressPicture}
+                    />
+                ) : (
+                    <PostAnimalCard />
+                )}
 
                 <PostFooter onPressComment={props.onPressComment} />
             </>

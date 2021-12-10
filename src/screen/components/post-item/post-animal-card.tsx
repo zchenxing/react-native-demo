@@ -1,45 +1,34 @@
-import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import LinearGradient from 'react-native-linear-gradient'
-import { themeColor, themeLightColor } from "../../../assets/styles";
+import React from 'react';
+import {Image, StyleSheet, Text, View} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
-import { birdCard } from "../../../mock";
+import {birdCard} from '../../../mock';
 
-const PostAnimalCard: React.FC = (props) => {
+const PostAnimalCard: React.FC = props => {
     return (
         <View style={styles.card}>
-
             <Image
                 source={require('../../../assets/images/card_header.png')}
                 style={styles.cardHeader}
             />
 
             <LinearGradient
-                colors={['#fff',  '#def5f7']}
+                colors={['#fff', '#def5f7']}
                 start={{x: 0.3, y: 0.3}}
                 end={{x: 0.4, y: 1}}
-                style={styles.gradient} >
-
-                <View style={styles.birdInfo}>
-                    {
-                        Array.from(new Array(20).keys()).map((i) => (
-                            <Text key={i} style={styles.birdInfoItem}>wddwa</Text>
-                        ))
-                    }
-
+                style={styles.gradient}>
+                <View style={styles.animalInfo}>
+                    {Array.from(new Array(20).keys()).map(i => (
+                        <View key={i} style={styles.animalInfoItem}>
+                            <Text style={styles.animalInfoItemText}>wdwa</Text>
+                        </View>
+                    ))}
                 </View>
             </LinearGradient>
 
+            <Text style={styles.animalName}>animal name</Text>
 
-            <Text style={styles.birdName}>bird name</Text>
-
-            <FastImage
-                style={styles.birdBase}
-                source={{uri: birdCard}}
-            />
-
-
-
+            <FastImage style={styles.animalBase} source={{uri: birdCard}} />
         </View>
     );
 };
@@ -50,17 +39,17 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ddd',
         overflow: 'hidden',
-        position: 'relative'
+        position: 'relative',
     },
     cardHeader: {
         width: '100%',
-        height: 69
+        height: 69,
     },
     gradient: {
         height: 140,
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
     },
-    birdName: {
+    animalName: {
         position: 'absolute',
         top: 13,
         left: 0,
@@ -70,7 +59,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#fff',
     },
-    birdBase: {
+    animalBase: {
         width: 78,
         height: 78,
         borderRadius: 78,
@@ -79,34 +68,31 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         left: '50%',
         top: 40,
-        transform: [
-            {translateX: -39}
-        ]
+        transform: [{translateX: -39}],
     },
-    birdInfo: {
+    animalInfo: {
         paddingTop: 10,
-        paddingLeft: 3,
-        height: 70,
+        paddingLeft: 10,
+        height: 65,
         flexDirection: 'row',
         flexWrap: 'wrap',
         overflow: 'hidden',
-        transform: [
-            {translateY: -10}
-        ],
+        transform: [{translateY: -10}],
     },
-    birdInfoItem: {
-        marginRight: 5,
-        marginLeft: 5,
-        backgroundColor: themeLightColor,
+    animalInfoItem: {
+        marginRight: 13,
+        backgroundColor: '#c1e3e6',
         padding: 2,
         paddingLeft: 10,
         paddingRight: 10,
         paddingBottom: 5,
         marginBottom: 8,
+        borderRadius: 15,
+    },
+    animalInfoItemText: {
         fontSize: 12,
-        borderRadius: 15
-    }
-
-})
+        color: '#666',
+    },
+});
 
 export default PostAnimalCard;

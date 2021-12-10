@@ -79,7 +79,7 @@ const SquareCategory: React.FC = () => {
                 visible={visible}
                 startIndex={startIndex}
                 onClick={() => setVisible(false)}
-                imageUrls={pictures.map(data => ({url: data.uri}))}
+                imageUrls={pictures.map(data => data.uri)}
             />
         </View>
     );

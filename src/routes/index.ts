@@ -5,6 +5,7 @@ import SearchResultScreen from '../screen/search/result-list';
 import PublishScreen from '../screen/publish';
 import PublishTagScreen from "../screen/publish/choose-tag";
 import PostDetailScreen from "../screen/post-detail";
+import PersonalScreen from "../screen/personal";
 
 type routeProps = {
     name: string
@@ -39,5 +40,9 @@ export const intelinkRoute: routeProps[] = [
     {
         name: INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL,
         component: PostDetailScreen
+    },
+    {
+        name: INTELINK_SCREEN_NAME.SCREEN_PERSONAL,
+        component: PersonalScreen
     }
 ];

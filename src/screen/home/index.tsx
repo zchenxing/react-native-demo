@@ -39,6 +39,11 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PUBLISH)
     };
 
+
+    const onPressPersonal = () => {
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL)
+    }
+
     const onPressDetail = () => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL, {
             id: '124012750128740912804912'
@@ -53,6 +58,7 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     dataSource={postList}
                     refreshing={refreshing}
                     moreLoading={moreLoading}
+                    onPressPersonal={onPressPersonal}
                     onPressDetail={onPressDetail}
                     onRefreshData={onRefreshData}
                     onLoadMoreData={onLoadMoreData}

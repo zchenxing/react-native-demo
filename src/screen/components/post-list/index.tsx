@@ -72,6 +72,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                         onPressDetail={props.onPressDetail}
                         onPressPicture={onPressPicture}
                         onPressComment={onPressComment}
+                        onPressPersonal={props.onPressPersonal}
                     />
                 )}
                 ListFooterComponent={() => loadMore()}

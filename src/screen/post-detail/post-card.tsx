@@ -1,85 +1,168 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {birdCard, pictureList} from '../../mock';
 import {screenWidth} from '../../config/contant';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useBoolean } from "ahooks";
+import { useBoolean, useSetState } from "ahooks";
+import {useLanguage} from '../../language';
+import AwePicturePreview from "../../components/awe-picture-preview";
 
-const PastCard: React.FC = props => {
+interface IProps {
+    onPressMore: (offset: number, isPutAway: boolean) => void
+}
 
-    const [showMore, {toggle}] = useBoolean(false)
+interface IState {
+    showMoreInfo: boolean
+    pictureVisible: boolean
+    pictureIndex: number
+}
+
+const pictures = [...pictureList].splice(0, 2)
+
+const PastCard: React.FC<IProps> = (props: IProps) => {
+
+    const positionY = React.useRef<number>(0)
+
+    const [state, setState] = useSetState<IState>({
+        showMoreInfo: false,
+        pictureVisible: false,
+        pictureIndex: 0
+    })
+
+
+    const onPressMore = () => {
+        setState({
+            showMoreInfo: !state.showMoreInfo
+        })
+        props.onPressMore(positionY.current, !state.showMoreInfo)
+    }
+
+
+
+    const onPressPicture = (index: number) => {
+        setState({
+            pictureIndex: index,
+            pictureVisible: true
+        })
+    }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.card}>
-                <Image
-                    source={require('../../assets/images/card_header.png')}
-                    style={styles.cardHeader}
-                />
+        <>
+            <View style={styles.container}>
+                <View style={styles.card}>
+                    <Image
+                        source={require('../../assets/images/card_header.png')}
+                        style={styles.cardHeader}
+                    />
 
-                <View style={styles.gradient}>
-                    <View style={styles.animalPicture}>
-                        {[...pictureList].splice(0, 2).map(picture => (
-                            <FastImage
-                                key={picture.uri}
-                                style={[
-                                    styles.animalPictureItem,
-                                    {
-                                        width: (screenWidth - 50) / 2,
-                                    },
-                                ]}
-                                source={{uri: picture.uri}}
-                            />
-                        ))}
-                    </View>
-
-                    <View style={styles.animalInfo}>
-                        {Array.from(new Array(20).keys()).map(i => (
-                            <View key={i} style={styles.animalInfoItem}>
-                                <Text style={styles.animalInfoItemText}>
-                                    wdwa
-                                </Text>
-                            </View>
-                        ))}
-                    </View>
-
-
-
-                    <View style={styles.moreBase}>
-                        <View style={styles.moreInfo}>
-                            {
-                                [1, 2, 3, 4, 5, 6, 7].map(i => (
-                                    <View key={i}>
-                                        <Text>特征</Text>
-                                        <Text>222</Text>
-                                    </View>
-                                ))
-                            }
+                    <View style={styles.gradient}>
+                        <View style={styles.animalPicture}>
+                            {pictures.map((picture, index) => (
+                                <TouchableHighlight
+                                    key={picture.uri}
+                                    underlayColor={'none'}
+                                    onPress={() => onPressPicture(index)}
+                                >
+                                    <FastImage
+                                        style={[
+                                            styles.animalPictureItem,
+                                            {
+                                                width: (screenWidth - 50) / 2,
+                                            },
+                                        ]}
+                                        source={{uri: picture.uri}}
+                                    />
+                                </TouchableHighlight>
+                            ))}
                         </View>
 
+                        <View style={styles.animalInfo}>
+                            {Array.from(new Array(20).keys()).map(i => (
+                                <View key={i} style={styles.animalInfoItem}>
+                                    <Text style={styles.animalInfoItemText}>
+                                        wdwa
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+
+                        <View style={styles.moreBase} onLayout={e => {positionY.current = e.nativeEvent.layout.y}}>
+                            <View style={styles.moreInfo}>
+                                {state.showMoreInfo && (
+                                    <>
+                                        <Text style={styles.special_title}>
+                                            {useLanguage.animal_special} (cm)
+                                        </Text>
+
+                                        {[1, 2, 3, 4, 5, 6, 7].map(i => (
+                                            <View
+                                                key={i}
+                                                style={styles.moreInfoItem}>
+                                                <Text
+                                                    style={
+                                                        styles.moreInfoItemTitle
+                                                    }>
+                                                    特征
+                                                </Text>
+                                                <Text
+                                                    style={styles.moreInfoItemText}>
+                                                    222
+                                                </Text>
+                                            </View>
+                                        ))}
+                                    </>
+                                )}
+
+                                <TouchableHighlight onPress={onPressMore}>
+                                    <View
+                                        style={[
+                                            styles.moreButton,
+                                            {
+                                                bottom: state.showMoreInfo ? -33 : -22,
+                                            },
+                                        ]}>
+                                        <Text style={{color: '#999'}}>
+                                            {state.showMoreInfo ? 'Put away' : 'See all information'}
+                                        </Text>
+                                        <Icon
+                                            name={state.showMoreInfo ? 'angle-double-up' : 'angle-double-down'}
+                                            style={styles.showMoreAngle}
+                                        />
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+
+                        {/*<TouchableHighlight>*/}
+                        {/*    <View style={styles.moreButton}>*/}
+                        {/*        <View style={styles.divider} />*/}
+                        {/*        <Text style={styles.seeInfo}>*/}
+                        {/*            See all information*/}
+                        {/*        </Text>*/}
+                        {/*        <Icon*/}
+                        {/*            name={showMore ? 'angle-double-up' : 'angle-double-down'}*/}
+                        {/*            style={{fontSize: 16}}*/}
+                        {/*        />*/}
+                        {/*    </View>*/}
+                        {/*</TouchableHighlight>*/}
                     </View>
 
-                    {/*<TouchableHighlight>*/}
-                    {/*    <View style={styles.moreButton}>*/}
-                    {/*        <View style={styles.divider} />*/}
-                    {/*        <Text style={styles.seeInfo}>*/}
-                    {/*            See all information*/}
-                    {/*        </Text>*/}
-                    {/*        <Icon*/}
-                    {/*            name={showMore ? 'angle-double-up' : 'angle-double-down'}*/}
-                    {/*            style={{fontSize: 16}}*/}
-                    {/*        />*/}
-                    {/*    </View>*/}
-                    {/*</TouchableHighlight>*/}
+                    <Text style={styles.animalName}>animal name</Text>
 
+                    <FastImage style={styles.animalBase} source={{uri: birdCard}} />
                 </View>
-
-                <Text style={styles.animalName}>animal name</Text>
-
-                <FastImage style={styles.animalBase} source={{uri: birdCard}} />
             </View>
-        </View>
+
+
+            <AwePicturePreview
+                startIndex={state.pictureIndex}
+                visible={state.pictureVisible}
+                imageUrls={pictures.map(data => data.uri)}
+                onClick={() => setState({pictureVisible: false})}
+            />
+
+        </>
     );
 };
 
@@ -158,19 +241,48 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#666',
     },
-
     moreBase: {
-        padding: 15
+        padding: 15,
     },
     moreInfo: {
         borderTopWidth: 1,
         borderTopColor: '#ddd',
-        paddingTop: 10
+        paddingTop: 10,
+        paddingBottom: 20,
+        position: 'relative',
+    },
+    special_title: {
+        color: '#999',
+    },
+    moreInfoItem: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+        paddingTop: 10,
+        paddingBottom: 10,
+    },
+    moreInfoItemTitle: {
+        color: '#999',
+        fontSize: 12,
+    },
+    moreInfoItemText: {
+        color: '#333',
+        fontSize: 15,
+        paddingTop: 5,
+    },
+    moreButton: {
+        alignItems: 'center',
+        position: 'absolute',
+        left: '50%',
+        width: 135,
+        transform: [{translateX: -55}],
+        backgroundColor: '#fff',
+        padding: 5
+    },
+    showMoreAngle: {
+        fontSize: 16,
+        marginTop: 5,
+        color: '#999'
     }
-    // moreButton: {
-    //     alignItems: 'center',
-    //     paddingBottom: 10
-    // },
     // seeInfo: {
     //     backgroundColor: '#fff',
     //     paddingLeft: 5,

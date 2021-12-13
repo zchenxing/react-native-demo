@@ -16,6 +16,7 @@ import CommentItem from '../components/post-comments/comment-item';
 import {themeColor} from '../../assets/styles';
 import AweKeyboard from '../../components/awe-keyboard';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import PostCard from './post-card';
 
 interface IState {
     followStatus: boolean;
@@ -26,6 +27,10 @@ interface IState {
 }
 
 const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
+
+    const flatListRef = React.useRef<any>(null)
+
+
     const [state, setState] = useSetState<IState>({
         followStatus: false,
         followLoading: false,
@@ -33,6 +38,16 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         keyboardVisible: false,
         commentText: '',
     });
+
+    /**
+     * 点击生物卡片查看更多
+     */
+    const onPressAnimalCardMore = (offset: number, isPutAway: boolean) => {
+        flatListRef.current.scrollToOffset({
+            offset: offset + (isPutAway ? 340 : 0),
+            animated: true
+        })
+    }
 
     const onChangeFollow = () => {
         setState({
@@ -64,11 +79,16 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             <ScreenBase>
                 <View style={{flex: 1}}>
                     <FlatList
+                        ref={flatListRef}
                         data={Array.from(new Array(1000).keys())}
                         renderItem={row => {
                             if (row.item === 0) {
                                 return <PostContent />;
-                            } else if (row.item === 1) {
+                            }
+                            else if (row.item === 1) {
+                                return <PostCard onPressMore={onPressAnimalCardMore} />
+                            }
+                            else if (row.item === 2) {
                                 return (
                                     <View style={styles.commentHeader}>
                                         <Text style={styles.commentHeaderTitle}>

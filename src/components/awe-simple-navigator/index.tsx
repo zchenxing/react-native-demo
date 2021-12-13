@@ -10,6 +10,12 @@ const AweSimpleNavigator: React.FC<AweSimpleNavigatorProps> = (
 ) => {
     return (
         <Header
+            containerStyle={{
+                // position: 'absolute',
+                // left: 0,
+                // right: 0,
+                // height: 'auto'
+            }}
             backgroundColor="#fff"
             leftComponent={
                 <TouchableHighlight

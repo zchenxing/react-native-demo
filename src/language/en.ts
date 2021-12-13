@@ -8,6 +8,7 @@ export const languageEn = {
     say_something: 'Say something',
     no_more_data: 'No more data',
     load_more: 'Load more',
+    animal_special: 'Special',
 
     x_minute_ago: (min: number) => `${min} ${min > 1 ? 'minutes' : 'minute'} ago`,
     x_hour_ago: (hour: number) => `${hour} ${hour > 1 ? 'hours' : 'hour'} ago`,

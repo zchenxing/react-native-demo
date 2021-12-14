@@ -27,9 +27,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 </Text>
             </View>
         ) : (
-            <View>
-
-            </View>
+            <></>
         );
     };
 

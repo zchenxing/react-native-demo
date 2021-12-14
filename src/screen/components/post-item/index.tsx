@@ -9,9 +9,6 @@ import PostFooter from './post-footer';
 import PostAnimalCard from './post-animal-card';
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
-    React.useEffect(() => {
-        // console.log(props);
-    }, []);
 
     const onPressPicture = (startIndex: number) => {
         props.onPressPicture(pictureList, startIndex);
@@ -23,7 +20,10 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
             onPress={props.onPressDetail}
             underlayColor={'#eee'}>
             <>
-                <PostHeader handleUser={props.onPressPersonal} />
+                <PostHeader
+                    handleUser={props.onPressPersonal}
+                    hiddenFollow={props.hiddenFollow}
+                />
 
                 <PostArticle />
 
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     itemContent: {
         padding: 20,
         paddingBottom: 20,
+        backgroundColor: '#fff'
     },
 });
 

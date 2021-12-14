@@ -3,5 +3,4 @@ export interface AweSimpleNavigatorProps {
     goBack: () => void
     rightActionEvent?: () => void
     rightActionTitle?: string
-    opacity?: number
 }

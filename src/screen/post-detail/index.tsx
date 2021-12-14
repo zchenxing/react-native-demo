@@ -7,7 +7,6 @@ import {
     View,
 } from 'react-native';
 import {NavigateProps} from '../../interface';
-import PostDetailNavigator from './navigator';
 import PostContent from './post-content';
 import ScreenBase from '../components/screen-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -17,6 +16,7 @@ import {themeColor} from '../../assets/styles';
 import AweKeyboard from '../../components/awe-keyboard';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import PostCard from './post-card';
+import UserNavigator from '../components/user-navigator';
 
 interface IState {
     followStatus: boolean;
@@ -69,7 +69,8 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     return (
         <SafeAreaProvider>
-            <PostDetailNavigator
+
+            <UserNavigator
                 isFollow={state.followStatus}
                 followLoading={state.followLoading}
                 goBack={props.navigation.goBack}
@@ -83,12 +84,13 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                         data={Array.from(new Array(1000).keys())}
                         renderItem={row => {
                             if (row.item === 0) {
+
                                 return <PostContent />;
-                            }
-                            else if (row.item === 1) {
+                            } else if (row.item === 1) {
+
                                 return <PostCard onPressMore={onPressAnimalCardMore} />
-                            }
-                            else if (row.item === 2) {
+                            } else if (row.item === 2) {
+
                                 return (
                                     <View style={styles.commentHeader}>
                                         <Text style={styles.commentHeaderTitle}>

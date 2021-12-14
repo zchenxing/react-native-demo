@@ -25,7 +25,9 @@ export const INTELINK_SCREEN_NAME = {
     // 内容详情
     SCREEN_POST_DETAIL: 'PostDetailScreen',
     // 个人主页
-    SCREEN_PERSONAL: 'PersonalScreen'
+    SCREEN_PERSONAL: 'PersonalScreen',
+    // 关注列表
+    SCREEN_FOLLOW_LIST: 'FollowListScreen'
 }
 
 

@@ -3,6 +3,11 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
+
+<!--        &lt;!&ndash; Android 4.4 API 19 透明状态栏 &ndash;&gt;-->
+<!--        <item name="android:windowTranslucentStatus">true</item>-->
+<!--        &lt;!&ndash; API21 Android 透明状态栏 &ndash;&gt;-->
+<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
     </style>
 
 </resources>

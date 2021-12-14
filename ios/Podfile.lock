@@ -283,6 +283,8 @@ PODS:
   - React-jsinspector (0.66.3)
   - React-logger (0.66.3):
     - glog
+  - react-native-blur (0.8.0):
+    - React
   - react-native-image-picker (4.3.0):
     - React-Core
   - react-native-multiple-image-picker (0.4.8):
@@ -460,6 +462,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-multiple-image-picker (from `../node_modules/@baronha/react-native-multiple-image-picker`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
@@ -546,6 +549,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-blur:
+    :path: "../node_modules/@react-native-community/blur"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-multiple-image-picker:
@@ -632,6 +637,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 433a691aee158533a6a6ee9c86cb4a1684fa2853
   React-jsinspector: d9c8eb0b53f0da206fed56612b289fec84991157
   React-logger: e522e76fa3e9ec3e7d7115b49485cc065cf4ae06
+  react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-image-picker: 869530859570f2af86ae57bc48886a5e2367a825
   react-native-multiple-image-picker: e73ad1b4f8a5687828c07aa46b35205894168089
   react-native-netinfo: 42c0965fca99069b92e3f7360ab2d425985e5104

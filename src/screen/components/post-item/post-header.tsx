@@ -4,22 +4,46 @@ import {Image} from 'react-native-elements';
 import Toast from 'react-native-simple-toast';
 import {avatarUrl} from '../../../mock';
 import {themeColor} from '../../../assets/styles';
+import FollowButton from '../follow-button';
+import { useSetState } from "ahooks";
 
 interface IProps {
+    hiddenFollow?: boolean
     handleUser: () => void;
 }
 
+interface IState {
+    following: boolean
+    followLoading: boolean
+}
+
 const PostHeader: React.FC<IProps> = (props: IProps) => {
-    const [following, setFollowing] = React.useState(false);
+
+    const [state, setState] = useSetState<IState>({
+        following: false,
+        followLoading: false
+    })
+
 
     const onPressFollow = (followStatus: boolean) => {
-        setFollowing(followStatus);
 
-        Toast.showWithGravity(
-            followStatus ? '已关注' : '已取消关注',
-            1,
-            Toast.TOP,
-        );
+        setState({
+            followLoading: true
+        })
+
+        setTimeout(() => {
+            setState({
+                following: followStatus,
+                followLoading: false
+            })
+
+            Toast.showWithGravity(
+                followStatus ? '已关注' : '已取消关注',
+                1,
+                Toast.TOP,
+            );
+        }, 900)
+
     };
 
     return (
@@ -47,27 +71,17 @@ const PostHeader: React.FC<IProps> = (props: IProps) => {
                 </>
             </TouchableHighlight>
 
-            <TouchableHighlight
-                onPress={() => onPressFollow(!following)}
-                underlayColor="none">
-                <View
-                    style={[
-                        postHeaderStyles.follow,
-                        {
-                            backgroundColor: following ? '#f7f7f7' : '#bbe1e6',
-                        },
-                    ]}>
-                    <Text
-                        style={[
-                            postHeaderStyles.followText,
-                            {
-                                color: following ? '#ccc' : themeColor,
-                            },
-                        ]}>
-                        {following ? 'Following' : 'Follow'}
-                    </Text>
-                </View>
-            </TouchableHighlight>
+            {
+                !props.hiddenFollow &&
+
+                <FollowButton
+                    isFollow={state.following}
+                    followLoading={state.followLoading}
+                    onChangeFollow={() => onPressFollow(!state.following)}
+                />
+
+            }
+
         </View>
     );
 };

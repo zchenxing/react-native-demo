@@ -68,8 +68,20 @@ const Utils = {
         text = text.replace(spaceReg, ' ')
         text = text.replace(/_e_n_t_e_r_/g, '\n')
         return text
+    },
 
+
+    /**
+     * 数字转金额
+     */
+    number2monetaryUnit: (amount: number): string => {
+
+        return Number(amount)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
+
+
 }
 
 

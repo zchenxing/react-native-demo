@@ -6,13 +6,12 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {elRoutes} from './routes/test-routes';
 import { intelinkRoute } from "./routes";
 import { globalStyles } from "./assets/styles";
-import { View } from "react-native";
 
 const Stack = createStackNavigator();
 
 const App = () => {
     return (
-        <View style={globalStyles.container}>
+        <SafeAreaProvider style={globalStyles.container}>
             <NavigationContainer>
                 <Stack.Navigator
                     screenOptions={{
@@ -34,7 +33,7 @@ const App = () => {
                     })}
                 </Stack.Navigator>
             </NavigationContainer>
-        </View>
+        </SafeAreaProvider>
     );
 };
 

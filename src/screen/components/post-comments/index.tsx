@@ -30,9 +30,18 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
 
     }, [props.visible]);
 
+    /**
+     * 打开 SheetView
+     */
     const openComments = () => {
         actionSheetRef.current?.setModalVisible(true);
     };
+
+
+    const onPressReply = () => {
+
+    }
+
 
     return (
         <ActionSheet
@@ -66,20 +75,23 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
                         actionSheetRef.current?.handleChildScrollEnd()
                     }
                 >
-                    {
-                        Array.from(new Array(30).keys()).map((i) => (
-                            <CommentItem key={i} showSeparator={true} subComment={[]} />
-                        ))
-                    }
+                    <FlatList
+                        style={styles.sheetContent}
+                        data={Array.from(new Array(10).keys()).map(i => ({
+                            id: i,
+                        }))}
+                        scrollEnabled={true}
+                        keyExtractor={(item: any) => item.id}
+                        renderItem={() => (
+                            <CommentItem
+                                showSeparator={true}
+                                subComment={[]}
+                                onPressReply={onPressReply}
+                            />
+                        )}
+                    />
                 </ScrollView>
-                {/*<FlatList*/}
-                {/*    style={styles.sheetContent}*/}
-                {/*    data={postList}*/}
-                {/*    scrollEnabled={true}*/}
-                {/*    keyExtractor={item => item.id}*/}
-                {/*    renderItem={() => (*/}
-                {/*        <CommentItem showSeparator={true}  />*/}
-                {/*    )} />*/}
+
 
                 <TouchableHighlight
                     underlayColor={'none'}
@@ -154,8 +166,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         paddingTop: 10,
-        // overflow: 'hidden',
-        borderWidth: 2,
     },
     sheetFooter: {
         flexDirection: 'row',

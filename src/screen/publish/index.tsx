@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {themeColor, themeLightColor} from '../../assets/styles';
 import {NavigateProps, PictureProps} from '../../interface';
-import { isIOS, screenHeight, screenWidth } from "../../config/contant";
+import { isIOS, screenWidth } from "../../config/contant";
 import {DragSortableView} from 'react-native-drag-sort';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import AwePicturePreview from '../../components/awe-picture-preview';
@@ -32,17 +32,32 @@ const AddPicture = {
 interface IState {
     selectedAssets: any[]
     startIndex: number
-    preview: boolean
+    preview: boolean,
+    inputHeight: number,
+    postContent: string
 }
 
 const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
+
     const {publishTagId} = useSmartDataStore();
+    const inputRef = React.useRef<any>(null)
 
     const [state, setState] = useSetState<IState>({
         selectedAssets: [],
         startIndex: 0,
-        preview: false
+        preview: false,
+        inputHeight: 170,
+        postContent: ''
     })
+
+    React.useEffect(() => {
+
+
+        setTimeout(() => {
+            inputRef.current.focus()
+        }, 500)
+
+    }, [])
 
     const onPreviewPicture = (data: any[], item: any, index: number) => {
         if (item.fileName === __AddPictureName__) {
@@ -100,11 +115,22 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         setState({ selectedAssets: selected })
     };
 
+
+    const goBack = () => {
+
+        if (state.postContent) {
+
+        }
+
+        // props.navigation.goBack()
+    }
+
+
     return (
         <>
             <AweSimpleNavigator
                 centerTitle={'Publish'}
-                goBack={props.navigation.goBack}
+                goBack={goBack}
                 rightActionTitle={'Post'}
                 rightActionEvent={() => console.log('发布')}
             />
@@ -121,11 +147,24 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
             <ScrollView style={styles.container} scrollEnabled={true}>
                 <TextInput
+                    ref={inputRef}
+                    value={state.postContent}
+                    onChangeText={text => setState({postContent: text})}
                     placeholder={'Share your content'}
                     multiline={true}
                     keyboardType="default"
                     textAlignVertical={'top'}
-                    style={styles.input}
+                    style={{height: state.inputHeight}}
+                    maxLength={300}
+                    onContentSizeChange={event => {
+                        setState({
+                            inputHeight:
+                                Math.max(
+                                    170,
+                                    event.nativeEvent.contentSize.height,
+                                ),
+                        });
+                    }}
                 />
 
                 <View style={styles.pictureList}>
@@ -141,14 +180,10 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                         childrenWidth={pictureWidth}
                         onClickItem={onPreviewPicture}
                         onDataChange={result => setState({selectedAssets: result})}
-                        renderItem={item => RenderItem(item, onDeletePicture)}
+                        fixedItems={[state.selectedAssets.length]}
+                        renderItem={item =>  RenderItem(item, onDeletePicture)}
                     />
 
-                    {/*<TouchableHighlight*/}
-                    {/*    onPress={openCamera}*/}
-                    {/*    underlayColor={'#f8f8f8'}>*/}
-                    {/*    <View style={styles.add} />*/}
-                    {/*</TouchableHighlight>*/}
                 </View>
             </ScrollView>
 
@@ -166,6 +201,7 @@ const RenderItem = (
     item: PictureProps,
     onDeleteItem: (item: PictureProps) => void,
 ) => {
+
     return (
         <View style={styles.pictureItem}>
             <Image
@@ -186,6 +222,7 @@ const RenderItem = (
                     </View>
                 </TouchableHighlight>
             )}
+
         </View>
     );
 };
@@ -207,17 +244,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 10,
     },
-    input: {
-        height: 170,
-    },
     pictureList: {
         flex: 1,
+        height: screenWidth + 30,
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
     pictureItem: {
         width: pictureWidth,
-        height: pictureWidth,
+        height: pictureWidth + 1,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
@@ -246,7 +281,7 @@ const styles = StyleSheet.create({
     },
     deleteView: {
         backgroundColor: 'rgba(0, 0, 0, .4)',
-        padding: 2,
+        padding: 6,
         borderRadius: 10,
     },
 });

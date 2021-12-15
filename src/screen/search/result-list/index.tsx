@@ -43,19 +43,24 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL)
     }
 
+    const onPressPersonal = () => {
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL)
+    }
+
     return (
         <SafeAreaProvider style={globalStyles.container}>
             <SearchNavigator
                 defaultValue={params.searchResult}
                 editDisable={true}
                 onLeftPress={props.navigation.goBack}
+                onPressDisableInput={props.navigation.goBack}
             />
 
             <ScreenBase
-                nothingPage={{
-                    picture: require('../../../assets/images/status/search_nothing.png'),
-                    title: 'No result found'
-                }}
+                // nothingPage={{
+                //     picture: require('../../../assets/images/status/search_nothing.png'),
+                //     title: 'No result found'
+                // }}
             >
                 <PostList
                     dataSource={postList}
@@ -64,7 +69,7 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     onPressDetail={onPressDetail}
                     onRefreshData={onRefreshData}
                     onLoadMoreData={onLoadMoreData}
-                />
+                    onPressPersonal={onPressPersonal}/>
             </ScreenBase>
         </SafeAreaProvider>
     );

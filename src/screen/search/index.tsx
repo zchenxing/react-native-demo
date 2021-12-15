@@ -1,5 +1,4 @@
 import React from 'react';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import ScreenBase from '../components/screen-base';
 import SearchNavigator from './search-navigator';
 import {NavigateProps} from '../../interface';
@@ -10,10 +9,10 @@ import {
     TouchableHighlight,
     View,
 } from 'react-native';
-import {globalStyles, themeColor} from '../../assets/styles';
-import {useLanguage} from '../../language';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import druidStorage from '../../storage';
+import { themeColor } from '../../assets/styles';
+import { useLanguage } from '../../language';
 import { StorageType } from "../../storage/storage-type";
 import { INTELINK_SCREEN_NAME } from "../../routes/screen-name";
 
@@ -87,7 +86,11 @@ const SearchScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     return (
         <>
-            <SearchNavigator onLeftPress={props.navigation.goBack} onSearchDone={showSearchResult} />
+            <SearchNavigator
+                onLeftPress={props.navigation.goBack}
+                onSearchDone={showSearchResult}
+
+            />
 
             <ScreenBase>
                 <View style={{flex: 1}}>

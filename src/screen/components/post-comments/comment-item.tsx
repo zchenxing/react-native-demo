@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    ActivityIndicator,
     FlatList,
     StyleSheet,
     Text,
@@ -10,14 +11,38 @@ import FastImage from 'react-native-fast-image';
 import {avatarUrl, postList} from '../../../mock';
 import Utils from '../../../utils';
 import {PostCommentsItemProps} from './type';
+import {themeColor} from '../../../assets/styles';
+import {useSetState} from 'ahooks';
+import {isIOS} from '../../../config/contant';
+
+interface IState {
+    // 加载更多回复
+    moreLoading: boolean;
+}
 
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,
 ) => {
+    const [state, setState] = useSetState<IState>({
+        moreLoading: false,
+    });
+
+    const onPressLoadMore = () => {
+        setState({
+            moreLoading: true,
+        });
+
+        setTimeout(() => {
+            setState({
+                moreLoading: false,
+            });
+        }, 1000);
+    };
+
     return (
         <View>
             <TouchableHighlight
-                onPress={() => console.log('回复')}
+                onPress={() => props.onPressReply && props.onPressReply()}
                 underlayColor={'#fafafa'}>
                 <View style={styles.container}>
                     <FastImage
@@ -27,7 +52,9 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                     />
                     <View style={[styles.rightView]}>
                         <View style={styles.postHeader}>
-                            <Text style={{color: '#999'}}>User Nickname</Text>
+                            <Text style={{color: '#999'}}>
+                                Coconut Island Games
+                            </Text>
                             <Text style={styles.postTime}>
                                 {Utils.getPostTime('2021-12-07 12:33:22')}
                             </Text>
@@ -45,14 +72,25 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
 
             {props.subComment && (
                 <View style={{paddingLeft: 40}}>
-                    {/*<FlatList*/}
-                    {/*    data={postList}*/}
-                    {/*    keyExtractor={item => item.id}*/}
-                    {/*    removeClippedSubviews={true}*/}
-                    {/*    renderItem={() => <CommentItem />}*/}
-                    {/*/>*/}
+                    {[...postList].splice(0, 2).map(data => (
+                        <CommentItem key={data.id} />
+                    ))}
 
-                    <CommentItem />
+                    <TouchableHighlight
+                        style={styles.moreReplies}
+                        onPress={onPressLoadMore}
+                        underlayColor={'none'}>
+                        {!state.moreLoading ? (
+                            <Text style={styles.moreRepliesText}>
+                                View more replies
+                            </Text>
+                        ) : (
+                            <Text style={styles.moreRepliesText}>
+                                <ActivityIndicator />
+                                Load more
+                            </Text>
+                        )}
+                    </TouchableHighlight>
                 </View>
             )}
 
@@ -60,7 +98,6 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -93,6 +130,16 @@ const styles = StyleSheet.create({
         height: 1,
         backgroundColor: '#eee',
         marginLeft: 35,
+    },
+    moreReplies: {
+        width: 140,
+        marginLeft: 30,
+        paddingBottom: 10,
+    },
+    moreRepliesText: {
+        paddingLeft: 10,
+        color: themeColor,
+        lineHeight: isIOS ? 22 : 17,
     },
 });
 

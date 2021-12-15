@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-    Dimensions,
     StyleSheet,
     TouchableHighlight,
     TextInput,
@@ -16,9 +15,18 @@ import {screenWidth} from '../../../config/contant';
 const SearchNavigator: React.FC<SearchNavigatorProps> = (
     props: SearchNavigatorProps,
 ) => {
+    const inputRef = React.useRef<any>(null)
     const [searchValue, setSearchValue] = React.useState<string>(
         props.defaultValue || '',
     );
+
+    React.useEffect(() => {
+        // 延迟800ms将键盘抬起
+        setTimeout(() => {
+            inputRef.current.focus()
+        }, 500)
+    }, [])
+
 
     const cleanSearch = () => {
         setSearchValue('');
@@ -48,6 +56,7 @@ const SearchNavigator: React.FC<SearchNavigatorProps> = (
                 centerComponent={
                     <View style={styles.searchBase}>
                         <TextInput
+                            ref={inputRef}
                             editable={!props.editDisable}
                             style={styles.searchInput}
                             value={searchValue}
@@ -59,6 +68,17 @@ const SearchNavigator: React.FC<SearchNavigatorProps> = (
                                 props.onSearchDone(searchValue)
                             }
                         />
+
+                        {
+                            props.editDisable &&
+                            <TouchableHighlight
+                                style={styles.inputCover}
+                                onPress={props.onPressDisableInput}
+                            >
+                                <></>
+                            </TouchableHighlight>
+                        }
+
                         {!!searchValue && !props.editDisable && (
                             <TouchableHighlight
                                 underlayColor="none"
@@ -99,6 +119,14 @@ const styles = StyleSheet.create({
         textAlignVertical: 'center',
         paddingVertical: 5,
         marginLeft: 10,
+    },
+    inputCover: {
+        position: 'absolute',
+        opacity: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0
     },
     cleanBase: {
         marginLeft: 10,

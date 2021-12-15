@@ -1,11 +1,12 @@
 import React from 'react';
 import {
+    ActivityIndicator,
     FlatList,
     StyleSheet,
     Text,
     TouchableHighlight,
-    View,
-} from 'react-native';
+    View
+} from "react-native";
 import {NavigateProps} from '../../interface';
 import PostContent from './post-content';
 import ScreenBase from '../components/screen-base';
@@ -17,6 +18,7 @@ import AweKeyboard from '../../components/awe-keyboard';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import PostCard from './post-card';
 import UserNavigator from '../components/user-navigator';
+import { useLanguage } from "../../language";
 
 interface IState {
     followStatus: boolean;
@@ -24,6 +26,7 @@ interface IState {
     collection: boolean;
     keyboardVisible: boolean;
     commentText: string;
+    moreLoading: boolean
 }
 
 const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
@@ -37,6 +40,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         collection: false,
         keyboardVisible: false,
         commentText: '',
+        moreLoading: false
     });
 
     /**
@@ -67,6 +71,31 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         });
     };
 
+
+    const loadMore = () => {
+        return state.moreLoading ? (
+            <View>
+                <ActivityIndicator />
+                <Text style={{textAlign: 'center'}}>
+                    {useLanguage.load_more}
+                </Text>
+            </View>
+        ) : (
+            <></>
+        );
+    };
+
+    const onLoadMoreData = () => {
+        setState({
+            moreLoading: true
+        });
+
+        setTimeout(() => {
+            setState({moreLoading: false});
+        }, 2000);
+    }
+
+
     return (
         <SafeAreaProvider>
 
@@ -81,7 +110,9 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 <View style={{flex: 1}}>
                     <FlatList
                         ref={flatListRef}
-                        data={Array.from(new Array(1000).keys())}
+                        data={Array.from(new Array(22).keys())}
+                        ListFooterComponent={() => loadMore()}
+                        onEndReached={onLoadMoreData}
                         renderItem={row => {
                             if (row.item === 0) {
 

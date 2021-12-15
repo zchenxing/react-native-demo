@@ -1,4 +1,3 @@
-import 'react-native-get-random-values'
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -7,8 +6,8 @@ import {screenWidth} from '../../config/contant';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSetState } from "ahooks";
 import {useLanguage} from '../../language';
-import AwePicturePreview from "../../components/awe-picture-preview";
-import { WebView } from 'react-native-webview';
+import AwePicturePreview from '../../components/awe-picture-preview';
+import { WebView } from "react-native-webview";
 
 interface IProps {
     onPressMore: (offset: number, isPutAway: boolean) => void
@@ -18,6 +17,7 @@ interface IState {
     showMoreInfo: boolean
     pictureVisible: boolean
     pictureIndex: number
+    mapLoading: boolean
 }
 
 const pictures = [...pictureList].splice(0, 2)
@@ -29,8 +29,19 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
     const [state, setState] = useSetState<IState>({
         showMoreInfo: false,
         pictureVisible: false,
-        pictureIndex: 0
+        pictureIndex: 0,
+        mapLoading: true
     })
+
+    React.useEffect(() => {
+
+        setTimeout(() => {
+            setState({
+                mapLoading: false
+            })
+        }, 800)
+
+    }, [])
 
 
     const onPressMore = () => {
@@ -136,17 +147,18 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
                             </View>
                         </View>
 
-
-
                     </View>
 
+
                     <View style={{height: 300, width: screenWidth - 20, transform: [{translateX: -10}]}}>
-                        <WebView
-                            automaticallyAdjustContentInsets={false}
-                            source={{
-                                uri: 'https://leafletjs.com/examples/quick-start/example.html'
-                            }}
-                        />
+                        {
+                            !state.mapLoading &&
+                            <WebView
+                                automaticallyAdjustContentInsets={false}
+                                source={{
+                                    uri: 'https://leafletjs.com/examples/quick-start/example.html'
+                                }}
+                            />}
                     </View>
 
                     <Text style={styles.animalName}>animal name</Text>

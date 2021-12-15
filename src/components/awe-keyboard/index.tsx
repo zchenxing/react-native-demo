@@ -8,12 +8,12 @@ import {
     Keyboard,
     Modal,
 } from 'react-native';
-import {AweKeyboardProps} from './data';
+import {AweKeyboardProps} from './type';
 import { screenHeight, screenWidth } from "../../config/contant";
 import { useLanguage } from "../../language";
 import {KeyboardAccessoryView} from 'react-native-keyboard-accessory';
 import { themeColor } from "../../assets/styles";
-import Utils from "../../utils";
+import Utils from '../../utils';
 
 const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
     const inputRef = React.useRef<any>(null);

@@ -58,6 +58,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 data={props.dataSource}
                 removeClippedSubviews={true}
                 keyExtractor={item => item.id}
+                ListFooterComponent={() => loadMore()}
+                onEndReached={props.onLoadMoreData}
                 refreshControl={
                     <RefreshControl
                         refreshing={props.refreshing}
@@ -73,8 +75,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                         onPressPersonal={props.onPressPersonal}
                     />
                 )}
-                ListFooterComponent={() => loadMore()}
-                onEndReached={props.onLoadMoreData}
+
             />
 
             <AwePicturePreview

@@ -9,4 +9,6 @@ export interface PostCommentsItemProps {
     subComment?: any[]
     // 是否显示分隔符
     showSeparator?: boolean
+    // 点击回复某人
+    onPressReply?: () => void
 }

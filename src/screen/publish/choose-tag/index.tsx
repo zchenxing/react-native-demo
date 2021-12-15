@@ -25,7 +25,11 @@ const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
             <ScrollView style={styles.container}>
                 {Array.from(new Array(7).keys()).map(i => (
-                    <TouchableHighlight style={styles.listItem} onPress={onSelectTag} underlayColor={'#efefef'}>
+                    <TouchableHighlight
+                        key={i}
+                        style={styles.listItem}
+                        onPress={onSelectTag}
+                        underlayColor={'#efefef'}>
                         <>
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <Icon
@@ -40,6 +44,7 @@ const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     </TouchableHighlight>
                 ))}
             </ScrollView>
+
         </>
     );
 };

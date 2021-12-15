@@ -7,7 +7,7 @@ import {
     StyleSheet,
 } from 'react-native';
 import PersonalInfo from './info';
-import {screenWidth} from '../../config/contant';
+import { isIOS, screenWidth } from "../../config/contant";
 import UserNavigator from '../components/user-navigator';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -75,7 +75,7 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
                         <View style={styles.headerBack}>
                             <Icon
                                 name={'angle-left'}
-                                style={{fontSize: 30, color: '#aaa'}}
+                                style={{fontSize: 30, color: '#fff'}}
                             />
                         </View>
                         <Animated.View
@@ -97,28 +97,31 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
                         ref={ref => (this.flatListRef = ref)}
                         style={{flex: 1, width: screenWidth}}
                         scrollEventThrottle={1}
-                        data={Array.from(new Array(3).keys())}
-                        // onScroll={Animated.event(
-                        //     [
-                        //         {
-                        //             nativeEvent: {
-                        //                 contentOffset: {
-                        //                     y: this.state.navOpacityOffset,
-                        //                 },
-                        //             },
-                        //         },
-                        //     ],
-                        //     {
-                        //         useNativeDriver: false,
-                        //     },
-                        // )}
+                        data={Array.from(new Array(4).keys())}
+                        onScroll={Animated.event(
+                            [
+                                {
+                                    nativeEvent: {
+                                        contentOffset: {
+                                            y: this.state.navOpacityOffset,
+                                        },
+                                    },
+                                },
+                            ],
+                            {
+                                useNativeDriver: false,
+                            },
+                        )}
                         showsVerticalScrollIndicator={false}
                         renderItem={row => {
                             if (row.item === 0) {
                                 return (
                                     <PersonalInfo
+                                        imageOffsetY={this.state.navOpacityOffset}
                                         onScrollOffset={this.onScrollOffset}
-                                        onPressFollowList={this.onPressFollowList}
+                                        onPressFollowList={
+                                            this.onPressFollowList
+                                        }
                                     />
                                 )
                             } else {

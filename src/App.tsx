@@ -3,7 +3,6 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {elRoutes} from './routes/test-routes';
 import { intelinkRoute } from "./routes";
 import { globalStyles } from "./assets/styles";
 

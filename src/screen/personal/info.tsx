@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    Animated,
     Image,
     StatusBar,
     StyleSheet,
@@ -8,25 +9,25 @@ import {
     View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {isIOS} from '../../config/contant';
+import { isIOS, screenWidth } from "../../config/contant";
 import {avatarUrl} from '../../mock';
-import {BlurView} from '@react-native-community/blur';
 import {useSetState} from 'ahooks';
 import Utils from '../../utils';
 import {PersonalOtherEnum} from './type';
 import FollowButton from '../components/follow-button';
 import Toast from 'react-native-simple-toast';
 
-const barHeight = isIOS ? 44 : StatusBar.currentHeight || 0;
+const imageHeight = 90 + (isIOS ? 44 : StatusBar.currentHeight || 0);
 
 interface IProps {
+    imageOffsetY: Animated.Value;
     onScrollOffset: (offset: number) => void;
     onPressFollowList: (type: PersonalOtherEnum) => void;
 }
 
 interface IState {
-    following: boolean
-    followLoading: boolean
+    following: boolean;
+    followLoading: boolean;
     otherInfo: any[];
 }
 
@@ -40,7 +41,7 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
             {
                 type: PersonalOtherEnum.Post,
                 title: 'Post',
-                value: 231231,
+                value: 23,
             },
             {
                 type: PersonalOtherEnum.Following,
@@ -55,26 +56,23 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
         ],
     });
 
-
     const onPressFollow = () => {
-
         setState({
-            followLoading: true
-        })
+            followLoading: true,
+        });
 
         setTimeout(() => {
             setState({
                 following: !state.following,
-                followLoading: false
-            })
+                followLoading: false,
+            });
 
             Toast.showWithGravity(
                 !state.following ? '已关注' : '已取消关注',
                 1,
                 Toast.TOP,
             );
-        }, 900)
-
+        }, 900);
     };
 
     const onPressOtherItem = (type: PersonalOtherEnum) => {
@@ -91,30 +89,50 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
             onLayout={e =>
                 (containerHeight.current = e.nativeEvent.layout.height)
             }>
-            <View style={{height: 90 + barHeight}}>
+            <Animated.View
+                style={{
+                    height: imageHeight,
+                    transform: [
+                        {
+                            translateY: props.imageOffsetY.interpolate({
+                                inputRange: [-imageHeight, 0, imageHeight,],
+                                outputRange: [-imageHeight / 2, -1, 0],
+                                extrapolate: 'clamp',
+                                // @ts-ignore
+                                useNativeDriver: true,
+                            }),
+                        },
+                        {
+                            scale: props.imageOffsetY.interpolate({
+                                inputRange: [-imageHeight, 0, imageHeight],
+                                outputRange: [2, 1, 1],
+                                extrapolate: 'clamp', // 阻止输出值超过outputRange
+                                // @ts-ignore
+                                useNativeDriver: true,
+                            }),
+                        },
+                    ],
+                }}>
                 <LinearGradient
                     colors={['#69BECB', '#A2E0E7']}
                     start={{x: 0, y: 0}}
                     end={{x: 0, y: 1}}
-                    style={{height: 90 + barHeight}}>
+                    style={{height: imageHeight}}>
                     <Image source={{uri: avatarUrl}} style={{flex: 1}} />
-
-
-
                 </LinearGradient>
-                {/*<BlurView*/}
-                {/*    style={styles.blur}*/}
-                {/*    blurType="light"*/}
-                {/*    blurAmount={30}*/}
-                {/*    reducedTransparencyFallbackColor="black"*/}
-                {/*/>*/}
-            </View>
+
+                <View
+                    style={[
+                        styles.blur,
+                        {backgroundColor: 'rgba(0, 0, 0, .6)'},
+                    ]}
+                />
+            </Animated.View>
 
             <View style={styles.info}>
                 <Image source={{uri: avatarUrl}} style={styles.avatar} />
 
                 <View style={styles.actions}>
-
                     <FollowButton
                         isFollow={state.following}
                         followLoading={state.followLoading}
@@ -127,7 +145,8 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
                 <Text style={styles.username}>User nickname</Text>
 
                 <Text style={styles.signature}>
-                    这是这个用户的签名这是这个用户的签名这是这个用户的签名qwdqwd
+                    这是这个用户的签名这是这个用户的签名这是这个用户的签名
+                    前雾灯破口哦
                 </Text>
             </View>
 
@@ -171,7 +190,6 @@ const styles = StyleSheet.create({
     },
     actions: {
         height: 40,
-        paddingRight: 20,
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-end',
@@ -200,7 +218,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 10,
     },
     othersItem: {
-        flex: 1,
+        width: screenWidth / 3 - 10,
         alignItems: 'center',
         padding: 20,
     },

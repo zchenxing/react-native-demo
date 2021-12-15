@@ -33,7 +33,7 @@ const UserItem: React.FC = props => {
                 1,
                 Toast.TOP,
             );
-        }, 900);
+        }, 444);
     };
 
     return (

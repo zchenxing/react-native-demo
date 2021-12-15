@@ -140,15 +140,11 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
 
                     </View>
 
-                    <View>
+                    <View style={{height: 300, width: screenWidth - 20, transform: [{translateX: -10}]}}>
                         <WebView
-                            source={{uri: 'https://leafletjs.com/examples/quick-start/example.html'}}
-                            style={{
-                                width: '100%',
-                                height: 200,
-                                transform: [
-                                    {translateX: -5},
-                                ]
+                            automaticallyAdjustContentInsets={false}
+                            source={{
+                                uri: 'https://leafletjs.com/examples/quick-start/example.html'
                             }}
                         />
                     </View>

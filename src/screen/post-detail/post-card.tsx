@@ -1,12 +1,14 @@
+import 'react-native-get-random-values'
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {birdCard, pictureList} from '../../mock';
 import {screenWidth} from '../../config/contant';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useBoolean, useSetState } from "ahooks";
+import { useSetState } from "ahooks";
 import {useLanguage} from '../../language';
 import AwePicturePreview from "../../components/awe-picture-preview";
+import { WebView } from 'react-native-webview';
 
 interface IProps {
     onPressMore: (offset: number, isPutAway: boolean) => void
@@ -134,18 +136,21 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
                             </View>
                         </View>
 
-                        {/*<TouchableHighlight>*/}
-                        {/*    <View style={styles.moreButton}>*/}
-                        {/*        <View style={styles.divider} />*/}
-                        {/*        <Text style={styles.seeInfo}>*/}
-                        {/*            See all information*/}
-                        {/*        </Text>*/}
-                        {/*        <Icon*/}
-                        {/*            name={showMore ? 'angle-double-up' : 'angle-double-down'}*/}
-                        {/*            style={{fontSize: 16}}*/}
-                        {/*        />*/}
-                        {/*    </View>*/}
-                        {/*</TouchableHighlight>*/}
+
+
+                    </View>
+
+                    <View>
+                        <WebView
+                            source={{uri: 'https://leafletjs.com/examples/quick-start/example.html'}}
+                            style={{
+                                width: '100%',
+                                height: 200,
+                                transform: [
+                                    {translateX: -5},
+                                ]
+                            }}
+                        />
                     </View>
 
                     <Text style={styles.animalName}>animal name</Text>

@@ -6,7 +6,9 @@ import {
     Text,
     TextInput,
     TouchableHighlight,
+    BackHandler,
     View,
+    Alert
 } from 'react-native';
 import {themeColor, themeLightColor} from '../../assets/styles';
 import {NavigateProps, PictureProps} from '../../interface';
@@ -52,10 +54,15 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     React.useEffect(() => {
 
-
         setTimeout(() => {
             inputRef.current.focus()
         }, 500)
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            goBack)
+
+        return () => backHandler.remove()
 
     }, [])
 
@@ -119,10 +126,20 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const goBack = () => {
 
         if (state.postContent) {
-
+            Alert.alert('', '是否保存草稿?', [
+                {
+                    text: '不保存',
+                    onPress: () => props.navigation.goBack(),
+                    style: 'cancel',
+                },
+                { text: "保存", onPress: () => null,}
+            ]);
+            return true
         }
-
-        // props.navigation.goBack()
+        else {
+            props.navigation.goBack()
+            return true
+        }
     }
 
 

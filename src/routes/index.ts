@@ -30,6 +30,9 @@ export const intelinkRoute: routeProps[] = [
     {
         name: INTELINK_SCREEN_NAME.SCREEN_PUBLISH,
         component: PublishScreen,
+        options: {
+            gestureEnabled: false
+        }
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_PUBLISH_TAG,

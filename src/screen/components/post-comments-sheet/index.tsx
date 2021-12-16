@@ -5,22 +5,45 @@ import {
     StyleSheet,
     FlatList,
     TouchableHighlight, ScrollView
-} from "react-native";
+} from 'react-native';
 import {screenHeight, screenWidth} from '../../../config/contant';
 import {Image} from 'react-native-elements';
 import {useLanguage} from '../../../language';
 import AweKeyboard from '../../../components/awe-keyboard';
-import {PostCommentsProps} from './type';
-import {avatarUrl, postList} from '../../../mock';
+import {PostCommentProps} from './type';
+import {avatarUrl} from '../../../mock';
 import CommentItem from './comment-item';
 import { themeColor } from "../../../assets/styles";
 import ActionSheet from 'react-native-actions-sheet';
+import { useDebounce, useSetState } from "ahooks";
+import { useSheetDataStore } from "../../../store/provider";
 
-const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
+
+interface IState {
+    contentText: string
+    scrollOffsetY: number
+    keyboardVisible: boolean
+    resetScrollOffsetY: number
+}
+
+
+const PostCommentSheet: React.FC<PostCommentProps> = (
+    props: PostCommentProps,
+) => {
     const actionSheetRef = React.createRef<any>();
+    const scrollRef = React.useRef<any>(null);
 
-    const [contentText, setContentText] = React.useState<string>('');
-    const [keyboardVisible, setKeyboardVisible] = React.useState(false);
+    const [state, setState] = useSetState<IState>({
+        contentText: '',
+        scrollOffsetY: 0,
+        keyboardVisible: false,
+        resetScrollOffsetY: 0
+    })
+
+    const { addDataToComment} = useSheetDataStore()
+
+    const scrollOffsetY = useDebounce(state.scrollOffsetY, { wait: 100 });
+
 
     React.useEffect(() => {
 
@@ -28,27 +51,77 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
             openComments();
         }
 
-    }, [props.visible]);
+        if (state.resetScrollOffsetY && scrollRef.current) {
+            scrollRef.current.scrollTo({
+                y: state.resetScrollOffsetY,
+                animated: false
+            })
+        }
+
+    }, [props.visible, scrollRef.current]);
+
+
+    React.useImperativeHandle(props.cRef, () => ({
+        setScrollOffsetY: (offsetY: number) => {
+
+            setTimeout(() => {
+                setState({
+                    resetScrollOffsetY: offsetY
+                })
+            }, 100)
+
+
+        }
+    }))
+
 
     /**
      * 打开 SheetView
      */
     const openComments = () => {
-        actionSheetRef.current?.setModalVisible(true);
+        if (!actionSheetRef.current.modalVisible) {
+            actionSheetRef.current?.setModalVisible(true);
+        }
     };
 
 
+    /**
+     * 点击回复 显示键盘
+     */
     const onPressReply = () => {
-
+        setState({
+            keyboardVisible: true
+        })
     }
 
+    /**
+     * 点击头像跳转到个人信息
+     */
+    const onPressAvatar = () => {
+        addDataToComment(props.sheetId, {
+            offsetY: scrollOffsetY,
+            data: []
+        })
+
+        actionSheetRef.current?.setModalVisible(false)
+        props.onPressAvatar()
+    }
+
+
+    const onClose = () => {
+        setState({
+            resetScrollOffsetY: 0
+        })
+        props.onClose()
+    }
 
     return (
         <ActionSheet
             ref={actionSheetRef}
             gestureEnabled={false}
+            openAnimationSpeed={4}
             keyboardHandlerEnabled={false}
-            onClose={props.onClose}
+            onClose={onClose}
             springOffset={150}
         >
 
@@ -57,14 +130,18 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
             <View style={styles.sheetView}>
 
                 <View style={styles.sheetHeader}>
-                    <Text style={{color: '#777'}}>33 comments</Text>
+                    <Text style={{color: '#777'}}>
+                        33 comments
+                    </Text>
                 </View>
 
 
                 <ScrollView
+                    ref={scrollRef}
                     style={{flex: 1}}
                     scrollEnabled={true}
                     nestedScrollEnabled={true}
+                    onScroll={e => setState({scrollOffsetY: e.nativeEvent.contentOffset.y})}
                     onScrollEndDrag={() =>
                         actionSheetRef.current?.handleChildScrollEnd()
                     }
@@ -75,9 +152,10 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
                         actionSheetRef.current?.handleChildScrollEnd()
                     }
                 >
+
                     <FlatList
                         style={styles.sheetContent}
-                        data={Array.from(new Array(10).keys()).map(i => ({
+                        data={Array.from(new Array(20).keys()).map(i => ({
                             id: i,
                         }))}
                         scrollEnabled={true}
@@ -86,6 +164,7 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
                             <CommentItem
                                 showSeparator={true}
                                 subComment={[]}
+                                onPressAvatar={onPressAvatar}
                                 onPressReply={onPressReply}
                             />
                         )}
@@ -95,7 +174,7 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
 
                 <TouchableHighlight
                     underlayColor={'none'}
-                    onPress={() => setKeyboardVisible(true)}>
+                    onPress={() => setState({keyboardVisible: true})}>
                     <View style={styles.sheetFooter}>
                         <Image
                             style={styles.avatar}
@@ -107,9 +186,9 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
                             <Text
                                 numberOfLines={1}
                                 ellipsizeMode={'tail'}
-                                style={{color: contentText ? '#333' : '#ddd'}}>
-                                {contentText
-                                    ? contentText
+                                style={{color: state.contentText ? '#333' : '#ddd'}}>
+                                {state.contentText
+                                    ? state.contentText
                                     : useLanguage.say_something}
                             </Text>
                         </View>
@@ -121,7 +200,7 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
                                     styles.submitButton,
                                     {
                                         backgroundColor: themeColor,
-                                        opacity: contentText ? 1 : 0.7,
+                                        opacity: state.contentText ? 1 : 0.7,
                                     },
                                 ]}>
                                 <Text style={{color: '#fff'}}>
@@ -134,10 +213,10 @@ const PostComment: React.FC<PostCommentsProps> = (props: PostCommentsProps) => {
             </View>
 
             <AweKeyboard
-                visible={keyboardVisible}
-                contentText={contentText}
-                onClose={() => setKeyboardVisible(false)}
-                onChangeText={setContentText}
+                visible={state.keyboardVisible}
+                contentText={state.contentText}
+                onClose={() => setState({keyboardVisible: false})}
+                onChangeText={(contentText) => setState({contentText})}
             />
         </ActionSheet>
     );
@@ -201,4 +280,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PostComment;
+export default PostCommentSheet;

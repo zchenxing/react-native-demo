@@ -20,6 +20,7 @@ interface IState {
     moreLoading: boolean;
 }
 
+
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,
 ) => {
@@ -40,16 +41,22 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
     };
 
     return (
-        <View>
+        <>
             <TouchableHighlight
-                onPress={() => props.onPressReply && props.onPressReply()}
+                onPress={() => props.onPressReply()}
                 underlayColor={'#fafafa'}>
                 <View style={styles.container}>
-                    <FastImage
-                        style={styles.avatar}
-                        source={{uri: avatarUrl}}
-                        resizeMode={FastImage.resizeMode.cover}
-                    />
+                    <TouchableHighlight
+                        onPress={props.onPressAvatar}
+                        underlayColor={'none'}
+                    >
+                        <FastImage
+                            style={styles.avatar}
+                            source={{uri: avatarUrl}}
+                            resizeMode={FastImage.resizeMode.cover}
+                        />
+                    </TouchableHighlight>
+
                     <View style={[styles.rightView]}>
                         <View style={styles.postHeader}>
                             <Text style={{color: '#999'}}>
@@ -73,7 +80,11 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
             {props.subComment && (
                 <View style={{paddingLeft: 40}}>
                     {[...postList].splice(0, 2).map(data => (
-                        <CommentItem key={data.id} />
+                        <CommentItem
+                            key={data.id}
+                            onPressAvatar={props.onPressAvatar}
+                            onPressReply={props.onPressReply}
+                        />
                     ))}
 
                     <TouchableHighlight
@@ -95,7 +106,7 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
             )}
 
             {props.showSeparator && <View style={styles.separator} />}
-        </View>
+        </>
     );
 };
 

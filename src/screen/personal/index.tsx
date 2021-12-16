@@ -4,18 +4,20 @@ import {
     StatusBar,
     View,
     Animated,
+    DeviceEventEmitter,
     StyleSheet,
 } from 'react-native';
 import PersonalInfo from './info';
-import { isIOS, screenWidth } from "../../config/contant";
+import { screenWidth } from "../../config/contant";
 import UserNavigator from '../components/user-navigator';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PostItem from '../components/post-item';
-import PostComment from '../components/post-comments';
+import PostCommentSheet from '../components/post-comments-sheet';
 import { PersonalOtherEnum } from "./type";
 import { NavigateProps } from "../../interface";
 import { INTELINK_SCREEN_NAME } from "../../routes/screen-name";
+import { sheetDataStore } from "../../store/provider";
 
 
 class PersonalScreen extends React.Component<NavigateProps, any> {
@@ -23,6 +25,8 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
     changeNavHeight = 70; //决定改变导航栏样式的滑动距离
     flatListRef: any = React.createRef()
     navOpacityAnimated: any = null
+
+    routeParams: any = this.props.route.params
 
     state = {
         navOpacityOffset: new Animated.Value(0),
@@ -47,6 +51,14 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
     }
 
 
+    componentWillUnmount() {
+        DeviceEventEmitter.emit(
+            this.routeParams.lastScreen,
+            sheetDataStore.sheetData,
+        );
+    }
+
+
     onScrollOffset = (offset: number) => {
         this.flatListRef.scrollToOffset({
             offset,
@@ -57,6 +69,10 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
 
     onPressFollowList = (type: PersonalOtherEnum) => {
         this.props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_FOLLOW_LIST)
+    }
+
+    onPressAvatar = () => {
+        this.props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL)
     }
 
     render() {
@@ -141,8 +157,10 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
                 </SafeAreaProvider>
 
 
-                <PostComment
+                <PostCommentSheet
+                    sheetId={''}
                     visible={this.state.commentVisible}
+                    onPressAvatar={this.onPressAvatar}
                     onClose={() => this.setState({commentVisible: false})}
                 />
             </>

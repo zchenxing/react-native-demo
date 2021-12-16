@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {themeColor, themeLightColor} from '../../assets/styles';
 import {NavigateProps, PictureProps} from '../../interface';
-import { isIOS, screenWidth } from "../../config/contant";
+import {isIOS, screenWidth} from '../../config/contant';
 import {DragSortableView} from 'react-native-drag-sort';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import AwePicturePreview from '../../components/awe-picture-preview';
@@ -20,8 +20,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import AweSimpleNavigator from '../../components/awe-simple-navigator';
 import {observer} from 'mobx-react';
-import {useSmartDataStore} from '../../mobx/provider';
+import {useSmartDataStore} from '../../store/provider';
 import {useSetState} from 'ahooks'
+import {useLanguage} from '../../language';
 
 const pictureWidth = (screenWidth - 20) / 3;
 
@@ -34,8 +35,8 @@ const AddPicture = {
 interface IState {
     selectedAssets: any[]
     startIndex: number
-    preview: boolean,
-    inputHeight: number,
+    preview: boolean
+    inputHeight: number
     postContent: string
 }
 
@@ -43,6 +44,8 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const {publishTagId} = useSmartDataStore();
     const inputRef = React.useRef<any>(null)
+    const contentText = React.useRef<any>('')
+    const backListener = React.useRef<any>(null)
 
     const [state, setState] = useSetState<IState>({
         selectedAssets: [],
@@ -58,11 +61,19 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             inputRef.current.focus()
         }, 500)
 
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            goBack)
+        if (!isIOS) {
+            backListener.current = BackHandler.addEventListener(
+                'hardwareBackPress',
+                () => goBack(),
+            );
+        }
 
-        return () => backHandler.remove()
+
+        return () => {
+            if (!isIOS) {
+                backListener.current.remove()
+            }
+        }
 
     }, [])
 
@@ -123,33 +134,52 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     };
 
 
-    const goBack = () => {
+    /**
+     *
+     * @param isNavigationBack 是否用导航栏返回
+     */
+    const goBack = (isNavigationBack?: boolean) => {
 
-        if (state.postContent) {
-            Alert.alert('', '是否保存草稿?', [
+        if (contentText.current) {
+            Alert.alert('', useLanguage.save_post_to_draft, [
                 {
-                    text: '不保存',
+                    text: useLanguage.dont_save,
                     onPress: () => props.navigation.goBack(),
                     style: 'cancel',
                 },
-                { text: "保存", onPress: () => null,}
+                { text: useLanguage.save, onPress: savePostToDraft}
             ]);
             return true
+
         }
         else {
-            props.navigation.goBack()
-            return true
+            if (isNavigationBack) {
+                props.navigation.goBack()
+            }
+            return false
         }
     }
 
+
+    /**
+     * 将帖子保存至草稿
+     */
+    const savePostToDraft = () => {
+
+    }
+
+
+    const onPressSubmit = () => {
+        console.log(state.postContent);
+    }
 
     return (
         <>
             <AweSimpleNavigator
                 centerTitle={'Publish'}
-                goBack={goBack}
+                goBack={() => goBack(true)}
                 rightActionTitle={'Post'}
-                rightActionEvent={() => console.log('发布')}
+                rightActionEvent={onPressSubmit}
             />
 
             <TouchableHighlight
@@ -166,7 +196,10 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 <TextInput
                     ref={inputRef}
                     value={state.postContent}
-                    onChangeText={text => setState({postContent: text})}
+                    onChangeText={text => {
+                        contentText.current = text
+                        setState({postContent: text})
+                    }}
                     placeholder={'Share your content'}
                     multiline={true}
                     keyboardType="default"

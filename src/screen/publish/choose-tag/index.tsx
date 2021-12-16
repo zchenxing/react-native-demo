@@ -4,7 +4,7 @@ import {NavigateProps} from '../../../interface';
 import AweSimpleNavigator from '../../../components/awe-simple-navigator';
 import {View, Text, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useSmartDataStore } from "../../../mobx/provider";
+import { useSmartDataStore } from "../../../store/provider";
 import { themeColor } from "../../../assets/styles";
 
 const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {

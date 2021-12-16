@@ -12,13 +12,14 @@ import PostContent from './post-content';
 import ScreenBase from '../components/screen-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useSetState} from 'ahooks';
-import CommentItem from '../components/post-comments/comment-item';
+import CommentItem from '../components/post-comments-sheet/comment-item';
 import {themeColor} from '../../assets/styles';
 import AweKeyboard from '../../components/awe-keyboard';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import PostCard from './post-card';
 import UserNavigator from '../components/user-navigator';
 import { useLanguage } from "../../language";
+import { INTELINK_SCREEN_NAME } from "../../routes/screen-name";
 
 interface IState {
     followStatus: boolean;
@@ -96,6 +97,10 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     }
 
 
+    const onPressAvatar = () => {
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL)
+    }
+
     return (
         <SafeAreaProvider>
 
@@ -137,6 +142,8 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                             paddingRight: 20,
                                         }}>
                                         <CommentItem
+                                            onPressReply={() => {}}
+                                            onPressAvatar={onPressAvatar}
                                             showSeparator={true}
                                             subComment={[]}
                                         />

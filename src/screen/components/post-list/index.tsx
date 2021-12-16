@@ -8,14 +8,36 @@ import {
 } from 'react-native';
 import PostItem from '../post-item';
 import AwePicturePreview from '../../../components/awe-picture-preview';
-import PostComment from '../post-comments';
+import PostCommentSheet from '../post-comments-sheet';
 import { useLanguage } from "../../../language";
+import { useSetState } from "ahooks";
+
+interface IState {
+    pictureVisible: boolean
+    pictureStartIndex: number
+    pictureList: any[]
+    commentVisible: boolean
+}
 
 const PostList: React.FC<PostListProps> = (props: PostListProps) => {
-    const [pictureVisible, setPictureVisible] = React.useState(false);
-    const [pictureStartIndex, setPictureStartIndex] = React.useState<number>(0);
-    const [pictureList, setPictureList] = React.useState<any[]>([]);
-    const [commentVisible, setCommentVisible] = React.useState(false);
+
+    const sheetRef = React.useRef<any>(null)
+
+    const [state, setState] = useSetState<IState>({
+        pictureVisible: false,
+        pictureStartIndex: 0,
+        pictureList: [],
+        commentVisible: false
+    })
+
+    React.useImperativeHandle(props.cRef, () => ({
+        openCommentSheet: (offsetY: number) => {
+            setState({
+                commentVisible: true
+            })
+            sheetRef.current.setScrollOffsetY(offsetY)
+        }
+    }))
 
 
     const loadMore = () => {
@@ -38,19 +60,27 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      * @param startIndex
      */
     const onPressPicture = (pictures: any[], startIndex: number) => {
-        setPictureVisible(true);
-        setPictureStartIndex(startIndex);
 
         const list = pictures.map(picture => (picture.uri));
-        setPictureList(list);
+
+        setState({
+            pictureVisible: true,
+            pictureStartIndex: startIndex,
+            pictureList: list
+        })
+
     };
 
     /**
      * 查看评论
      */
     const onPressComment = () => {
-        setCommentVisible(true);
+        setState({
+            commentVisible: true
+        })
     };
+
+
 
     return (
         <>
@@ -79,15 +109,18 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             />
 
             <AwePicturePreview
-                visible={pictureVisible}
-                onClick={() => setPictureVisible(false)}
-                imageUrls={pictureList}
-                startIndex={pictureStartIndex}
+                visible={state.pictureVisible}
+                onClick={() => setState({pictureVisible: false})}
+                imageUrls={state.pictureList}
+                startIndex={state.pictureStartIndex}
             />
 
-            <PostComment
-                visible={commentVisible}
-                onClose={() => setCommentVisible(false)}
+            <PostCommentSheet
+                cRef={sheetRef}
+                sheetId={props.sheetId}
+                onPressAvatar={props.onPressPersonal}
+                visible={state.commentVisible}
+                onClose={() => setState({commentVisible: false})}
             />
         </>
     );

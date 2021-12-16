@@ -3,7 +3,7 @@ import {AppRegistry} from 'react-native';
 import App from './src/App';
 import {name as appName} from './app.json';
 import { Provider } from 'mobx-react'
-import { stores, StoresContext } from "./src/mobx/provider";
+import { stores, StoresContext } from "./src/store/provider";
 
 const Root = () => {
     return (

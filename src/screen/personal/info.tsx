@@ -23,6 +23,7 @@ interface IProps {
     imageOffsetY: Animated.Value;
     onScrollOffset: (offset: number) => void;
     onPressFollowList: (type: PersonalOtherEnum) => void;
+    onPressEdit: () => void
 }
 
 interface IState {
@@ -138,6 +139,9 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
                         followLoading={state.followLoading}
                         onChangeFollow={onPressFollow}
                     />
+                    <TouchableHighlight onPress={props.onPressEdit}>
+                        <Text>编辑</Text>
+                    </TouchableHighlight>
                 </View>
             </View>
 

@@ -8,6 +8,7 @@ import ScreenBase from '../../components/screen-base';
 import PostList from '../../components/post-list';
 import { postList } from "../../../mock";
 import { INTELINK_SCREEN_NAME } from "../../../routes/screen-name";
+import apis from "../../../network/apis";
 
 const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
@@ -63,7 +64,7 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 // }}
             >
                 <PostList
-                    sheetId={INTELINK_SCREEN_NAME.SCREEN_SEARCH_RESULT}
+                    api={apis.post.search}
                     dataSource={postList}
                     refreshing={refreshing}
                     moreLoading={moreLoading}

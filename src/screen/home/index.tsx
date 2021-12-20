@@ -5,34 +5,13 @@ import ScreenBase from '../components/screen-base';
 import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import PostList from '../components/post-list';
 import {postList} from '../../mock';
-import {useSheetDataStore} from '../../store/provider';
-import { DeviceEventEmitter, View } from "react-native";
+import apis from "../../network/apis";
 
 const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
-    const childRef = React.useRef<any>(null)
-    const { deleteSheetId } = useSheetDataStore()
     const [refreshing, setRefreshing] = React.useState(false);
     const [moreLoading, setMoreLoading] = React.useState(false);
 
-
-    React.useEffect(() => {
-        const subscription = DeviceEventEmitter.addListener(
-            INTELINK_SCREEN_NAME.SCREEN_HOME,
-            params => {
-                // 判断是否从sheet评论页面进入
-                // 如果有参数，表示从评论进入了个人页面
-                const sheetData = params[INTELINK_SCREEN_NAME.SCREEN_HOME];
-
-                if (sheetData) {
-                    childRef.current.openCommentSheet(sheetData.offsetY)
-                    deleteSheetId(INTELINK_SCREEN_NAME.SCREEN_HOME)
-                }
-            },
-        );
-
-        return () => subscription.remove();
-    }, []);
 
     const onRefreshData = () => {
         setRefreshing(true);
@@ -51,8 +30,7 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     };
 
     const onPressSearch = () => {
-        // props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_SEARCH);
-        props.navigation.push('Test1')
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_SEARCH);
     };
 
     const onPublish = () => {
@@ -60,9 +38,7 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     };
 
     const onPressPersonal = () => {
-        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL, {
-            lastScreen: INTELINK_SCREEN_NAME.SCREEN_HOME,
-        });
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL);
     };
 
     const onPressDetail = () => {
@@ -76,8 +52,7 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             <HomeNavigator onSearch={onPressSearch} onPublish={onPublish} />
             <ScreenBase>
                 <PostList
-                    cRef={childRef}
-                    sheetId={INTELINK_SCREEN_NAME.SCREEN_HOME}
+                    api={apis.post.list}
                     dataSource={postList}
                     refreshing={refreshing}
                     moreLoading={moreLoading}

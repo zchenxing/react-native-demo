@@ -40,7 +40,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         resetScrollOffsetY: 0
     })
 
-    const { addDataToComment} = useSheetDataStore()
+    const {addDataToComment} = useSheetDataStore()
 
     const scrollOffsetY = useDebounce(state.scrollOffsetY, { wait: 100 });
 
@@ -69,8 +69,6 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                     resetScrollOffsetY: offsetY
                 })
             }, 100)
-
-
         }
     }))
 
@@ -123,10 +121,10 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
             keyboardHandlerEnabled={false}
             onClose={onClose}
             springOffset={150}
+            animated={false}
         >
 
             <View style={{height: screenHeight * 0.7 }} />
-
             <View style={styles.sheetView}>
 
                 <View style={styles.sheetHeader}>

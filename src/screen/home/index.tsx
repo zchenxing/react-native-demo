@@ -51,7 +51,8 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     };
 
     const onPressSearch = () => {
-        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_SEARCH);
+        // props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_SEARCH);
+        props.navigation.push('Test1')
     };
 
     const onPublish = () => {

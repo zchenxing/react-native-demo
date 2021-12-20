@@ -63,7 +63,6 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 // }}
             >
                 <PostList
-                    sheetId={INTELINK_SCREEN_NAME.SCREEN_SEARCH_RESULT}
                     dataSource={postList}
                     refreshing={refreshing}
                     moreLoading={moreLoading}

@@ -4,7 +4,6 @@ import {
     StatusBar,
     View,
     Animated,
-    DeviceEventEmitter,
     StyleSheet,
 } from 'react-native';
 import PersonalInfo from './info';
@@ -17,7 +16,6 @@ import PostCommentSheet from '../components/post-comments-sheet';
 import { PersonalOtherEnum } from "./type";
 import { NavigateProps } from "../../interface";
 import { INTELINK_SCREEN_NAME } from "../../routes/screen-name";
-import { sheetDataStore } from "../../store/provider";
 
 
 class PersonalScreen extends React.Component<NavigateProps, any> {
@@ -48,14 +46,6 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
             // @ts-ignore
             useNativeDriver: true,
         });
-    }
-
-
-    componentWillUnmount() {
-        DeviceEventEmitter.emit(
-            this.routeParams.lastScreen,
-            sheetDataStore.sheetData,
-        );
     }
 
 
@@ -158,7 +148,6 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
 
 
                 <PostCommentSheet
-                    sheetId={''}
                     visible={this.state.commentVisible}
                     onPressAvatar={this.onPressAvatar}
                     onClose={() => this.setState({commentVisible: false})}

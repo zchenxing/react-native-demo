@@ -1,7 +1,5 @@
 export interface PostCommentProps {
-    cRef: any
     visible: boolean
-    sheetId: string
     onClose: () => void
     onPressAvatar: () => void
 }

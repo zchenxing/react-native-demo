@@ -79,13 +79,13 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
 
             {props.subComment && (
                 <View style={{paddingLeft: 40}}>
-                    {[...postList].splice(0, 2).map(data => (
-                        <CommentItem
-                            key={data.id}
-                            onPressAvatar={props.onPressAvatar}
-                            onPressReply={props.onPressReply}
-                        />
-                    ))}
+                    {/*{[...postList].splice(0, 2).map(data => (*/}
+                    {/*    <CommentItem*/}
+                    {/*        key={data.id}*/}
+                    {/*        onPressAvatar={props.onPressAvatar}*/}
+                    {/*        onPressReply={props.onPressReply}*/}
+                    {/*    />*/}
+                    {/*))}*/}
 
                     <TouchableHighlight
                         style={styles.moreReplies}

@@ -1,4 +1,3 @@
-import 'react-native-reanimated';
 import React from 'react';
 import {NavigateProps} from '../../../interface';
 import AweSimpleNavigator from '../../../components/awe-simple-navigator';

@@ -1,7 +1,5 @@
 
 interface PostListProps {
-    cRef: any
-    sheetId: string
     dataSource: any[]
     refreshing: boolean
     moreLoading: boolean

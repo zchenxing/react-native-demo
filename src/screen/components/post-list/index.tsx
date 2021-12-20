@@ -30,15 +30,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         commentVisible: false
     })
 
-    React.useImperativeHandle(props.cRef, () => ({
-        openCommentSheet: (offsetY: number) => {
-            setState({
-                commentVisible: true
-            })
-            sheetRef.current.setScrollOffsetY(offsetY)
-        }
-    }))
-
 
     const loadMore = () => {
         return props.moreLoading ? (
@@ -75,6 +66,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      * 查看评论
      */
     const onPressComment = () => {
+        console.log('12e12e');
         setState({
             commentVisible: true
         })
@@ -116,8 +108,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             />
 
             <PostCommentSheet
-                cRef={sheetRef}
-                sheetId={props.sheetId}
                 onPressAvatar={props.onPressPersonal}
                 visible={state.commentVisible}
                 onClose={() => setState({commentVisible: false})}

@@ -8,6 +8,7 @@ import {
     TouchableHighlight,
     BackHandler,
     View,
+    ActionSheetIOS,
     Alert
 } from 'react-native';
 import {themeColor, themeLightColor} from '../../assets/styles';
@@ -102,7 +103,7 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 isPreview: true,
                 numberOfColumn: 3,
                 maxSelectedAssets: 9,
-                usedCameraButton: false,
+                usedCameraButton: true,
                 allowedLivePhotos: false,
             });
 

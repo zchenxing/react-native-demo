@@ -1,5 +1,6 @@
 
 interface PostListProps {
+    api: string
     dataSource: any[]
     refreshing: boolean
     moreLoading: boolean

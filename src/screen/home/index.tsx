@@ -5,6 +5,7 @@ import ScreenBase from '../components/screen-base';
 import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import PostList from '../components/post-list';
 import {postList} from '../../mock';
+import apis from "../../network/apis";
 
 const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
@@ -30,7 +31,6 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const onPressSearch = () => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_SEARCH);
-        // props.navigation.push('Test1')
     };
 
     const onPublish = () => {
@@ -52,6 +52,7 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             <HomeNavigator onSearch={onPressSearch} onPublish={onPublish} />
             <ScreenBase>
                 <PostList
+                    api={apis.post.list}
                     dataSource={postList}
                     refreshing={refreshing}
                     moreLoading={moreLoading}

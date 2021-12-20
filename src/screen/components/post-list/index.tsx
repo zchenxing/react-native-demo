@@ -21,14 +21,14 @@ interface IState {
 
 const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
-    const sheetRef = React.useRef<any>(null)
-
     const [state, setState] = useSetState<IState>({
         pictureVisible: false,
         pictureStartIndex: 0,
         pictureList: [],
         commentVisible: false
     })
+
+
 
 
     const loadMore = () => {

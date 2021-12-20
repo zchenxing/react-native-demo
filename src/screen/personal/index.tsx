@@ -61,6 +61,11 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
         this.props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_FOLLOW_LIST)
     }
 
+    onPressEdit = () => {
+        this.props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_EDIT_PERSONAL_INFO)
+    }
+
+
     onPressAvatar = () => {
         this.props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL)
     }
@@ -125,9 +130,8 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
                                     <PersonalInfo
                                         imageOffsetY={this.state.navOpacityOffset}
                                         onScrollOffset={this.onScrollOffset}
-                                        onPressFollowList={
-                                            this.onPressFollowList
-                                        }
+                                        onPressFollowList={this.onPressFollowList}
+                                        onPressEdit={this.onPressEdit}
                                     />
                                 )
                             } else {

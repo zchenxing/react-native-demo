@@ -4,6 +4,7 @@ import {
     View,
     StyleSheet,
     TouchableHighlight,
+    ActivityIndicator,
 } from 'react-native';
 import {screenHeight, screenWidth} from '../../../config/contant';
 import {Image} from 'react-native-elements';
@@ -17,11 +18,11 @@ import {useSetState} from 'ahooks';
 import BottomSheet, {BottomSheetVirtualizedList} from '@gorhom/bottom-sheet';
 
 interface IState {
-    contentText: string
-    scrollOffsetY: number
-    keyboardVisible: boolean
-    resetScrollOffsetY: number
-    dataSource: any[]
+    contentText: string;
+    scrollOffsetY: number;
+    keyboardVisible: boolean;
+    resetScrollOffsetY: number;
+    dataSource: any[];
 }
 
 const PostCommentSheet: React.FC<PostCommentProps> = (
@@ -34,31 +35,25 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         scrollOffsetY: 0,
         keyboardVisible: false,
         resetScrollOffsetY: 0,
-        dataSource: []
+        dataSource: [],
     });
 
     React.useEffect(() => {
-
         if (props.visible) {
-            actionSheetRef.current.snapToIndex(1)
-            getDataSource()
+            actionSheetRef.current.snapToIndex(1);
+            getDataSource();
         } else {
-            actionSheetRef.current.snapToIndex(-1)
+            actionSheetRef.current.snapToIndex(-1);
         }
-
-
-
     }, [props.visible]);
-
 
     const getDataSource = () => {
         setTimeout(() => {
             setState({
-                dataSource: Array.from(new Array(10).keys())
-            })
-        }, 600)
-    }
-
+                dataSource: Array.from(new Array(10).keys()),
+            });
+        }, 600);
+    };
 
     // callbacks
     const handleSheetChanges = React.useCallback((index: number) => {
@@ -94,16 +89,14 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
     return (
         <>
-
-            {
-                props.visible &&
+            {props.visible && (
                 <TouchableHighlight
                     underlayColor={'none'}
                     style={styles.cover}
                     onPress={() => onClose(true)}>
                     <View />
                 </TouchableHighlight>
-            }
+            )}
 
             <BottomSheet
                 ref={actionSheetRef}
@@ -117,23 +110,27 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 )}>
 
 
-                <BottomSheetVirtualizedList
-                    style={styles.sheetContent}
-                    getItemCount={() => state.dataSource.length}
-                    getItem={(data, index) => data[index]}
-                    data={state.dataSource}
-                    keyExtractor={i => `${i}`}
-                    renderItem={() => (
-                        <CommentItem
-                            showSeparator={true}
-                            subComment={[]}
-                            onPressAvatar={onPressAvatar}
-                            onPressReply={onPressReply}
-                        />
-                    )}
-                />
-
-
+                {state.dataSource.length ? (
+                    <BottomSheetVirtualizedList
+                        style={styles.sheetContent}
+                        getItemCount={() => state.dataSource.length}
+                        getItem={(data, index) => data[index]}
+                        data={state.dataSource}
+                        keyExtractor={i => `${i}`}
+                        renderItem={() => (
+                            <CommentItem
+                                showSeparator={true}
+                                subComment={[]}
+                                onPressAvatar={onPressAvatar}
+                                onPressReply={onPressReply}
+                            />
+                        )}
+                    />
+                ) : (
+                    <View style={{flex: 1, justifyContent: 'center'}}>
+                        <ActivityIndicator />
+                    </View>
+                )}
 
                 <TouchableHighlight
                     underlayColor={'none'}
@@ -175,7 +172,6 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                         </TouchableHighlight>
                     </View>
                 </TouchableHighlight>
-
             </BottomSheet>
 
             <AweKeyboard
@@ -185,8 +181,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 onChangeText={contentText => setState({contentText})}
             />
         </>
-    )
-
+    );
 };
 
 const styles = StyleSheet.create({

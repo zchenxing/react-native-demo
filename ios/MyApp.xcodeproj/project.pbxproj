@@ -536,7 +536,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = test.native.MyApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "test.druids-native.MyApp";
 				PRODUCT_NAME = MyApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -569,7 +569,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = test.native.MyApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "test.druids-native.MyApp";
 				PRODUCT_NAME = MyApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

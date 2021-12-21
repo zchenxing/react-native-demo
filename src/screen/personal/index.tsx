@@ -4,8 +4,8 @@ import {
     StatusBar,
     View,
     Animated,
-    StyleSheet,
-} from 'react-native';
+    StyleSheet, Text
+} from "react-native";
 import PersonalInfo from './info';
 import { screenWidth } from "../../config/contant";
 import UserNavigator from '../components/user-navigator';
@@ -108,7 +108,7 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
                         ref={ref => (this.flatListRef = ref)}
                         style={{flex: 1, width: screenWidth}}
                         scrollEventThrottle={1}
-                        data={Array.from(new Array(4).keys())}
+                        data={Array.from(new Array(14).keys())}
                         onScroll={Animated.event(
                             [
                                 {
@@ -136,14 +136,17 @@ class PersonalScreen extends React.Component<NavigateProps, any> {
                                 )
                             } else {
                                 return (
-                                    <PostItem
-                                        {...row}
-                                        hiddenFollow={true}
-                                        onPressDetail={() => {}}
-                                        onPressPicture={() => {}}
-                                        onPressComment={() => this.setState({commentVisible: true})}
-                                        onPressPersonal={() => {}}
-                                    />
+                                    <View>
+                                        <Text>123</Text>
+                                    </View>
+                                    // <PostItem
+                                    //     postItem={row.item}
+                                    //     hiddenFollow={true}
+                                    //     onPressDetail={() => {}}
+                                    //     onPressPicture={() => {}}
+                                    //     onPressComment={() => this.setState({commentVisible: true})}
+                                    //     onPressPersonal={() => {}}
+                                    // />
                                 );
                             }
                         }}

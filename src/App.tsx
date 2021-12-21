@@ -5,10 +5,16 @@ import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import { intelinkRoute } from "./routes";
 import { globalStyles } from "./assets/styles";
+import myToken from "./network/token";
 
 const Stack = createStackNavigator();
 
 const App = () => {
+
+    React.useEffect(() => {
+        myToken.getToken()
+    }, [])
+
     return (
         <SafeAreaProvider style={globalStyles.container}>
             <NavigationContainer>

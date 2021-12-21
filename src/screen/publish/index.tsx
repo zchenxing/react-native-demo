@@ -8,12 +8,11 @@ import {
     TouchableHighlight,
     BackHandler,
     View,
-    ActionSheetIOS,
-    Alert
-} from 'react-native';
+    Alert, DeviceEventEmitter
+} from "react-native";
 import {themeColor, themeLightColor} from '../../assets/styles';
 import {NavigateProps, PictureProps} from '../../interface';
-import {isIOS, screenWidth} from '../../config/contant';
+import { EventEmitterName, isIOS, screenWidth } from "../../config/contant";
 import {DragSortableView} from 'react-native-drag-sort';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import AwePicturePreview from '../../components/awe-picture-preview';
@@ -24,6 +23,10 @@ import {observer} from 'mobx-react';
 import {useSmartDataStore} from '../../store/provider';
 import {useSetState} from 'ahooks'
 import {useLanguage} from '../../language';
+import server from '../../network';
+import apis from '../../network/apis';
+import Toast from 'react-native-simple-toast';
+import Utils from "../../utils";
 
 const pictureWidth = (screenWidth - 20) / 3;
 
@@ -43,7 +46,7 @@ interface IState {
 
 const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
-    const {publishTagId} = useSmartDataStore();
+    const {publishTag} = useSmartDataStore();
     const inputRef = React.useRef<any>(null)
     const contentText = React.useRef<any>('')
     const backListener = React.useRef<any>(null)
@@ -170,8 +173,26 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     }
 
 
-    const onPressSubmit = () => {
-        console.log(state.postContent);
+    const onPressSubmit = async () => {
+        try {
+
+            const data = {
+                label: publishTag.name,
+                content: Utils.removeSpaceAndEnter(state.postContent)
+            }
+
+            console.log('发布内容', data);
+
+            await server.post(apis.post.create, data)
+            Toast.show('发布成功')
+            // 刷新首页列表
+            DeviceEventEmitter.emit(EventEmitterName.RefreshHome)
+
+            props.navigation.goBack()
+        } catch (err) {
+            console.log(err);
+        }
+
     }
 
     return (
@@ -188,7 +209,7 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 onPress={onPressChooseTag}>
                 <View style={styles.labelHeader}>
                     <Text style={styles.labelText}>
-                        {publishTagId ? publishTagId : 'Choose category'}
+                        {publishTag ? publishTag.name : 'Choose category'}
                     </Text>
                 </View>
             </TouchableHighlight>

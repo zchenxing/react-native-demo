@@ -1,11 +1,6 @@
+import { PostContentProps } from "../../../interface/work";
 
-interface PostListProps {
-    api: string
-    dataSource: any[]
-    refreshing: boolean
-    moreLoading: boolean
-    onPressDetail: () => void
-    onRefreshData: () => void
-    onLoadMoreData: () => void
+export interface PostListProps {
+    onPressDetail: (postContent: PostContentProps) => void
     onPressPersonal: () => void
 }

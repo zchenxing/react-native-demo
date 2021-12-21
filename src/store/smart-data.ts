@@ -2,10 +2,10 @@ import { action, observable } from 'mobx'
 
 export class SmartDataStore {
 
-    @observable publishTagId: string = ''
+    @observable publishTag: any = null
 
-    @action.bound setPublishTagId = (id: string) => {
-        this.publishTagId = id
+    @action.bound setPublishTag = (tag: any) => {
+        this.publishTag = tag
     }
 
 }

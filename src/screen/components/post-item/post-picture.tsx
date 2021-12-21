@@ -99,14 +99,14 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
     },
     imageView: {
-        paddingRight: 8,
-        paddingBottom: 6,
+        paddingRight: 4,
+        paddingBottom: 4,
         position: 'relative',
     },
     image: {
         width: '100%',
         height: '100%',
-        borderRadius: 8,
+        borderRadius: 5,
         overflow: 'hidden',
         borderColor: '#eee',
         borderWidth: 1

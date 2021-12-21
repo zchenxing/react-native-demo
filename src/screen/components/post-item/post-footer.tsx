@@ -1,48 +1,55 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import Utils from '../../../utils';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Toast from 'react-native-simple-toast';
+import IconFont from '../../../iconfont';
 
 interface PostFooterProps {
+    isCollection: boolean
+    createdAt: string
+    // 评论总数
+    commentTotal: number
+    onPressCollection: () => void
     onPressComment: () => void
 }
 
 const PostFooter: React.FC<PostFooterProps> = (props: PostFooterProps) => {
-    const [collection, setCollection] = React.useState(false);
+    // const [collection, setCollection] = React.useState(false);
 
-    const onPressCollect = (status: boolean) => {
-        Toast.show(status ? '收藏' : '取消收藏');
-        setCollection(status);
+    const onPressCollect = (status?: boolean) => {
+        // Toast.show(status ? '收藏' : '取消收藏');
+        // setCollection(status);
+        props.onPressCollection()
     };
 
 
     return (
         <View style={styles.container}>
-            <Text>{Utils.getPostTime('2021-12-05 12:00:33')}</Text>
+            <Text style={{color: '#999'}}>{Utils.getPostTime(props.createdAt)}</Text>
 
             <View style={styles.right}>
+                {/* DESC --- 收藏 --- */}
                 <TouchableHighlight
                     underlayColor={'none'}
-                    onPress={() => onPressCollect(!collection)}>
+                    onPress={() => onPressCollect()}>
                     <View style={{padding: 5, paddingRight: 10}}>
-                        {collection ? (
-                            <Icon
-                                name={'star'}
-                                style={{fontSize: 20, color: '#FFD575'}}
-                            />
+                        {!props.isCollection ? (
+                            <IconFont name={'weishoucang'} size={20} />
                         ) : (
-                            <Icon name={'star-o'} style={{fontSize: 20}} />
+                            <IconFont name={'yishoucang'} size={20} color={'#FFD575'} />
                         )}
                     </View>
                 </TouchableHighlight>
+                {/* DESC --- 评论 --- */}
                 <TouchableHighlight underlayColor={'none'} onPress={props.onPressComment}>
                     <View style={{padding: 5, flexDirection: 'row'}}>
-                        <Icon
-                            name={'commenting-o'}
-                            style={styles.commentIcon}
+                        <IconFont
+                            name={'pinglun'}
+                            size={20}
                         />
-                        <Text>99+</Text>
+                        <Text>
+                            {' '}{props.commentTotal}
+                        </Text>
                     </View>
                 </TouchableHighlight>
             </View>
@@ -58,15 +65,6 @@ const styles = StyleSheet.create({
     },
     right: {
         flexDirection: 'row',
-    },
-    commentIcon: {
-        fontSize: 20,
-        paddingRight: 5,
-        transform: [
-            {
-                translateY: -2,
-            },
-        ],
     },
 });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, TouchableHighlight} from 'react-native';
+import {StyleSheet, TouchableHighlight} from 'react-native';
 import {PostItemProps} from './type';
 import PostHeader from './post-header';
 import PostArticle from './post-article';
@@ -10,33 +10,51 @@ import PostAnimalCard from './post-animal-card';
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
+    React.useEffect(() => {
+        // console.log('=-abnsbdiuubiuqwiud', props.postItem);
+    }, [])
+
     const onPressPicture = (startIndex: number) => {
         props.onPressPicture(pictureList, startIndex);
     };
 
+    const onPressCollection = () => {
+        props.onPressCollection()
+    }
+
     return (
         <TouchableHighlight
             style={styles.itemContent}
-            onPress={props.onPressDetail}
+            onPress={() => props.onPressDetail(props.postItem)}
             underlayColor={'#eee'}>
             <>
                 <PostHeader
+                    userNickname={props.postItem.user_info.nickname}
+                    userAvatar={props.postItem.user_info.avatar}
+                    label={props.postItem.label}
                     handleUser={props.onPressPersonal}
                     hiddenFollow={props.hiddenFollow}
                 />
 
-                <PostArticle />
+                <PostArticle contentText={props.postItem.content} />
 
-                {props.index % 2 !== 0 ? (
-                    <PostPicture
-                        pictureUri={pictureList}
-                        onPressPicture={onPressPicture}
-                    />
-                ) : (
-                    <PostAnimalCard />
-                )}
+                {/*{props.index % 2 !== 0 ? (*/}
+                {/*    <PostPicture*/}
+                {/*        pictureUri={pictureList}*/}
+                {/*        onPressPicture={onPressPicture}*/}
+                {/*    />*/}
+                {/*) : (*/}
+                {/*    <PostAnimalCard />*/}
+                {/*)}*/}
 
-                <PostFooter onPressComment={props.onPressComment} />
+                {/*<PostAnimalCard />*/}
+
+                <PostFooter
+                    isCollection={!!props.postItem.user_events}
+                    createdAt={props.postItem.created_at}
+                    commentTotal={props.postItem.total_comment}
+                    onPressCollection={onPressCollection}
+                    onPressComment={props.onPressComment} />
             </>
         </TouchableHighlight>
     );
@@ -45,8 +63,10 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 const styles = StyleSheet.create({
     itemContent: {
         padding: 20,
-        paddingBottom: 20,
-        backgroundColor: '#fff'
+        paddingBottom: 16,
+        backgroundColor: '#fff',
+        borderBottomWidth: 10,
+        borderBottomColor: '#F8F8F8'
     },
 });
 

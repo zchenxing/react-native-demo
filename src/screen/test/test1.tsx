@@ -1,95 +1,59 @@
 import 'react-native-reanimated'
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableHighlight, ScrollView } from "react-native";
+import { StyleSheet, View } from "react-native";
 import AweSimpleNavigator from '../../components/awe-simple-navigator';
 import { NavigateProps } from "../../interface";
-import BottomSheet, {BottomSheetFlatList} from '@gorhom/bottom-sheet';
-import { Button } from "react-native-elements";
-import AweKeyboard from "../../components/awe-keyboard";
-
+import { Button, Input } from "react-native-elements";
+import apis from '../../network/apis';
+import server from '../../network';
+import myToken from '../../network/token';
+import apiConfig from '../../network/config';
 
 const Test1: React.FC<NavigateProps> = (props: NavigateProps) => {
 
-    const bottomSheetRef = React.useRef<any>(null);
+    const [username, setUsername] = React.useState<string>('')
+    const [password, setPassword] = React.useState<string>('')
+    const [nickname, setNickname] = React.useState<string>('')
 
-    const [sheetVisible, setSheetVisible] = React.useState(false)
+    const onLogin = async () => {
 
-    const [keyboardVisible, setKeyboardVisible] = React.useState(false)
-    const [contentText, setContentText] = React.useState('')
+        try {
+            const res = await server.post(apis.user.login, {
+                username: username,
+                password: apiConfig.generatePassword(username, password)
+            })
+            myToken.setToken(res.headers['x-druid-authentication'])
+            props.navigation.goBack()
 
-
-    // variables
-    const snapPoints = React.useMemo(() => [1, 500], []);
-
-    // callbacks
-    const handleSheetChanges = React.useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
-        if (index === 0) {
-            onClose()
+        } catch (err) {
+            console.log(err);
         }
-    }, []);
+    }
 
-
-    const onClose = () => {
-        bottomSheetRef.current.snapToPosition(1)
-        setTimeout(() => {
-            setSheetVisible(false)
-        }, 100)
+    const onRegister = async () => {
+        try {
+            const res = await server.post(apis.user.register, {
+                username: username,
+                nickname: nickname,
+                password: apiConfig.generatePassword(username, password)
+            })
+            console.log(res);
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     return (
         <View style={{flex: 1}}>
-            <AweSimpleNavigator centerTitle={'Test1'} goBack={props.navigation.goBack} />
 
-            <Button title={'打开'} onPress={() => {
-                setSheetVisible(true)
-            }} />
+            <AweSimpleNavigator centerTitle={'登录注册'} goBack={props.navigation.goBack} />
 
-            <Button title={'关闭'} onPress={() => {}} />
+            <Input placeholder={"账号"} autoCompleteType={undefined} onChangeText={setUsername}  />
+            <Input placeholder={'密码'} autoCompleteType={undefined} onChangeText={setPassword} />
+            <Input placeholder={'注册用户名'} autoCompleteType={undefined} onChangeText={setNickname} />
 
-
-
-            <AweKeyboard
-                visible={keyboardVisible}
-                contentText={contentText}
-                onChangeText={txt => setContentText(txt)}
-                onClose={() => setKeyboardVisible(false)} />
-
-
-            {
-                sheetVisible &&
-                <View style={styles.cover}>
-
-                    <TouchableHighlight
-                        underlayColor={'none'}
-                        style={styles.cover}
-                        onPress={onClose}>
-                        <View />
-                    </TouchableHighlight>
-
-                    <BottomSheet
-                        ref={bottomSheetRef}
-                        index={1}
-                        snapPoints={snapPoints}
-                        onChange={handleSheetChanges}
-                    >
-                        <View style={{flex: 1}}>
-                            <Button title={'下一页'} onPress={() => props.navigation.push('Test2')} />
-
-                            <BottomSheetFlatList
-                                data={Array.from(new Array(100).keys())}
-                                keyExtractor={(i) => `${i}`}
-                                renderItem={() => <View><Text>qwd</Text></View>}
-
-                            />
-
-
-                        </View>
-                    </BottomSheet>
-                </View>
-
-
-            }
+            <Button title={'登录'} onPress={onLogin} />
+            <Button title={'注册'} onPress={onRegister} />
 
         </View>
     );

@@ -1,19 +1,13 @@
 import React from 'react';
-import {Image, Text, StyleSheet, View} from 'react-native';
+import {Image, Text, StyleSheet, View, TouchableHighlight} from 'react-native';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {screenWidth} from '../../../config/contant';
+import { NetworkStatus } from "../../../enum";
 
-enum NetworkStatus {
-    // 未知类型
-    Unknown,
-    // 有网
-    Working,
-    // 没有网
-    None,
-}
 
 interface ScreenBaseProps {
     children?: React.ReactNode;
+    onReload?: () => void
     nothingPage?: {
         picture: any;
         title?: string;
@@ -34,7 +28,7 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
             setNetworking(NetworkStatus.Working);
         }
 
-    }, [netInfo]);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -50,16 +44,22 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
                     </Text>
                 </View>
             ) : props.nothingPage ? (
-                <View style={styles.noNetwork}>
-                    <Image
-                        style={styles.noNetworkImg}
-                        resizeMode={'contain'}
-                        source={props.nothingPage.picture}
-                    />
-                    <Text style={styles.noNetworkText}>
-                        {props.nothingPage.title || ''}
-                    </Text>
-                </View>
+                <TouchableHighlight
+                    style={styles.noNetwork}
+                    underlayColor={'none'}
+                    onPress={() => props.onReload && props.onReload}
+                >
+                    <>
+                        <Image
+                            style={styles.noNetworkImg}
+                            resizeMode={'contain'}
+                            source={props.nothingPage.picture}
+                        />
+                        <Text style={styles.noNetworkText}>
+                            {props.nothingPage.title || ''}
+                        </Text>
+                    </>
+                </TouchableHighlight>
             ) : (
                 props.children
             )}

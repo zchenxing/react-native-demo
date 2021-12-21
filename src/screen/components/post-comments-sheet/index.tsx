@@ -4,8 +4,8 @@ import {
     View,
     StyleSheet,
     TouchableHighlight,
-    ActivityIndicator,
-} from 'react-native';
+    ActivityIndicator, StatusBar
+} from "react-native";
 import {screenHeight, screenWidth} from '../../../config/contant';
 import {Image} from 'react-native-elements';
 import {useLanguage} from '../../../language';
@@ -16,6 +16,7 @@ import CommentItem from './comment-item';
 import {themeColor} from '../../../assets/styles';
 import {useSetState} from 'ahooks';
 import BottomSheet, {BottomSheetVirtualizedList} from '@gorhom/bottom-sheet';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 interface IState {
     contentText: string;
@@ -40,10 +41,10 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
     React.useEffect(() => {
         if (props.visible) {
-            actionSheetRef.current.snapToIndex(1);
+            actionSheetRef.current && actionSheetRef.current.snapToIndex(1);
             getDataSource();
         } else {
-            actionSheetRef.current.snapToIndex(-1);
+            actionSheetRef.current && actionSheetRef.current.snapToIndex(-1);
         }
     }, [props.visible]);
 
@@ -84,17 +85,18 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
         setTimeout(() => {
             props.onClose();
-        }, 0);
+        }, 100);
     };
 
     return (
-        <>
+         <>
             {props.visible && (
                 <TouchableHighlight
                     underlayColor={'none'}
                     style={styles.cover}
                     onPress={() => onClose(true)}>
-                    <View />
+                    <View>
+                    </View>
                 </TouchableHighlight>
             )}
 
@@ -189,7 +191,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        top: -100,
+        top: -120,
         bottom: 0,
         backgroundColor: 'rgba(1, 1, 1, .3)',
     },

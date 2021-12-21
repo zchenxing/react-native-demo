@@ -1,6 +1,8 @@
 
 const apis: any = {
     user: {
+        register: '/v1/register',
+        login: '/v1/login',
         // 个人用户信息，get | put
         myself: '/v1/user/',
         // 查看用户信息
@@ -15,7 +17,7 @@ const apis: any = {
     // 帖子API
     post: {
         // 新建帖子
-        create: '/v1/theme',
+        create: '/v1/theme/',
         // 帖子 查看 | 删除
         one: (postId: string) => `/v1/theme/id/${postId}`,
         // 发帖列表

@@ -22,6 +22,17 @@ class DruidStorage {
             throw err
         }
     }
+
+
+    removeData = async (name: string) => {
+        try {
+            await AsyncStorage.removeItem(name)
+        } catch (err) {
+            console.error('Storage remove data error');
+            throw err
+        }
+
+    }
 }
 
 

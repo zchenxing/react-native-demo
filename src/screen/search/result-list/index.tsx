@@ -64,7 +64,6 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 // }}
             >
                 <PostList
-                    api={apis.post.search}
                     dataSource={postList}
                     refreshing={refreshing}
                     moreLoading={moreLoading}

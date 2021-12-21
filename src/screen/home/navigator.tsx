@@ -4,13 +4,12 @@ import {
     TouchableHighlight,
     View,
     Text,
-    Image,
     StatusBar,
 } from 'react-native';
 import { Header } from 'react-native-elements';
 import { screenWidth } from "../../config/contant";
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import IconFont from '../../iconfont';
 
 interface HomeNavigatorProps {
     onSearch: () => void;
@@ -23,7 +22,7 @@ const searchWidth = screenWidth - 80
 const HomeNavigator: React.FC<HomeNavigatorProps> = (props: HomeNavigatorProps) => {
     return (
         <>
-            <StatusBar barStyle={'dark-content'} backgroundColor="#fff" />
+
             <Header
                 backgroundColor={'#fff'}
                 leftComponent={
@@ -48,13 +47,19 @@ const HomeNavigator: React.FC<HomeNavigatorProps> = (props: HomeNavigatorProps) 
                         onPress={props.onPublish}
                         underlayColor="none">
                         <View style={styles.publishBase}>
-                            <Image
-                                style={styles.publishPlus}
-                                source={require('../../assets/images/icons/add.png')}
-                            />
+                            <IconFont name={'fawen'} />
                         </View>
                     </TouchableHighlight>
                 }
+            />
+
+            <StatusBar
+                animated={true}
+                // @ts-ignore
+                androidtranslucent={true}
+                barStyle="dark-content"
+                translucent={true}
+                backgroundColor={'rgba(1, 1, 1, 0)'}
             />
         </>
     );

@@ -5,3 +5,11 @@ export const isIOS = Platform.OS === 'ios'
 export const screenWidth = Dimensions.get('window').width
 
 export const screenHeight = Dimensions.get('window').height
+
+
+/**
+ * 统一配置事件监听名
+ */
+export const EventEmitterName = {
+    RefreshHome: 'RefreshHome'
+}

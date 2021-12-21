@@ -30,7 +30,7 @@ export interface NavigateProps {
 }
 
 
-
+// 本地图片接口
 export interface PictureProps {
     path: string;
     fileName: string;
@@ -46,5 +46,8 @@ export interface PictureProps {
     thumbnail?: string;
     creationDate?: string;
     uri: string | any
-
 }
+
+
+
+

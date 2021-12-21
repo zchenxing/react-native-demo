@@ -3,13 +3,14 @@ import { useLanguage } from "../language";
 
 const Utils = {
 
+
     /**
      * 显示发布时间，发布时间与当前时间的时间差
      * 0 < time <120s       显示 刚刚
      * 120s <= time < 60min 显示 2～59分钟前
-     * 1h <= time < 24h      显示 n小时前
-     * 24h <= time < 48h    显示 昨天
-     * 48h <= time < 168h   发布当天到现在间隔n天, 显示 n+1天前
+     * 1h <= time < 24h     显示 n小时前
+     * 24h <= time < 48h 改为-> day === 1    显示 昨天
+     * 48h <= time < 168h 改为-> day > 1   发布当天到现在间隔n天, 显示 n+1天前
      * 是否为今年             显示 MM-DD
      * 其余                  显示 YYYY-MM-DD
      */
@@ -24,7 +25,7 @@ const Utils = {
 
 
         // 0 < time <120s       显示 刚刚
-        if (seconds > 0 && seconds < 120) {
+        if (seconds > -1 && seconds < 120) {
             return useLanguage.just_now
         }
         // 120s <= time < 60min 显示 2～59分钟前
@@ -43,7 +44,8 @@ const Utils = {
             return useLanguage.yesterday
         }
         // 48h <= time < 168h   发布当天到现在间隔n天, 显示 n+1天前
-        else if (day > 1) {
+        else if (day > 1 && seconds < 168 * 3600) {
+            console.log(seconds);
             const days = dayjs().diff(time, 'days')
             return useLanguage.x_day_ago(days)
         }
@@ -80,6 +82,7 @@ const Utils = {
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
+
 
 
 }

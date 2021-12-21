@@ -6,12 +6,40 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSmartDataStore } from "../../../store/provider";
 import { themeColor } from "../../../assets/styles";
 
+
+const PostTags = [
+    {
+        icon: '',
+        name: 'Birds'
+    },
+    {
+        icon: '',
+        // 哺乳
+        name: 'Mammals'
+    },
+    {
+        icon: '',
+        name: 'Fishes'
+    },
+    {
+        icon: '',
+        // 爬行动物
+        name: 'Reptiles'
+    },
+    {
+        icon: '',
+        // 爬行动物
+        name: 'Amphibian'
+    }
+]
+
+
 const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
-    const {setPublishTagId} = useSmartDataStore()
+    const {setPublishTag} = useSmartDataStore()
 
-    const onSelectTag = () => {
-        setPublishTagId(`${Math.random()}`)
+    const onSelectTag = (tag: any) => {
+        setPublishTag(tag)
         props.navigation.goBack()
     }
 
@@ -23,11 +51,11 @@ const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             />
 
             <ScrollView style={styles.container}>
-                {Array.from(new Array(7).keys()).map(i => (
+                {PostTags.map(tag => (
                     <TouchableHighlight
-                        key={i}
+                        key={tag.name}
                         style={styles.listItem}
-                        onPress={onSelectTag}
+                        onPress={() => onSelectTag(tag)}
                         underlayColor={'#efefef'}>
                         <>
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -35,7 +63,9 @@ const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                     name={'bookmark'}
                                     style={{marginRight: 10, color: themeColor}}
                                 />
-                                <Text style={{fontSize: 15}}>qwd</Text>
+                                <Text style={{fontSize: 15}}>
+                                    {tag.name}
+                                </Text>
                             </View>
 
                             <Icon name={'angle-right'} style={{fontSize: 16}} />

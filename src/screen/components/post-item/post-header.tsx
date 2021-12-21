@@ -8,6 +8,10 @@ import FollowButton from '../follow-button';
 import { useSetState } from "ahooks";
 
 interface IProps {
+    userAvatar?: string
+    userNickname?: string
+    label?: string
+
     hiddenFollow?: boolean
     handleUser: () => void;
 }
@@ -56,16 +60,18 @@ const PostHeader: React.FC<IProps> = (props: IProps) => {
                     <Image
                         style={postHeaderStyles.avatar}
                         source={{
-                            uri: avatarUrl,
+                            uri: props.userAvatar ? props.userAvatar : avatarUrl,
                         }}
                     />
 
                     <View style={{justifyContent: 'space-between'}}>
                         <Text style={postHeaderStyles.nickname}>
-                            Donald John Trump
+                            {props.userNickname || '——'}
                         </Text>
                         <View style={{flexDirection: 'row'}}>
-                            <Text style={postHeaderStyles.tag}>Birds</Text>
+                            <Text style={postHeaderStyles.tag}>
+                                {props.label}
+                            </Text>
                         </View>
                     </View>
                 </>

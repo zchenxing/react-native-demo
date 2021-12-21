@@ -8,7 +8,8 @@
         "start": "react-native start",
         "test": "jest",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-        "pod": "cd ios && arch -x86_64 pod install"
+        "pod": "cd ios && arch -x86_64 pod install",
+        "iconfont": "npx iconfont-rn"
     },
     "dependencies": {
         "@babel/plugin-proposal-decorators": "^7.16.4",
@@ -22,6 +23,7 @@
         "ahooks": "^3.0.1",
         "axios": "^0.24.0",
         "dayjs": "^1.10.7",
+        "js-sha256": "^0.9.0",
         "mobx": "^4.15.5",
         "mobx-react": "^6.2.5",
         "react": "17.0.2",

@@ -7,20 +7,17 @@ import {pictureList} from '../../../mock';
 import PostPicture from './post-picture';
 import PostFooter from './post-footer';
 import PostAnimalCard from './post-animal-card';
+import { PostUserEventType } from "../../../enum";
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
     React.useEffect(() => {
-        // console.log('=-abnsbdiuubiuqwiud', props.postItem);
     }, [])
 
     const onPressPicture = (startIndex: number) => {
         props.onPressPicture(pictureList, startIndex);
     };
 
-    const onPressCollection = () => {
-        props.onPressCollection()
-    }
 
     return (
         <TouchableHighlight
@@ -50,10 +47,14 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                 {/*<PostAnimalCard />*/}
 
                 <PostFooter
-                    isCollection={!!props.postItem.user_events}
+                    isCollection={
+                        props.postItem.event_types.indexOf(
+                            PostUserEventType.Collection,
+                        ) > -1
+                    }
                     createdAt={props.postItem.created_at}
                     commentTotal={props.postItem.total_comment}
-                    onPressCollection={onPressCollection}
+                    onPressCollection={props.onPressCollection}
                     onPressComment={props.onPressComment} />
             </>
         </TouchableHighlight>

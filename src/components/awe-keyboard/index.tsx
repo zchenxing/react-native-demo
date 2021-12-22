@@ -13,9 +13,12 @@ import { screenHeight, screenWidth } from "../../config/contant";
 import { useLanguage } from "../../language";
 import {KeyboardAccessoryView} from 'react-native-keyboard-accessory';
 import { themeColor } from "../../assets/styles";
-import Utils from '../../utils';
+import {useNetInfo} from '@react-native-community/netinfo'
+import Utils from '../../help';
 
 const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
+
+    const netInfo = useNetInfo()
     const inputRef = React.useRef<any>(null);
     const [textValue, setTextValue] = React.useState<string>('')
 
@@ -49,8 +52,11 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
     }
 
     const onPressSend = () => {
-        setTextValue(Utils.removeSpaceAndEnter(textValue))
-        Keyboard.dismiss();
+        if (netInfo.type !== 'none') {
+             props.onPressSend(Utils.removeSpaceAndEnter(textValue))
+        }
+        // setTextValue(Utils.removeSpaceAndEnter(textValue))
+        // Keyboard.dismiss();
     };
 
     const onClose = () => {
@@ -95,7 +101,7 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
                         //     );
                         // }}
                     />
-                    <TouchableHighlight onPress={onPressSend} underlayColor={'none'}>
+                    <TouchableHighlight onPress={onPressSend} disabled={!textValue} underlayColor={'none'}>
                         <View style={[styles.textInputButton, {opacity: textValue ? 1 : 0.7}]}>
                             <Text style={{color: '#fff'}}>{useLanguage.comment}</Text>
                         </View>

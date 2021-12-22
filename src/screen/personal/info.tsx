@@ -12,7 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { isIOS, screenWidth } from "../../config/contant";
 import {avatarUrl} from '../../mock';
 import {useSetState} from 'ahooks';
-import Utils from '../../utils';
+import Utils from '../../help';
 import {PersonalOtherEnum} from './type';
 import FollowButton from '../components/follow-button';
 import Toast from 'react-native-simple-toast';

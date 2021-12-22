@@ -3,4 +3,5 @@ export interface AweKeyboardProps {
     contentText: string,
     onChangeText: (content: string) => void
     onClose: () => void
+    onPressSend: (comment: string) => void
 }

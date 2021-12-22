@@ -10,7 +10,7 @@ export interface PostItemProps {
     // 查看图片
     onPressPicture: (pictureList: any[], startIndex: number) => void
     // 点击收藏
-    onPressCollection: () => void
+    onPressCollection: (collect: boolean) => void
     // 查看评论
     onPressComment: () => void
     // 查看用户

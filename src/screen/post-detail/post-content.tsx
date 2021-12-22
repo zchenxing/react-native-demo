@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
-import Utils from '../../utils';
+import Utils from '../../help';
 import {themeColor} from '../../assets/styles';
 import {pictureList} from '../../mock';
 import FastImage from 'react-native-fast-image';

@@ -26,7 +26,7 @@ import {useLanguage} from '../../language';
 import server from '../../network';
 import apis from '../../network/apis';
 import Toast from 'react-native-simple-toast';
-import Utils from "../../utils";
+import Utils from "../../help";
 
 const pictureWidth = (screenWidth - 20) / 3;
 

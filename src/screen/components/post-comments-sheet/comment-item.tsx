@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {avatarUrl, postList} from '../../../mock';
-import Utils from '../../../utils';
+import Utils from '../../../help';
 import {PostCommentsItemProps} from './type';
 import {themeColor} from '../../../assets/styles';
 import {useSetState} from 'ahooks';

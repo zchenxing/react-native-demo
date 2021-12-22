@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
-import Utils from '../../../utils';
-import Toast from 'react-native-simple-toast';
+import Utils from '../../../help';
 import IconFont from '../../../iconfont';
 
 interface PostFooterProps {
@@ -9,17 +8,14 @@ interface PostFooterProps {
     createdAt: string
     // 评论总数
     commentTotal: number
-    onPressCollection: () => void
+    onPressCollection: (collect: boolean) => void
     onPressComment: () => void
 }
 
 const PostFooter: React.FC<PostFooterProps> = (props: PostFooterProps) => {
-    // const [collection, setCollection] = React.useState(false);
 
-    const onPressCollect = (status?: boolean) => {
-        // Toast.show(status ? '收藏' : '取消收藏');
-        // setCollection(status);
-        props.onPressCollection()
+    const onPressCollect = () => {
+        props.onPressCollection(!props.isCollection)
     };
 
 
@@ -31,7 +27,7 @@ const PostFooter: React.FC<PostFooterProps> = (props: PostFooterProps) => {
                 {/* DESC --- 收藏 --- */}
                 <TouchableHighlight
                     underlayColor={'none'}
-                    onPress={() => onPressCollect()}>
+                    onPress={onPressCollect}>
                     <View style={{padding: 5, paddingRight: 10}}>
                         {!props.isCollection ? (
                             <IconFont name={'weishoucang'} size={20} />

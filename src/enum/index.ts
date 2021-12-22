@@ -14,9 +14,11 @@ export enum TagsType {
 }
 
 
-export enum UserEventType {
+export const PostUserEventType = {
     // 收藏帖子
-    Collection = 1,
+    Collection: 1,
     // 点赞
-    Lick ,
+    Lick: 2 ,
+    // 关注
+    Follow: 3
 }

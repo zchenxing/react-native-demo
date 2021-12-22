@@ -4,6 +4,7 @@
 import React, { FunctionComponent } from 'react';
 import { ViewProps } from 'react-native';
 import { GProps } from 'react-native-svg';
+import IconSousuo from './IconSousuo';
 import IconBianjitouxiang from './IconBianjitouxiang';
 import IconBianjiziliao from './IconBianjiziliao';
 import IconWeishoucang from './IconWeishoucang';
@@ -18,6 +19,7 @@ import IconHuati from './IconHuati';
 import IconJiaoliu from './IconJiaoliu';
 import IconPinglun from './IconPinglun';
 import IconYishoucang from './IconYishoucang';
+export { default as IconSousuo } from './IconSousuo';
 export { default as IconBianjitouxiang } from './IconBianjitouxiang';
 export { default as IconBianjiziliao } from './IconBianjiziliao';
 export { default as IconWeishoucang } from './IconWeishoucang';
@@ -33,7 +35,7 @@ export { default as IconJiaoliu } from './IconJiaoliu';
 export { default as IconPinglun } from './IconPinglun';
 export { default as IconYishoucang } from './IconYishoucang';
 
-export type IconNames = 'bianjitouxiang' | 'bianjiziliao' | 'weishoucang' | 'liangqi' | 'yu' | 'xiong' | 'pahang' | 'niao' | 'fenxiang' | 'fawen' | 'huati' | 'jiaoliu' | 'pinglun' | 'yishoucang';
+export type IconNames = 'sousuo' | 'bianjitouxiang' | 'bianjiziliao' | 'weishoucang' | 'liangqi' | 'yu' | 'xiong' | 'pahang' | 'niao' | 'fenxiang' | 'fawen' | 'huati' | 'jiaoliu' | 'pinglun' | 'yishoucang';
 
 interface Props extends GProps, ViewProps {
   name: IconNames;
@@ -43,34 +45,36 @@ interface Props extends GProps, ViewProps {
 
 let IconFont: FunctionComponent<Props> = ({ name, ...rest }) => {
   switch (name) {
+    case 'sousuo':
+      return <IconSousuo key="1" {...rest} />;
     case 'bianjitouxiang':
-      return <IconBianjitouxiang key="1" {...rest} />;
+      return <IconBianjitouxiang key="2" {...rest} />;
     case 'bianjiziliao':
-      return <IconBianjiziliao key="2" {...rest} />;
+      return <IconBianjiziliao key="3" {...rest} />;
     case 'weishoucang':
-      return <IconWeishoucang key="3" {...rest} />;
+      return <IconWeishoucang key="4" {...rest} />;
     case 'liangqi':
-      return <IconLiangqi key="4" {...rest} />;
+      return <IconLiangqi key="5" {...rest} />;
     case 'yu':
-      return <IconYu key="5" {...rest} />;
+      return <IconYu key="6" {...rest} />;
     case 'xiong':
-      return <IconXiong key="6" {...rest} />;
+      return <IconXiong key="7" {...rest} />;
     case 'pahang':
-      return <IconPahang key="7" {...rest} />;
+      return <IconPahang key="8" {...rest} />;
     case 'niao':
-      return <IconNiao key="8" {...rest} />;
+      return <IconNiao key="9" {...rest} />;
     case 'fenxiang':
-      return <IconFenxiang key="9" {...rest} />;
+      return <IconFenxiang key="10" {...rest} />;
     case 'fawen':
-      return <IconFawen key="10" {...rest} />;
+      return <IconFawen key="11" {...rest} />;
     case 'huati':
-      return <IconHuati key="11" {...rest} />;
+      return <IconHuati key="12" {...rest} />;
     case 'jiaoliu':
-      return <IconJiaoliu key="12" {...rest} />;
+      return <IconJiaoliu key="13" {...rest} />;
     case 'pinglun':
-      return <IconPinglun key="13" {...rest} />;
+      return <IconPinglun key="14" {...rest} />;
     case 'yishoucang':
-      return <IconYishoucang key="14" {...rest} />;
+      return <IconYishoucang key="15" {...rest} />;
   }
 
   return null;

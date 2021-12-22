@@ -1,13 +1,5 @@
-import { UserEventType } from "../enum";
+import { PostUserEventType } from "../enum";
 
-
-export interface UserEventProps {
-    id: string
-    user_id: string
-    event_type: UserEventType
-    event_object_id: string
-    note: string
-}
 
 export interface AnimalCardProps {
     nickname: string
@@ -39,6 +31,8 @@ export interface PostContentProps {
         avatar: string
     },
     biological_card?: AnimalCardProps
-    // 用户事件
-    user_events?: UserEventProps[] | null
+    // 用户事件，1-收藏主题，2-点赞主题，3-关注用户
+    user_events?: {event_type: 1 | 2 | 3}[] | null
+    //
+    event_types: number[]
 }

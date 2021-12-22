@@ -12,6 +12,9 @@ export const languageEn = {
     save_post_to_draft: 'Do you want to save as a draft ?',
     dont_save: "Don't save",
     save: 'Save',
+    choose_category: 'Choose a category',
+    Choose_category_first: 'Choose a category first',
+    create_post: 'Create Post',
 
     x_minute_ago: (min: number) => `${min} ${min > 1 ? 'minutes' : 'minute'} ago`,
     x_hour_ago: (hour: number) => `${hour} ${hour > 1 ? 'hours' : 'hour'} ago`,

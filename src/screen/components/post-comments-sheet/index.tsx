@@ -4,8 +4,9 @@ import {
     View,
     StyleSheet,
     TouchableHighlight,
-    ActivityIndicator, StatusBar
-} from "react-native";
+    ActivityIndicator,
+    Keyboard,
+} from 'react-native';
 import {screenHeight, screenWidth} from '../../../config/contant';
 import {Image} from 'react-native-elements';
 import {useLanguage} from '../../../language';
@@ -16,44 +17,66 @@ import CommentItem from './comment-item';
 import {themeColor} from '../../../assets/styles';
 import {useSetState} from 'ahooks';
 import BottomSheet, {BottomSheetVirtualizedList} from '@gorhom/bottom-sheet';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import server from '../../../network';
+import apis from '../../../network/apis';
+import {CommentProps} from '../../../interface/work';
+import dayjs from 'dayjs';
+import {observer} from 'mobx-react';
+import {usePostListDataStore} from '../../../store/provider';
 
 interface IState {
     contentText: string;
-    scrollOffsetY: number;
     keyboardVisible: boolean;
-    resetScrollOffsetY: number;
-    dataSource: any[];
+    dataSource: CommentProps[];
 }
 
 const PostCommentSheet: React.FC<PostCommentProps> = (
     props: PostCommentProps,
 ) => {
+    const {postStoreData} = usePostListDataStore();
+
     const actionSheetRef = React.createRef<any>();
+    const commentListRef = React.useRef<any>(null);
+    const currentPostId = React.useRef<string>('');
+    const currentPostLatest = React.useRef<any>(null);
 
     const [state, setState] = useSetState<IState>({
         contentText: '',
-        scrollOffsetY: 0,
         keyboardVisible: false,
-        resetScrollOffsetY: 0,
         dataSource: [],
     });
 
     React.useEffect(() => {
         if (props.visible) {
+            // 重复打开帖子的评论不需要重新请求
+            // 同一个帖子打开的间隔超过20秒
+            // 都会触发重新请求
+            if (
+                postStoreData[props.rowIndex].id !== currentPostId.current ||
+                dayjs().valueOf() - currentPostLatest.current > 30000
+            ) {
+                currentPostId.current = postStoreData[props.rowIndex].id;
+                currentPostLatest.current = dayjs().valueOf();
+                setState({
+                    dataSource: [],
+                });
+                getDataSource();
+            }
             actionSheetRef.current && actionSheetRef.current.snapToIndex(1);
-            getDataSource();
         } else {
             actionSheetRef.current && actionSheetRef.current.snapToIndex(-1);
         }
     }, [props.visible]);
 
-    const getDataSource = () => {
-        setTimeout(() => {
+    const getDataSource = async () => {
+        try {
+            const res = await server.get(
+                apis.post.comment.list(currentPostId.current),
+            );
             setState({
-                dataSource: Array.from(new Array(10).keys()),
+                dataSource: res.data,
             });
-        }, 600);
+        } catch (err) {}
     };
 
     // callbacks
@@ -88,15 +111,44 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         }, 100);
     };
 
+    /**
+     * 发送评论
+     */
+    const onPressSend = async () => {
+        try {
+            const res = await server.post(
+                apis.post.comment.push(currentPostId.current),
+                {
+                    content: state.contentText,
+                },
+            );
+
+            // 能打开评论框，说明肯定有评论
+            postStoreData[props.rowIndex].total_comment += 1
+
+            Keyboard.dismiss();
+
+            commentListRef.current.scrollToOffset({
+                offset: 0,
+                animated: true,
+            });
+
+            setState({
+                dataSource: [res.data, ...state.dataSource],
+                contentText: '',
+                keyboardVisible: false,
+            });
+        } catch (err) {}
+    };
+
     return (
-         <>
+        <>
             {props.visible && (
                 <TouchableHighlight
                     underlayColor={'none'}
                     style={styles.cover}
                     onPress={() => onClose(true)}>
-                    <View>
-                    </View>
+                    <View />
                 </TouchableHighlight>
             )}
 
@@ -107,22 +159,24 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 onChange={handleSheetChanges}
                 handleComponent={() => (
                     <View style={styles.sheetHeader}>
-                        <Text style={{color: '#777'}}>33 comments</Text>
+                        <Text style={{color: '#777'}}>
+                            {postStoreData[props.rowIndex]?.total_comment || 0} comments
+                        </Text>
                     </View>
                 )}>
-
-
                 {state.dataSource.length ? (
                     <BottomSheetVirtualizedList
+                        ref={commentListRef}
                         style={styles.sheetContent}
                         getItemCount={() => state.dataSource.length}
                         getItem={(data, index) => data[index]}
                         data={state.dataSource}
-                        keyExtractor={i => `${i}`}
-                        renderItem={() => (
+                        keyExtractor={(item: any) => item.id}
+                        renderItem={(row: any) => (
                             <CommentItem
+                                commentDetail={row.item}
                                 showSeparator={true}
-                                subComment={[]}
+                                // subComment={[]}
                                 onPressAvatar={onPressAvatar}
                                 onPressReply={onPressReply}
                             />
@@ -158,7 +212,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                         </View>
                         <TouchableHighlight
                             underlayColor={'none'}
-                            onPress={() => console.log('发布发布')}>
+                            onPress={onPressSend}>
                             <View
                                 style={[
                                     styles.submitButton,
@@ -181,6 +235,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 contentText={state.contentText}
                 onClose={() => setState({keyboardVisible: false})}
                 onChangeText={contentText => setState({contentText})}
+                onPressSend={onPressSend}
             />
         </>
     );
@@ -222,7 +277,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingTop: 10,
-        paddingBottom: 20,
+        paddingBottom: 25,
         paddingLeft: 20,
         paddingRight: 10,
         borderTopWidth: 1,
@@ -252,4 +307,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PostCommentSheet;
+export default React.memo(observer(PostCommentSheet));

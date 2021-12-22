@@ -1,52 +1,47 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import {Image} from 'react-native-elements';
-import Toast from 'react-native-simple-toast';
 import {avatarUrl} from '../../../mock';
 import {themeColor} from '../../../assets/styles';
 import FollowButton from '../follow-button';
-import { useSetState } from "ahooks";
 
 interface IProps {
-    userAvatar?: string
-    userNickname?: string
-    label?: string
-
-    hiddenFollow?: boolean
-    handleUser: () => void;
-}
-
-interface IState {
-    following: boolean
+    isFollow: boolean
     followLoading: boolean
+    // 显示标签
+    label?: string
+    // 用户头像
+    userAvatar?: string
+    // 用户昵称
+    userNickname?: string
+    // 隐藏follow按钮
+    hiddenFollow?: boolean
+    // 点击用户跳转
+    handleUser: () => void;
+    // 点击关注事件
+    handleFollow: (follow: boolean) => void
 }
 
 const PostHeader: React.FC<IProps> = (props: IProps) => {
 
-    const [state, setState] = useSetState<IState>({
-        following: false,
-        followLoading: false
-    })
+    const onPressFollow = () => {
 
-
-    const onPressFollow = (followStatus: boolean) => {
-
-        setState({
-            followLoading: true
-        })
-
-        setTimeout(() => {
-            setState({
-                following: followStatus,
-                followLoading: false
-            })
-
-            Toast.showWithGravity(
-                followStatus ? '已关注' : '已取消关注',
-                1,
-                Toast.TOP,
-            );
-        }, 900)
+        props.handleFollow(!props.isFollow)
+        // setState({
+        //     followLoading: true
+        // })
+        //
+        // setTimeout(() => {
+        //     setState({
+        //         followLoading: false
+        //     })
+        //
+        //     Toast.showWithGravity(
+        //         followStatus ? '已关注' : '已取消关注',
+        //         1,
+        //         Toast.TOP,
+        //     );
+        // }, 900)
 
     };
 
@@ -81,9 +76,9 @@ const PostHeader: React.FC<IProps> = (props: IProps) => {
                 !props.hiddenFollow &&
 
                 <FollowButton
-                    isFollow={state.following}
-                    followLoading={state.followLoading}
-                    onChangeFollow={() => onPressFollow(!state.following)}
+                    isFollow={props.isFollow}
+                    followLoading={props.followLoading}
+                    onChangeFollow={onPressFollow}
                 />
 
             }

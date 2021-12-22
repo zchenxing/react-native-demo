@@ -11,13 +11,23 @@ import { PostUserEventType } from "../../../enum";
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
+    const [followLoading, setFollowLoading] = React.useState(false)
+
     React.useEffect(() => {
+
     }, [])
 
     const onPressPicture = (startIndex: number) => {
         props.onPressPicture(pictureList, startIndex);
     };
 
+
+    const onPressFollow = () => {
+        setFollowLoading(true)
+        props.onPressFollow(() => {
+            setFollowLoading(false)
+        })
+    }
 
     return (
         <TouchableHighlight
@@ -26,11 +36,18 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
             underlayColor={'#eee'}>
             <>
                 <PostHeader
+                    isFollow={
+                        props.postItem.event_types.indexOf(
+                            PostUserEventType.Follow,
+                        ) > -1
+                    }
+                    followLoading={followLoading}
                     userNickname={props.postItem.user_info.nickname}
                     userAvatar={props.postItem.user_info.avatar}
                     label={props.postItem.label}
-                    handleUser={props.onPressPersonal}
                     hiddenFollow={props.hiddenFollow}
+                    handleUser={props.onPressPersonal}
+                    handleFollow={onPressFollow}
                 />
 
                 <PostArticle contentText={props.postItem.content} />

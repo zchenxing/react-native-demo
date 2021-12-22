@@ -24,16 +24,22 @@ import {useNetInfo} from '@react-native-community/netinfo';
 import {PostUserEventType} from '../../../enum';
 import AweKeyboard from '../../../components/awe-keyboard';
 import Toast from 'react-native-simple-toast';
+import {usePostListDataStore} from '../../../store/provider';
+import {observer} from 'mobx-react';
+import dayjs from 'dayjs';
 
 interface IState {
-    dataSource: PostContentProps[];
     refreshing: boolean;
     moreLoading: boolean;
     hasMoreData: boolean;
+    refreshTime: number;
+    followLoading: boolean
+
     // 首次评论的事件
-    firstKeyboardVisible: boolean
-    firstContentText: string
-    firstPostId: string
+    firstKeyboardVisible: boolean;
+    firstContentText: string;
+    currentPost: PostContentProps | null;
+    currentRowIndex: number;
 
     pictureVisible: boolean;
     pictureStartIndex: number;
@@ -43,16 +49,20 @@ interface IState {
 
 const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     const netInfo = useNetInfo();
+    const {postStoreData, setPostStoreData} = usePostListDataStore();
+    const listRef = React.useRef<any>(null);
 
     const [state, setState] = useSetState<IState>({
-        refreshing: false,
+        refreshing: true,
         moreLoading: false,
-        dataSource: [],
         hasMoreData: true,
+        refreshTime: 0,
+        followLoading: false,
 
         firstKeyboardVisible: false,
         firstContentText: '',
-        firstPostId: '',
+        currentPost: null,
+        currentRowIndex: -1,
 
         pictureVisible: false,
         pictureStartIndex: 0,
@@ -61,12 +71,14 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     });
 
     React.useEffect(() => {
-        onLoadData();
+        if (state.refreshing) {
+            onLoadData(false);
+        }
 
         // 监听是否发布了新的帖子
         const eventEmitter = DeviceEventEmitter.addListener(
             EventEmitterName.RefreshHome,
-            onLoadData,
+            () => onLoadData(true),
         );
 
         return () => eventEmitter.remove();
@@ -99,14 +111,25 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
     /**
      * 加载数据
+     * @param scrollToTop
      */
-    const onLoadData = async () => {
+    const onLoadData = async (scrollToTop: boolean) => {
         try {
             const data = await getDataSource();
+
+            setPostStoreData(data);
+
             setState({
-                dataSource: data,
+                refreshTime: dayjs().valueOf(),
                 refreshing: false,
             });
+
+            if (scrollToTop) {
+                listRef.current.scrollToOffset({
+                    offset: 0,
+                    animated: true,
+                });
+            }
         } catch (err) {
             console.log(err);
         }
@@ -132,11 +155,13 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             });
 
             try {
-                const _id = state.dataSource[state.dataSource.length - 1].id;
+                const _id = postStoreData[postStoreData.length - 1].id;
                 const data = await getDataSource(_id);
                 if (data.length) {
+                    setPostStoreData([...postStoreData, ...data]);
+
                     setState({
-                        dataSource: [...state.dataSource, ...data],
+                        refreshTime: dayjs().valueOf(),
                         moreLoading: false,
                         hasMoreData: true,
                     });
@@ -198,30 +223,68 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         });
     };
 
+
+    /**
+     * 执行关注
+     * @param row
+     * @param callback
+     */
+    const onPressFollow = async (row: any, callback: () => void) => {
+
+        try {
+
+            setState({ followLoading: true })
+
+            await server.post(apis.user.follow(row.item.id))
+
+            const index = postStoreData[row.index].event_types.indexOf(
+                PostUserEventType.Follow,
+            );
+
+            if (index === -1) {
+                postStoreData[row.index].event_types.push(
+                    PostUserEventType.Follow,
+                );
+            } else {
+                postStoreData[row.index].event_types.splice(index, 1);
+            }
+
+            callback()
+            setPostStoreData(postStoreData)
+
+        } catch (err) {
+            callback()
+            console.log(err);
+        }
+    };
+
     /**
      * 查看评论
      */
     const onPressComment = (row: any) => {
-
         // 如果有评论，就打开评论
         // 没有评论就截止回复
         if (row.item.total_comment) {
             setState({
+                currentPost: row.item,
                 commentVisible: true,
+                currentRowIndex: row.index,
             });
         } else {
-            if (row.item.id === state.firstPostId) {
+            // 判断是够连续查看同一条帖子的评论，如果是就不清除评论内容
+            if (row.item.id === state.currentPost?.id) {
                 setState({
+                    currentRowIndex: row.index,
                     firstKeyboardVisible: true,
-                })
+                });
             } else {
                 setState({
+                    currentRowIndex: row.index,
                     firstKeyboardVisible: true,
                     firstContentText: '',
-                    firstPostId: row.item.id
-                })
+                    currentPost: row.item,
+                });
             }
-
         }
     };
 
@@ -234,14 +297,11 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         if (netInfo.type !== 'none') {
             try {
                 await server.post(apis.post.collect(row.item.id), {});
-                console.log('收藏操作成功');
-
-                const posts = [...state.dataSource];
-                const event_types = [...posts[row.index].event_types];
+                const event_types = [...postStoreData[row.index].event_types];
 
                 // 进行收藏操作，在event_types中添加收藏
                 if (collect) {
-                    posts[row.index].event_types = [
+                    postStoreData[row.index].event_types = [
                         ...new Set([
                             ...event_types,
                             PostUserEventType.Collection,
@@ -254,12 +314,14 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                         PostUserEventType.Collection,
                     );
                     event_types.splice(deleteIndex, 1);
-                    posts[row.index].event_types = event_types;
+                    postStoreData[row.index].event_types = event_types;
                 }
 
+                setPostStoreData(postStoreData);
+
                 setState({
-                    dataSource: posts,
-                });
+                    refreshTime: dayjs().valueOf(),
+                })
             } catch (err) {
                 console.log(err);
                 throw err;
@@ -271,34 +333,32 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      * 发评论
      */
     const onSendComment = async () => {
-        console.log(state.firstPostId, state.firstContentText);
-
         try {
+            await server.post(apis.post.comment.push(state.currentPost?.id), {
+                content: state.firstContentText,
+            });
 
-            await server.post(apis.post.comment.push(state.firstPostId), {
-                content: state.firstContentText
-            })
+            if (state.currentRowIndex > -1) {
+                // 直接修改列表数据
+                postStoreData[state.currentRowIndex].total_comment = 1;
 
-            setState({
-                firstKeyboardVisible: false,
-                firstContentText: '',
-                firstPostId: ''
-            })
+                setState({
+                    refreshTime: dayjs().valueOf(),
+                    firstContentText: '',
+                    currentPost: null,
+                    firstKeyboardVisible: false,
+                });
+            }
 
-
-            Toast.show('消息发送成功')
-
-        } catch (err) {
-
-        }
-
-    }
+            Toast.show('消息发送成功');
+        } catch (err) {}
+    };
 
     return (
         <ScreenBase
             onReload={getDataSource}
             nothingPage={
-                !state.dataSource.length
+                !postStoreData.length
                     ? {
                           title: 'Nothing here',
                           picture: require('../../../assets/images/status/nothing.png'),
@@ -306,7 +366,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                     : undefined
             }>
             <FlatList
-                data={state.dataSource}
+                ref={listRef}
+                data={postStoreData}
                 removeClippedSubviews={true}
                 keyExtractor={item => item.id}
                 ListFooterComponent={() => loadMore()}
@@ -319,7 +380,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 }
                 renderItem={(row: any) => (
                     <PostItem
-                        postItem={row.item}
+                        postItem={postStoreData[row.index]}
+                        onPressFollow={(callback) => onPressFollow(row, callback)}
                         onPressDetail={props.onPressDetail}
                         onPressPicture={onPressPicture}
                         onPressComment={() => onPressComment(row)}
@@ -339,11 +401,11 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             />
 
             <PostCommentSheet
+                rowIndex={state.currentRowIndex}
                 onPressAvatar={props.onPressPersonal}
                 visible={state.commentVisible}
                 onClose={() => setState({commentVisible: false})}
             />
-
 
             <AweKeyboard
                 visible={state.firstKeyboardVisible}
@@ -352,9 +414,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 onClose={() => setState({firstKeyboardVisible: false})}
                 onPressSend={onSendComment}
             />
-
         </ScreenBase>
     );
 };
 
-export default PostList;
+export default observer(PostList);

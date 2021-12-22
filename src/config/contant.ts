@@ -7,9 +7,16 @@ export const screenWidth = Dimensions.get('window').width
 export const screenHeight = Dimensions.get('window').height
 
 
+
+
+
 /**
  * 统一配置事件监听名
  */
 export const EventEmitterName = {
-    RefreshHome: 'RefreshHome'
+    // 刷新首页列表
+    RefreshHome: 'RefreshHome',
+    // 发布 -> 选择类别
+    ChooseCategory: 'ChooseCategory'
 }
+

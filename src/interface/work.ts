@@ -1,4 +1,3 @@
-import { PostUserEventType } from "../enum";
 
 
 export interface AnimalCardProps {
@@ -35,4 +34,44 @@ export interface PostContentProps {
     user_events?: {event_type: 1 | 2 | 3}[] | null
     //
     event_types: number[]
+}
+
+
+/**
+ * 评论
+ */
+export interface CommentProps {
+    id: string
+    created_at: string
+    user_id: string
+    theme_id: string
+    content: string
+    total_reply: number
+    replies: ReplyProps[]
+    user_info: {
+        nickname: string
+        avatar: string
+    }
+}
+
+
+/**
+ * 评论的回复
+ */
+export interface ReplyProps {
+    id: string
+    created_at: string
+    user_id: string
+    // 回复目标用户id
+    target_user_id: string
+    user_info: {
+        nickname: string
+        avatar: string
+    },
+    // 回复目标用户信息
+    target_user_info: {
+        nickname: string
+        avatar: string
+    }
+
 }

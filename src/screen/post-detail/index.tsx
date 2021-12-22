@@ -141,12 +141,13 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                             paddingLeft: 20,
                                             paddingRight: 20,
                                         }}>
-                                        <CommentItem
-                                            onPressReply={() => {}}
-                                            onPressAvatar={onPressAvatar}
-                                            showSeparator={true}
-                                            subComment={[]}
-                                        />
+                                        {/*<CommentItem*/}
+                                        {/*    commentDetail={}*/}
+                                        {/*    onPressReply={() => {}}*/}
+                                        {/*    onPressAvatar={onPressAvatar}*/}
+                                        {/*    showSeparator={true}*/}
+                                        {/*    subComment={[]}*/}
+                                        {/*/>*/}
                                     </View>
                                 );
                             }
@@ -196,22 +197,13 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 contentText={state.commentText}
                 onChangeText={text => setState({commentText: text})}
                 onClose={() => setState({keyboardVisible: false})}
+                onPressSend={() => {}}
             />
         </SafeAreaProvider>
     );
 };
 
 const styles = StyleSheet.create({
-    footer: {
-        borderTopWidth: 1,
-        borderTopColor: '#ddd',
-        backgroundColor: '#fff',
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 10,
-        paddingLeft: 15,
-        paddingRight: 20,
-    },
     comment: {
         flex: 1,
         padding: 10,
@@ -233,6 +225,17 @@ const styles = StyleSheet.create({
     commentHeaderTitle: {
         fontSize: 13,
         color: themeColor,
+    },
+    footer: {
+        borderTopWidth: 1,
+        borderTopColor: '#ddd',
+        backgroundColor: '#fff',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        paddingLeft: 15,
+        paddingRight: 20,
+        paddingBottom: 25,
     },
 });
 

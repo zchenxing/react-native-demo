@@ -28,6 +28,11 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
         moreLoading: false,
     });
 
+    React.useEffect(() => {
+        console.log(props.commentDetail);
+    }, [])
+
+
     const onPressLoadMore = () => {
         setState({
             moreLoading: true,
@@ -60,17 +65,18 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                     <View style={[styles.rightView]}>
                         <View style={styles.postHeader}>
                             <Text style={{color: '#999'}}>
-                                Coconut Island Games
+                                {props.commentDetail.user_info.nickname}
                             </Text>
                             <Text style={styles.postTime}>
-                                {Utils.getPostTime('2021-12-07 12:33:22')}
+                                {Utils.getPostTime(
+                                    props.commentDetail.created_at,
+                                )}
                             </Text>
                         </View>
 
                         <Text>
                             <Text>
-                                I am excited to share he latest trajectory of
-                                the seagulls seagulls seagu2233333lls sea.
+                                {props.commentDetail.content}
                             </Text>
                         </Text>
                     </View>

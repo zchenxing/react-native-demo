@@ -9,7 +9,7 @@
         "test": "jest",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "pod": "cd ios && arch -x86_64 pod install",
-        "iconfont": "npx iconfont-rn"
+        "icon": "npx iconfont-rn"
     },
     "dependencies": {
         "@babel/plugin-proposal-decorators": "^7.16.4",
@@ -36,6 +36,7 @@
         "react-native-image-zoom-viewer": "^3.0.1",
         "react-native-keyboard-accessory": "^0.1.15",
         "react-native-linear-gradient": "^2.5.6",
+        "react-native-pager-view": "^5.4.9",
         "react-native-reanimated": "^2.2.4",
         "react-native-safe-area-context": "^3.3.2",
         "react-native-screens": "^3.9.0",

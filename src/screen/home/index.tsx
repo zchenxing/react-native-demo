@@ -57,6 +57,15 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 }}>
                 <Text>登录</Text>
             </TouchableHighlight>
+            <TouchableHighlight
+                style={styles.test}
+                activeOpacity={1}
+                underlayColor={'white'}
+                onPress={() => {
+                    props.navigation.push('EntrustList');
+                }}>
+                <Text>委托</Text>
+            </TouchableHighlight>
         </>
     );
 };
@@ -76,4 +85,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    test: {
+        position: 'absolute',
+        width: 40,
+        height: 40,
+        bottom: screenHeight / 3,
+        right: 20,
+        zIndex: 100,
+        backgroundColor: '#f1f1f1',
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
 });

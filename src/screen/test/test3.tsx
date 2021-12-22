@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import AweSimpleNavigator from '../../components/awe-simple-navigator';
 import { NavigateProps } from "../../interface";
 
-const Test2: React.FC<NavigateProps> = (props: NavigateProps) => {
+const Test3: React.FC<NavigateProps> = (props: NavigateProps) => {
     return (
         <View style={{flex: 1}}>
 
@@ -14,4 +14,4 @@ const Test2: React.FC<NavigateProps> = (props: NavigateProps) => {
     );
 };
 
-export default Test2;
+export default Test3;

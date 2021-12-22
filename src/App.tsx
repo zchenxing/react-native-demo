@@ -3,7 +3,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import { intelinkRoute } from "./routes";
+import {EntrustRoute, intelinkRoute} from "./routes";
 import { globalStyles } from "./assets/styles";
 import myToken from "./network/token";
 

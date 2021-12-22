@@ -1,3 +1,4 @@
+import Entrust from "../screen/entrust";
 
 export const PAGE_NAME = {
     HOME: 'Home',
@@ -30,6 +31,8 @@ export const INTELINK_SCREEN_NAME = {
     SCREEN_FOLLOW_LIST: 'FollowListScreen',
     // 修改个人信息
     SCREEN_EDIT_PERSONAL_INFO: 'EditPersonalInfoScreen',
+    // 委托列表
+    ENTRUST_LIST: 'EntrustList',
 }
 
 

@@ -10,6 +10,7 @@ import FollowListScreen from '../screen/personal/follow-list';
 import Test1 from '../screen/test/test1';
 import Test2 from '../screen/test/test2';
 import EditPersonalInfoScreen from "../screen/personal/edit-info";
+import Entrust from "../screen/entrust/index";
 
 type routeProps = {
     name: string
@@ -64,5 +65,16 @@ export const intelinkRoute: routeProps[] = [
     {
         name: 'Test2',
         component: Test2
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_LIST,
+        component: Entrust
     }
 ];
+
+export const EntrustRoute: routeProps[] = [
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_LIST,
+        component: Entrust
+    }
+]

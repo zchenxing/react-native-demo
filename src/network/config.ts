@@ -1,4 +1,5 @@
 import { sha256 } from "js-sha256";
+import { PAGE_SIZE } from "../config/contant";
 
 
 class ApiConfig {
@@ -21,7 +22,7 @@ class ApiConfig {
 
         const headers: any = {}
 
-        headers['x-result-limit'] = 5
+        headers['x-result-limit'] = PAGE_SIZE
 
         if (sort) {
             headers['x-result-sort'] = sort

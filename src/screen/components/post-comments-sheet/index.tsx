@@ -20,10 +20,7 @@ import {CommentProps} from '../../../interface/work';
 import dayjs from 'dayjs';
 import {observer} from 'mobx-react';
 import { useCommentDataStore, usePostListDataStore } from "../../../store/provider";
-
-interface IState {
-    keyboardVisible: boolean;
-}
+import AweLoadMore from '../../../components/awe-load-more';
 
 const PostCommentSheet: React.FC<PostCommentProps> = (
     props: PostCommentProps,
@@ -34,11 +31,12 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         contentText,
         setContentText,
         getCommentData,
-        setCommentStoreData,
+        moreLoad,
         sendCommentToPost,
         sendReplyToComment,
         currentReplyData,
-        setCurrentReplyData
+        setCurrentReplyData,
+        resetData
     } = useCommentDataStore()
 
     const actionSheetRef = React.createRef<any>();
@@ -49,12 +47,12 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
     const [keyboardVisible, setKeyboardVisible] = React.useState(false)
 
+
     React.useEffect(() => {
         if (props.visible) {
             // 重复打开帖子的评论不需要重新请求
             // 同一个帖子打开的间隔超过20秒
             // 都会触发重新请求
-
             if (
                 postStoreData[props.rowIndex].id !== currentPostId.current ||
                 dayjs().valueOf() - latestOpenTimestamp.current > 30000
@@ -62,8 +60,8 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 currentPostId.current = postStoreData[props.rowIndex].id;
                 latestOpenTimestamp.current = dayjs().valueOf();
 
-                setCommentStoreData([])
-                getDataSource();
+                resetData()
+                getCommentData(currentPostId.current);
             }
             actionSheetRef.current && actionSheetRef.current.snapToIndex(1);
         } else {
@@ -71,10 +69,6 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         }
     }, [props.visible]);
 
-
-    const getDataSource = () => {
-        getCommentData(currentPostId.current);
-    };
 
     // callbacks
     const handleSheetChanges = React.useCallback((index: number) => {
@@ -84,21 +78,36 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
     }, []);
 
 
+    const onLoadMoreData = () => {
+        if (moreLoad.hasMoreData) {
+            getCommentData(currentPostId.current, true)
+        }
+    }
+
+
     /**
      * 回复消息 显示键盘
      * @param replyType
      * @param comment
-     * @param commentId
+     * @param commentRow
      */
     const onPressReply = (
         replyType: ReplyType,
         comment: CommentProps,
-        commentId: string,
+        commentRow: any,
     ) => {
+
+        console.log({
+            mainCommentIndex: commentRow.index,
+            commentId: commentRow.item.id,
+            replyNickname: comment.user_info.nickname,
+            replyId: replyType === ReplyType.ReplyToReply ? comment.id : ''
+        });
 
         setContentText('')
         setCurrentReplyData({
-            commentId,
+            mainCommentIndex: commentRow.index,
+            commentId: commentRow.item.id,
             replyNickname: comment.user_info.nickname,
             replyId: replyType === ReplyType.ReplyToReply ? comment.id : ''
         })
@@ -162,13 +171,16 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
     const sendToCommentOrReply = async () => {
         try {
             await sendReplyToComment()
-
-            // Keyboard.dismiss();
+            Keyboard.dismiss();
             setKeyboardVisible(false)
 
         } catch (err) {}
     };
 
+
+    const getMoreReplies = () => {
+
+    }
 
     /**
      * 关闭键盘
@@ -208,7 +220,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
             <BottomSheet
                 ref={actionSheetRef}
                 index={-1}
-                snapPoints={[1, screenHeight * 0.7]}
+                snapPoints={[1, screenHeight * 0.8]}
                 onChange={handleSheetChanges}
                 handleComponent={() => (
                     <View style={styles.sheetHeader}>
@@ -226,17 +238,28 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                         getItem={(data, index) => data[index]}
                         data={commentStoreData}
                         keyExtractor={(item: any) => item.id}
+                        onEndReached={onLoadMoreData}
+                        ListFooterComponent={
+                            <AweLoadMore
+                                loading={moreLoad.moreLoading}
+                                hasMoreData={moreLoad.hasMoreData}
+                                handleNoMoreData={onLoadMoreData} />
+                        }
                         renderItem={(row: any) => (
                             <CommentItem
+                                commentIndex={row.index}
                                 mainCommentUserId={row.item.user_id}
                                 isAuthor={
                                     postStoreData[props.rowIndex].user_id ===
                                     row.item.user_id
                                 }
+                                getMoreReplies={() => getMoreReplies()}
                                 commentDetail={row.item}
                                 showSeparator={true}
                                 onPressAvatar={onPressAvatar}
-                                onPressReply={(type, comment) => onPressReply(type, comment, row.item.id)}
+                                onPressReply={(type, comment) =>
+                                    onPressReply(type, comment, row)
+                                }
                             />
                         )}
                     />

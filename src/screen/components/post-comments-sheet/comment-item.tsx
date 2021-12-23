@@ -23,9 +23,9 @@ interface IState {
     // 加载更多回复
     moreLoading: boolean;
     // 回复列表
-    repliesList: CommentProps[];
+    // repliesList: CommentProps[];
     // 回复消息数
-    repliesTotal: number;
+    // repliesTotal: number;
     repliesPage: number;
 }
 
@@ -34,45 +34,45 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
 ) => {
     const [state, setState] = useSetState<IState>({
         moreLoading: false,
-        repliesList: [],
-        repliesTotal: 0,
+        // repliesList: [],
+        // repliesTotal: 0,
         repliesPage: 1,
     });
 
     React.useEffect(() => {
-        if (props.commentDetail.replies) {
-            setState({
-                repliesTotal: props.commentDetail.total_reply,
-                repliesList: props.commentDetail.replies,
-            });
-        }
+        // if (props.commentDetail.replies) {
+        //     setState({
+        //         repliesTotal: props.commentDetail.total_reply,
+        //         repliesList: props.commentDetail.replies,
+        //     });
+        // }
     }, []);
 
-    /**
-     * 获取更多回复
-     */
-    const getMoreReplies = async () => {
-        try {
-            setState({
-                moreLoading: true,
-            });
-            const res = await server.get(
-                apis.comment.replyList(
-                    props.commentDetail.id,
-                    state.repliesPage,
-                ),
-                apiConfig.pageToken(),
-            );
-
-            setState({
-                repliesList: res.data,
-                repliesPage: state.repliesPage + 1,
-                moreLoading: false,
-            });
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    // /**
+    //  * 获取更多回复
+    //  */
+    // const getMoreReplies = async () => {
+    //     try {
+    //         setState({
+    //             moreLoading: true,
+    //         });
+    //         const res = await server.get(
+    //             apis.comment.replyList(
+    //                 props.commentDetail.id,
+    //                 state.repliesPage,
+    //             ),
+    //             apiConfig.pageToken(),
+    //         );
+    //
+    //         setState({
+    //             repliesList: res.data,
+    //             repliesPage: state.repliesPage + 1,
+    //             moreLoading: false,
+    //         });
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // };
 
     return (
         <>
@@ -132,14 +132,15 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                                 )
                             }
                             {props.commentDetail.content}
+                            {/*{props.commentDetail.id}*/}
                         </Text>
                     </View>
                 </View>
             </TouchableHighlight>
 
-            {state.repliesList.length ? (
+            {props.commentDetail.replies && props.commentDetail.replies.length ? (
                 <View style={{paddingLeft: 40}}>
-                    {state.repliesList.map(data => (
+                    {props.commentDetail.replies.map(data => (
                         <CommentItem
                             mainCommentUserId={props.mainCommentUserId}
                             key={data.id}
@@ -154,19 +155,19 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         />
                     ))}
 
-                    {state.repliesTotal > state.repliesList.length && (
+                    {props.commentDetail.total_reply > props.commentDetail.replies.length && (
                         <TouchableHighlight
                             style={styles.moreReplies}
-                            onPress={getMoreReplies}
+                            onPress={props.getMoreReplies}
                             underlayColor={'none'}>
                             {!state.moreLoading ? (
                                 <Text style={styles.moreRepliesText}>
-                                    View more replies
+                                    {useLanguage.view_more_replies}
                                 </Text>
                             ) : (
                                 <Text style={styles.moreRepliesText}>
                                     <ActivityIndicator />
-                                    Load more
+                                    {useLanguage.load_more}
                                 </Text>
                             )}
                         </TouchableHighlight>

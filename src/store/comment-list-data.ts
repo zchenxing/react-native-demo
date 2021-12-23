@@ -3,8 +3,10 @@ import server from '../network';
 import {CommentProps} from '../interface/work';
 import apis from '../network/apis';
 import apiConfig from "../network/config";
+import { PAGE_SIZE } from "../config/contant";
 
 type CurrentReplyProps = {
+    mainCommentIndex: number
     replyNickname: string;
     // 评论id
     commentId: string;
@@ -15,6 +17,7 @@ type CurrentReplyProps = {
 export class CommentDataStore {
     // 帖子id
     private currentPostId: string = '';
+    private latestCommentId: string = ''
 
     // ————————————————————————————————————————————————————————————————————————
 
@@ -23,6 +26,24 @@ export class CommentDataStore {
     @observable commentStoreData: CommentProps[] = [];
     // 回复消息的实体内容
     @observable currentReplyData: CurrentReplyProps | null = null;
+
+    @observable moreLoad: any = {
+        moreLoading: false,
+        hasMoreData: true
+    }
+
+    /**
+     * 重置数据
+     */
+    @action.bound resetData = () => {
+        this.moreLoad = {
+            moreLoading: false,
+            hasMoreData: true
+        }
+        this.currentPostId = ''
+        this.latestCommentId = ''
+        this.commentStoreData = []
+    }
 
     @action.bound setCommentStoreData = (dataSource: CommentProps[]) => {
         this.commentStoreData = [...dataSource];
@@ -38,17 +59,44 @@ export class CommentDataStore {
 
     // ————————————————————————————————————————————————————————————————————————
 
-    public getCommentData = async (postId: string) => {
+    /**
+     *
+     * @param postId
+     * @param loadMore 是否加载更多数据
+     */
+    public getCommentData = async (postId: string, loadMore?: boolean) => {
         this.currentPostId = postId;
+
+        if (loadMore) {
+            this.moreLoad.moreLoading = true
+        }
 
         try {
             const res = await server.get(
-                apis.post.comment.list(postId),
+                apis.post.comment.list(postId, this.latestCommentId),
                 apiConfig.pageToken(),
             );
-            this.setCommentStoreData(res.data);
 
-        } catch (err) {}
+            this.moreLoad.moreLoading = false
+
+            if (res.data.length) {
+                this.latestCommentId = res.data[res.data.length - 1].id
+
+                const result = [...this.commentStoreData, ...res.data]
+                this.setCommentStoreData(result);
+
+                // 数据小于 page size，表示也m没有更多数据
+                this.moreLoad.hasMoreData = res.data.length >= PAGE_SIZE;
+
+            } else {
+                this.moreLoad.hasMoreData = false
+            }
+
+            return Promise.resolve(res)
+
+        } catch (err) {
+            return Promise.reject(err)
+        }
     };
 
     /**
@@ -88,7 +136,29 @@ export class CommentDataStore {
                 );
             }
 
-            await server.post(api, {content: this.contentText});
+            const res = await server.post(api, {content: this.contentText});
+
+            // 向评论中插入回复数据
+            const commentIndex = this.currentReplyData?.mainCommentIndex || 0
+
+            if (commentIndex > -1) {
+                const replies = this.commentStoreData[commentIndex].replies
+                if (replies) {
+                    this.commentStoreData[commentIndex].replies = [
+                        ...replies,
+                        res.data,
+                    ];
+                } else {
+                    this.commentStoreData[commentIndex].replies = [res.data]
+                }
+
+                this.setCommentStoreData(this.commentStoreData)
+            }
+
+
+
+            console.log('回复消息', res.data);
+
             this.setContentText('');
 
             return Promise.resolve();
@@ -97,8 +167,4 @@ export class CommentDataStore {
         }
     };
 
-    /**
-     * 回复回复
-     */
-    public sendReplyToReply = async (content: string) => {};
 }

@@ -26,14 +26,12 @@ import AweKeyboard from '../../../components/awe-keyboard';
 import Toast from 'react-native-simple-toast';
 import {usePostListDataStore} from '../../../store/provider';
 import {observer} from 'mobx-react';
-import dayjs from 'dayjs';
-import AweLoadMore from "../../../components/awe-load-more";
+import AweLoadMore from '../../../components/awe-load-more';
 
 interface IState {
     refreshing: boolean;
     moreLoading: boolean;
     hasMoreData: boolean;
-    refreshTime: number;
     followLoading: boolean
 
     // 首次评论的事件
@@ -57,7 +55,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         refreshing: true,
         moreLoading: false,
         hasMoreData: true,
-        refreshTime: 0,
         followLoading: false,
 
         firstKeyboardVisible: false,
@@ -121,7 +118,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             setPostStoreData(data);
 
             setState({
-                refreshTime: dayjs().valueOf(),
                 refreshing: false,
             });
 
@@ -162,7 +158,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                     setPostStoreData([...postStoreData, ...data]);
 
                     setState({
-                        refreshTime: dayjs().valueOf(),
                         moreLoading: false,
                         hasMoreData: true,
                     });
@@ -188,28 +183,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         onLoadMoreData(true);
     };
 
-    const loadMore = () => {
-        return state.moreLoading ? (
-            <View>
-                <ActivityIndicator />
-                <Text style={{textAlign: 'center'}}>
-                    {useLanguage.load_more}
-                </Text>
-            </View>
-        ) : (
-            <>
-                {!state.hasMoreData && (
-                    <TouchableHighlight
-                        style={{padding: 10}}
-                        onPress={handleNoMoreData}>
-                        <Text style={{textAlign: 'center'}}>
-                            {useLanguage.no_more_data}
-                        </Text>
-                    </TouchableHighlight>
-                )}
-            </>
-        );
-    };
 
     /**
      * 浏览图片
@@ -322,9 +295,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
                 setPostStoreData(postStoreData);
 
-                setState({
-                    refreshTime: dayjs().valueOf(),
-                })
             } catch (err) {
                 console.log(err);
                 throw err;
@@ -346,7 +316,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 postStoreData[state.currentRowIndex].total_comment = 1;
 
                 setState({
-                    refreshTime: dayjs().valueOf(),
                     firstContentText: '',
                     currentPost: null,
                     firstKeyboardVisible: false,

@@ -15,7 +15,8 @@ const AweLoadMore: React.FC<AweLoadMoreProps> = (props: AweLoadMoreProps) => {
         <>
             {!props.hasMoreData && (
                 <TouchableHighlight
-                    style={{padding: 10}}
+                    underlayColor={'#fafafa'}
+                    style={{padding: 22}}
                     onPress={props.handleNoMoreData}>
                     <Text style={{textAlign: 'center'}}>
                         {useLanguage.no_more_data}

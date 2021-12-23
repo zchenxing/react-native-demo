@@ -9,6 +9,4 @@ export class PostListDataStore {
         this.postStoreData = [...dataSource]
     }
 
-
-
 }

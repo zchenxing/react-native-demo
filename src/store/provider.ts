@@ -1,12 +1,14 @@
 import {createContext, useContext} from 'react';
-import { POST_LIST_DATA, SMART_DATA } from "./constant";
-import {SmartDataStore} from './smart-data';
+import { COMMENT_LIST_DATA, POST_LIST_DATA, SELF_INFO_DATA } from "./constant";
 import { PostListDataStore } from "./post-list-data";
+import { SelfInfoDataStore } from "./self-info-data";
+import { CommentDataStore } from "./comment-list-data";
 
 function createStores() {
     return {
-        [SMART_DATA]: new SmartDataStore(),
-        [POST_LIST_DATA]: new PostListDataStore()
+        [POST_LIST_DATA]: new PostListDataStore(),
+        [SELF_INFO_DATA]: new SelfInfoDataStore(),
+        [COMMENT_LIST_DATA]: new CommentDataStore()
     };
 }
 
@@ -14,28 +16,39 @@ const stores = createStores();
 const StoresContext = createContext(stores);
 const useStores = () => useContext(StoresContext);
 
-function useSmartDataStore() {
-    const {smart_data} = useStores();
-    return smart_data;
-}
 
 function usePostListDataStore() {
     const {post_list_data} = useStores()
     return post_list_data
 }
 
-const smartDataStore = stores[SMART_DATA];
+
+function useSelfDataStore() {
+    const {self_info_data} = useStores()
+    return self_info_data
+}
+
+function useCommentDataStore() {
+    const {comment_list_data} = useStores()
+    return comment_list_data
+}
+
+
+const selfDataStore = stores[SELF_INFO_DATA];
 const postListDataStore = stores[POST_LIST_DATA];
+const commentDataStore = stores[COMMENT_LIST_DATA]
 
 export {
     stores,
     StoresContext,
     useStores,
 
-    smartDataStore,
-    useSmartDataStore,
-
     postListDataStore,
-    usePostListDataStore
+    usePostListDataStore,
 
+    selfDataStore,
+    useSelfDataStore,
+
+    commentDataStore,
+    useCommentDataStore
 };

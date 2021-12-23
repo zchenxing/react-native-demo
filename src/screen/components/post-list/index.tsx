@@ -27,6 +27,7 @@ import Toast from 'react-native-simple-toast';
 import {usePostListDataStore} from '../../../store/provider';
 import {observer} from 'mobx-react';
 import dayjs from 'dayjs';
+import AweLoadMore from "../../../components/awe-load-more";
 
 interface IState {
     refreshing: boolean;
@@ -201,7 +202,9 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                     <TouchableHighlight
                         style={{padding: 10}}
                         onPress={handleNoMoreData}>
-                        <Text style={{textAlign: 'center'}}>没有更多数据</Text>
+                        <Text style={{textAlign: 'center'}}>
+                            {useLanguage.no_more_data}
+                        </Text>
                     </TouchableHighlight>
                 )}
             </>
@@ -235,7 +238,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
             setState({ followLoading: true })
 
-            await server.post(apis.user.follow(row.item.id))
+            await server.post(apis.user.follow(row.item.user_id))
 
             const index = postStoreData[row.index].event_types.indexOf(
                 PostUserEventType.Follow,
@@ -370,7 +373,12 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 data={postStoreData}
                 removeClippedSubviews={true}
                 keyExtractor={item => item.id}
-                ListFooterComponent={() => loadMore()}
+                ListFooterComponent={
+                    <AweLoadMore
+                        loading={state.moreLoading}
+                        hasMoreData={state.hasMoreData}
+                        handleNoMoreData={handleNoMoreData} />
+                }
                 onEndReached={() => onLoadMoreData(state.hasMoreData)}
                 refreshControl={
                     <RefreshControl

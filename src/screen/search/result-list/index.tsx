@@ -64,13 +64,9 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 // }}
             >
                 <PostList
-                    dataSource={postList}
-                    refreshing={refreshing}
-                    moreLoading={moreLoading}
+                    onPressPersonal={onPressPersonal}
                     onPressDetail={onPressDetail}
-                    onRefreshData={onRefreshData}
-                    onLoadMoreData={onLoadMoreData}
-                    onPressPersonal={onPressPersonal}/>
+                />
             </ScreenBase>
         </SafeAreaProvider>
     );

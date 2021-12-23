@@ -14,6 +14,13 @@ export enum TagsType {
 }
 
 
+export enum GenderProps {
+    Woman = 1,
+    Man,
+    Unknown
+}
+
+
 export const PostUserEventType = {
     // 收藏帖子
     Collection: 1,

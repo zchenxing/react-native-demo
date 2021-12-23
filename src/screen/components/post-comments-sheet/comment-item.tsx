@@ -1,60 +1,93 @@
 import React from 'react';
 import {
     ActivityIndicator,
-    FlatList,
     StyleSheet,
     Text,
     TouchableHighlight,
     View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {avatarUrl, postList} from '../../../mock';
+import {avatarUrl} from '../../../mock';
 import Utils from '../../../help';
-import {PostCommentsItemProps} from './type';
+import {PostCommentsItemProps, ReplyType} from './type';
 import {themeColor} from '../../../assets/styles';
 import {useSetState} from 'ahooks';
 import {isIOS} from '../../../config/contant';
+import {useLanguage} from '../../../language';
+import {CommentProps} from '../../../interface/work';
+import server from '../../../network';
+import apis from '../../../network/apis';
+import apiConfig from '../../../network/config';
 
 interface IState {
     // 加载更多回复
     moreLoading: boolean;
+    // 回复列表
+    repliesList: CommentProps[];
+    // 回复消息数
+    repliesTotal: number;
+    repliesPage: number;
 }
-
 
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,
 ) => {
     const [state, setState] = useSetState<IState>({
         moreLoading: false,
+        repliesList: [],
+        repliesTotal: 0,
+        repliesPage: 1,
     });
 
     React.useEffect(() => {
-        console.log(props.commentDetail);
-    }, [])
-
-
-    const onPressLoadMore = () => {
-        setState({
-            moreLoading: true,
-        });
-
-        setTimeout(() => {
+        if (props.commentDetail.replies) {
             setState({
+                repliesTotal: props.commentDetail.total_reply,
+                repliesList: props.commentDetail.replies,
+            });
+        }
+    }, []);
+
+    /**
+     * 获取更多回复
+     */
+    const getMoreReplies = async () => {
+        try {
+            setState({
+                moreLoading: true,
+            });
+            const res = await server.get(
+                apis.comment.replyList(
+                    props.commentDetail.id,
+                    state.repliesPage,
+                ),
+                apiConfig.pageToken(),
+            );
+
+            setState({
+                repliesList: res.data,
+                repliesPage: state.repliesPage + 1,
                 moreLoading: false,
             });
-        }, 1000);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     return (
         <>
             <TouchableHighlight
-                onPress={() => props.onPressReply()}
+                onPress={() =>
+                    props.onPressReply(
+                        ReplyType.ReplyToComment,
+                        props.commentDetail,
+                    )
+                }
                 underlayColor={'#fafafa'}>
                 <View style={styles.container}>
                     <TouchableHighlight
                         onPress={props.onPressAvatar}
-                        underlayColor={'none'}
-                    >
+                        underlayColor={'none'}>
                         <FastImage
                             style={styles.avatar}
                             source={{uri: avatarUrl}}
@@ -64,9 +97,18 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
 
                     <View style={[styles.rightView]}>
                         <View style={styles.postHeader}>
-                            <Text style={{color: '#999'}}>
-                                {props.commentDetail.user_info.nickname}
-                            </Text>
+                            <View style={styles.nameBase}>
+                                <Text style={{color: '#999'}}>
+                                    {props.commentDetail.user_info.nickname}
+                                </Text>
+                                {props.isAuthor && (
+                                    <View style={styles.authorBase}>
+                                        <Text style={styles.author}>
+                                            {useLanguage.author}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
                             <Text style={styles.postTime}>
                                 {Utils.getPostTime(
                                     props.commentDetail.created_at,
@@ -75,40 +117,63 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         </View>
 
                         <Text>
-                            <Text>
-                                {props.commentDetail.content}
-                            </Text>
+                            {
+                                props.commentDetail.target_user_info &&
+                                props.commentDetail.target_user_id !== props.mainCommentUserId && (
+                                    <Text>
+                                        {useLanguage.reply_to}
+                                        <Text style={{color: '#aaa'}}>
+                                            {
+                                                props.commentDetail.target_user_info.nickname
+                                            }
+                                        </Text>
+                                        {':  '}
+                                    </Text>
+                                )
+                            }
+                            {props.commentDetail.content}
                         </Text>
                     </View>
                 </View>
             </TouchableHighlight>
 
-            {props.subComment && (
+            {state.repliesList.length ? (
                 <View style={{paddingLeft: 40}}>
-                    {/*{[...postList].splice(0, 2).map(data => (*/}
-                    {/*    <CommentItem*/}
-                    {/*        key={data.id}*/}
-                    {/*        onPressAvatar={props.onPressAvatar}*/}
-                    {/*        onPressReply={props.onPressReply}*/}
-                    {/*    />*/}
-                    {/*))}*/}
+                    {state.repliesList.map(data => (
+                        <CommentItem
+                            mainCommentUserId={props.mainCommentUserId}
+                            key={data.id}
+                            commentDetail={data}
+                            isAuthor={
+                                props.commentDetail.user_id === data.user_id
+                            }
+                            onPressAvatar={props.onPressAvatar}
+                            onPressReply={() =>
+                                props.onPressReply(ReplyType.ReplyToReply, data)
+                            }
+                        />
+                    ))}
 
-                    <TouchableHighlight
-                        style={styles.moreReplies}
-                        onPress={onPressLoadMore}
-                        underlayColor={'none'}>
-                        {!state.moreLoading ? (
-                            <Text style={styles.moreRepliesText}>
-                                View more replies
-                            </Text>
-                        ) : (
-                            <Text style={styles.moreRepliesText}>
-                                <ActivityIndicator />
-                                Load more
-                            </Text>
-                        )}
-                    </TouchableHighlight>
+                    {state.repliesTotal > state.repliesList.length && (
+                        <TouchableHighlight
+                            style={styles.moreReplies}
+                            onPress={getMoreReplies}
+                            underlayColor={'none'}>
+                            {!state.moreLoading ? (
+                                <Text style={styles.moreRepliesText}>
+                                    View more replies
+                                </Text>
+                            ) : (
+                                <Text style={styles.moreRepliesText}>
+                                    <ActivityIndicator />
+                                    Load more
+                                </Text>
+                            )}
+                        </TouchableHighlight>
+                    )}
                 </View>
+            ) : (
+                <></>
             )}
 
             {props.showSeparator && <View style={styles.separator} />}
@@ -125,6 +190,22 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 32,
+    },
+    nameBase: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    authorBase: {
+        backgroundColor: '#EBEBEB',
+        borderRadius: 10,
+        marginLeft: 5,
+        padding: 1,
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+    author: {
+        color: '#fff',
+        fontSize: 12,
     },
     rightView: {
         flex: 1,

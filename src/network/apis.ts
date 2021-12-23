@@ -40,7 +40,7 @@ const apis: any = {
     // 评论API
     comment: {
         // 回复评论
-        reply: (comId: string) => `/v1/comment/id/${comId}/reply`,
+        replyToComment: (comId: string) => `/v1/comment/id/${comId}/reply`,
         // 回复评论下面的回复
         replyToReply: (comId: string, repId: string) => {
             return `/v1/comment/id/${comId}/reply/id/${repId}`

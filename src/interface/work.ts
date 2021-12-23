@@ -1,3 +1,21 @@
+import { GenderProps } from "../enum";
+
+
+export interface UserInfoProps {
+    id: string
+    created_at: string
+    username: string
+    nickname?: string
+    total_theme?: number
+    total_follow?: number
+    total_fans?: number
+    gender?: GenderProps
+    avatar?: string
+    job?: string
+    address?: string
+    birthday?: string
+    intro?: string
+}
 
 
 export interface AnimalCardProps {
@@ -41,37 +59,47 @@ export interface PostContentProps {
  * 评论
  */
 export interface CommentProps {
+    // 评论和回复通用
     id: string
     created_at: string
     user_id: string
     theme_id: string
     content: string
     total_reply: number
-    replies: ReplyProps[]
-    user_info: {
-        nickname: string
-        avatar: string
-    }
-}
-
-
-/**
- * 评论的回复
- */
-export interface ReplyProps {
-    id: string
-    created_at: string
-    user_id: string
-    // 回复目标用户id
-    target_user_id: string
     user_info: {
         nickname: string
         avatar: string
     },
+    replies?: CommentProps[] | null
+    // --- 只有回复才有的 ---
+    // 回复目标用户id
+    target_user_id?: string
     // 回复目标用户信息
-    target_user_info: {
+    target_user_info?: {
         nickname: string
         avatar: string
-    }
-
+    },
 }
+
+
+// /**
+//  * 评论的回复
+//  */
+// export interface ReplyProps {
+//     id: string
+//     created_at: string
+//     user_id: string
+//     content: string
+//     // 回复目标用户id
+//     target_user_id: string
+//     user_info: {
+//         nickname: string
+//         avatar: string
+//     },
+//     // 回复目标用户信息
+//     target_user_info: {
+//         nickname: string
+//         avatar: string
+//     },
+//     total_reply?: number
+// }

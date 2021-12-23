@@ -11,55 +11,58 @@ import {screenHeight, screenWidth} from '../../../config/contant';
 import {Image} from 'react-native-elements';
 import {useLanguage} from '../../../language';
 import AweKeyboard from '../../../components/awe-keyboard';
-import {PostCommentProps} from './type';
+import { PostCommentProps, ReplyType } from "./type";
 import {avatarUrl} from '../../../mock';
 import CommentItem from './comment-item';
 import {themeColor} from '../../../assets/styles';
-import {useSetState} from 'ahooks';
 import BottomSheet, {BottomSheetVirtualizedList} from '@gorhom/bottom-sheet';
-import server from '../../../network';
-import apis from '../../../network/apis';
 import {CommentProps} from '../../../interface/work';
 import dayjs from 'dayjs';
 import {observer} from 'mobx-react';
-import {usePostListDataStore} from '../../../store/provider';
+import { useCommentDataStore, usePostListDataStore } from "../../../store/provider";
 
 interface IState {
-    contentText: string;
     keyboardVisible: boolean;
-    dataSource: CommentProps[];
 }
 
 const PostCommentSheet: React.FC<PostCommentProps> = (
     props: PostCommentProps,
 ) => {
     const {postStoreData} = usePostListDataStore();
+    const {
+        commentStoreData,
+        contentText,
+        setContentText,
+        getCommentData,
+        setCommentStoreData,
+        sendCommentToPost,
+        sendReplyToComment,
+        currentReplyData,
+        setCurrentReplyData
+    } = useCommentDataStore()
 
     const actionSheetRef = React.createRef<any>();
     const commentListRef = React.useRef<any>(null);
     const currentPostId = React.useRef<string>('');
-    const currentPostLatest = React.useRef<any>(null);
+    // 最近一次打开事件
+    const latestOpenTimestamp = React.useRef<any>(null);
 
-    const [state, setState] = useSetState<IState>({
-        contentText: '',
-        keyboardVisible: false,
-        dataSource: [],
-    });
+    const [keyboardVisible, setKeyboardVisible] = React.useState(false)
 
     React.useEffect(() => {
         if (props.visible) {
             // 重复打开帖子的评论不需要重新请求
             // 同一个帖子打开的间隔超过20秒
             // 都会触发重新请求
+
             if (
                 postStoreData[props.rowIndex].id !== currentPostId.current ||
-                dayjs().valueOf() - currentPostLatest.current > 30000
+                dayjs().valueOf() - latestOpenTimestamp.current > 30000
             ) {
                 currentPostId.current = postStoreData[props.rowIndex].id;
-                currentPostLatest.current = dayjs().valueOf();
-                setState({
-                    dataSource: [],
-                });
+                latestOpenTimestamp.current = dayjs().valueOf();
+
+                setCommentStoreData([])
                 getDataSource();
             }
             actionSheetRef.current && actionSheetRef.current.snapToIndex(1);
@@ -68,15 +71,9 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         }
     }, [props.visible]);
 
-    const getDataSource = async () => {
-        try {
-            const res = await server.get(
-                apis.post.comment.list(currentPostId.current),
-            );
-            setState({
-                dataSource: res.data,
-            });
-        } catch (err) {}
+
+    const getDataSource = () => {
+        getCommentData(currentPostId.current);
     };
 
     // callbacks
@@ -86,13 +83,27 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         }
     }, []);
 
+
     /**
-     * 点击回复 显示键盘
+     * 回复消息 显示键盘
+     * @param replyType
+     * @param comment
+     * @param commentId
      */
-    const onPressReply = () => {
-        setState({
-            keyboardVisible: true,
-        });
+    const onPressReply = (
+        replyType: ReplyType,
+        comment: CommentProps,
+        commentId: string,
+    ) => {
+
+        setContentText('')
+        setCurrentReplyData({
+            commentId,
+            replyNickname: comment.user_info.nickname,
+            replyId: replyType === ReplyType.ReplyToReply ? comment.id : ''
+        })
+
+        setKeyboardVisible(true)
     };
 
     /**
@@ -102,43 +113,85 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         props.onPressAvatar();
     };
 
-    const onClose = (animatedBack?: boolean) => {
-        // 点击背景展示收回的动画
-        animatedBack && actionSheetRef.current.snapToPosition(1);
-
-        setTimeout(() => {
-            props.onClose();
-        }, 100);
+    /**
+     * 回复帖子
+     */
+    const replyToPost = () => {
+        setKeyboardVisible(true)
     };
+
 
     /**
      * 发送评论
      */
-    const onPressSend = async () => {
-        try {
-            const res = await server.post(
-                apis.post.comment.push(currentPostId.current),
-                {
-                    content: state.contentText,
-                },
-            );
+    const onPressSend = () => {
+        if (currentReplyData) {
+            // 回复评论
+            sendToCommentOrReply();
+        } else {
+            // 回复帖子
+            sendToPost();
+        }
+    };
 
-            // 能打开评论框，说明肯定有评论
-            postStoreData[props.rowIndex].total_comment += 1
+    /**
+     * 回复给帖子
+     */
+    const sendToPost = async () => {
+        try {
+            await sendCommentToPost()
+            // 评论数+1
+            postStoreData[props.rowIndex].total_comment += 1;
 
             Keyboard.dismiss();
-
+            // 滚动到第一行显示最新评论
             commentListRef.current.scrollToOffset({
                 offset: 0,
                 animated: true,
             });
 
-            setState({
-                dataSource: [res.data, ...state.dataSource],
-                contentText: '',
-                keyboardVisible: false,
-            });
+            setKeyboardVisible(false)
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    /**
+     * 回复评论
+     */
+    const sendToCommentOrReply = async () => {
+        try {
+            await sendReplyToComment()
+
+            // Keyboard.dismiss();
+            setKeyboardVisible(false)
+
         } catch (err) {}
+    };
+
+
+    /**
+     * 关闭键盘
+     */
+    const onCloseKeyboard = () => {
+        // 如果是回复某条消息，那么关闭键盘
+        if (currentReplyData) {
+            setContentText('')
+            setCurrentReplyData(null)
+        }
+        setKeyboardVisible(false)
+    };
+
+    const onClose = (animatedBack?: boolean) => {
+        // 点击背景展示收回的动画
+        animatedBack && actionSheetRef.current.snapToPosition(1);
+
+        setContentText('')
+        setCurrentReplyData(null)
+
+        setTimeout(() => {
+            props.onClose();
+        }, 100);
     };
 
     return (
@@ -160,25 +213,30 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 handleComponent={() => (
                     <View style={styles.sheetHeader}>
                         <Text style={{color: '#777'}}>
-                            {postStoreData[props.rowIndex]?.total_comment || 0} comments
+                            {postStoreData[props.rowIndex]?.total_comment || 0}{' '}
+                            comments
                         </Text>
                     </View>
                 )}>
-                {state.dataSource.length ? (
+                {commentStoreData.length ? (
                     <BottomSheetVirtualizedList
                         ref={commentListRef}
                         style={styles.sheetContent}
-                        getItemCount={() => state.dataSource.length}
+                        getItemCount={() => commentStoreData.length}
                         getItem={(data, index) => data[index]}
-                        data={state.dataSource}
+                        data={commentStoreData}
                         keyExtractor={(item: any) => item.id}
                         renderItem={(row: any) => (
                             <CommentItem
+                                mainCommentUserId={row.item.user_id}
+                                isAuthor={
+                                    postStoreData[props.rowIndex].user_id ===
+                                    row.item.user_id
+                                }
                                 commentDetail={row.item}
                                 showSeparator={true}
-                                // subComment={[]}
                                 onPressAvatar={onPressAvatar}
-                                onPressReply={onPressReply}
+                                onPressReply={(type, comment) => onPressReply(type, comment, row.item.id)}
                             />
                         )}
                     />
@@ -190,7 +248,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
                 <TouchableHighlight
                     underlayColor={'none'}
-                    onPress={() => setState({keyboardVisible: true})}>
+                    onPress={replyToPost}>
                     <View style={styles.sheetFooter}>
                         <Image
                             style={styles.avatar}
@@ -203,10 +261,10 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                                 numberOfLines={1}
                                 ellipsizeMode={'tail'}
                                 style={{
-                                    color: state.contentText ? '#333' : '#ddd',
+                                    color: contentText ? '#333' : '#ddd',
                                 }}>
-                                {state.contentText
-                                    ? state.contentText
+                                {contentText
+                                    ? contentText
                                     : useLanguage.say_something}
                             </Text>
                         </View>
@@ -218,7 +276,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                                     styles.submitButton,
                                     {
                                         backgroundColor: themeColor,
-                                        opacity: state.contentText ? 1 : 0.7,
+                                        opacity: contentText ? 1 : 0.7,
                                     },
                                 ]}>
                                 <Text style={{color: '#fff'}}>
@@ -231,10 +289,11 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
             </BottomSheet>
 
             <AweKeyboard
-                visible={state.keyboardVisible}
-                contentText={state.contentText}
-                onClose={() => setState({keyboardVisible: false})}
-                onChangeText={contentText => setState({contentText})}
+                replyUser={currentReplyData}
+                visible={keyboardVisible}
+                contentText={contentText}
+                onClose={onCloseKeyboard}
+                onChangeText={setContentText}
                 onPressSend={onPressSend}
             />
         </>

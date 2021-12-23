@@ -141,6 +141,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                             paddingLeft: 20,
                                             paddingRight: 20,
                                         }}>
+                                        <Text>qpwojdpoqwdk</Text>
                                         {/*<CommentItem*/}
                                         {/*    commentDetail={}*/}
                                         {/*    onPressReply={() => {}}*/}

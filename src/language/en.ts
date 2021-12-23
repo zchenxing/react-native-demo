@@ -1,5 +1,6 @@
 export const languageEn = {
 
+    author: 'Author',
     clear: 'Clear',
     just_now: '刚刚',
     yesterday: '昨天',
@@ -13,8 +14,10 @@ export const languageEn = {
     dont_save: "Don't save",
     save: 'Save',
     choose_category: 'Choose a category',
-    Choose_category_first: 'Choose a category first',
+    choose_category_first: 'Choose a category first',
     create_post: 'Create Post',
+    reply_to: `Reply to `,
+
 
     x_minute_ago: (min: number) => `${min} ${min > 1 ? 'minutes' : 'minute'} ago`,
     x_hour_ago: (hour: number) => `${hour} ${hour > 1 ? 'hours' : 'hour'} ago`,

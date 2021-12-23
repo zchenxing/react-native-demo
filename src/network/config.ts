@@ -21,7 +21,7 @@ class ApiConfig {
 
         const headers: any = {}
 
-        headers['x-result-limit'] = 20
+        headers['x-result-limit'] = 5
 
         if (sort) {
             headers['x-result-sort'] = sort

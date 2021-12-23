@@ -52,7 +52,7 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const backListener = React.useRef<any>(null);
 
     const [state, setState] = useSetState<IState>({
-        publishTag: { color: '#fff', icon: 'huati', name: useLanguage.Choose_category_first },
+        publishTag: { color: '#fff', icon: 'huati', name: useLanguage.choose_category_first },
         selectedAssets: [],
         startIndex: 0,
         preview: false,

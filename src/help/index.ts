@@ -45,7 +45,6 @@ const Utils = {
         }
         // 48h <= time < 168h   发布当天到现在间隔n天, 显示 n+1天前
         else if (day > 1 && seconds < 168 * 3600) {
-            console.log(seconds);
             const days = dayjs().diff(time, 'days')
             return useLanguage.x_day_ago(days)
         }

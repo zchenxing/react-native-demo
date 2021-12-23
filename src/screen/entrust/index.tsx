@@ -1,15 +1,30 @@
 import React from 'react';
-import {Text, TouchableHighlight, View,Alert,FlatList} from "react-native";
+import {Text, TouchableHighlight, View, Alert, FlatList, RefreshControl, DeviceEventEmitter} from "react-native";
 import {Header} from 'react-native-elements';
 import { NavigateProps } from "../../interface";
 // import Icon from "react-native-vector-icons/FontAwesome";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Test3 from "../test/test3";
 import Icon from "react-native-vector-icons/FontAwesome";
+import {useSetState} from "ahooks";
+import {EventEmitterName} from "../../config/contant";
+import Test4 from "../test/test4";
 const Tab = createMaterialTopTabNavigator();
 
 
 function ProfileScreen() {
+    const [state, setState] = useSetState<any>({
+        refreshing: false,
+    });
+
+    React.useEffect(() => {
+        setState({
+            refreshing: false,
+
+        });
+
+    }, [state.refreshing]);
+
     // This hook returns `true` if the screen is focused, `false` otherwise
     const DATA = [
         {
@@ -36,12 +51,26 @@ function ProfileScreen() {
     const renderItem = ({ item }: any) => (
         <Item title={item.title} />
     );
+    /**
+     * 下拉刷新数据
+     */
+    const onRefreshData = () => {
+        setState({
+            refreshing: true,
+        });
+    };
     return (
         <FlatList
             data={DATA}
             removeClippedSubviews={true}
             renderItem={renderItem}
             keyExtractor={item => item.id}
+            refreshControl={
+                <RefreshControl
+                    refreshing={state.refreshing}
+                    onRefresh={onRefreshData}
+                />
+            }
         />
     );
 }
@@ -49,7 +78,18 @@ function ProfileScreen() {
 
 const Entrust: React.FC<NavigateProps> = (props: NavigateProps) => {
 
+    const [state, setState] = useSetState<any>({
+        entrustType: 'me',
+        loading: false,
+    });
 
+    const changeEntrustType = (type:string) => {
+        setState({entrustType:type})
+    }
+
+    const setLoading = () => {
+        setState({loading:true})
+    }
 
     return (
         <View style={{flex: 1}}>
@@ -74,40 +114,18 @@ const Entrust: React.FC<NavigateProps> = (props: NavigateProps) => {
                     <View style={{flexDirection:'row'}}>
                         <TouchableHighlight
                             underlayColor={'none'}
-                            onPress={() => {Alert.alert(
-                                "Alert Title",
-                                "My Alert Msg",
-                                [
-                                    {
-                                        text: "Cancel",
-                                        onPress: () => console.log("Cancel Pressed"),
-                                        style: "cancel"
-                                    },
-                                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                                ]
-                            )}}
+                            onPress={() => {changeEntrustType('me')}}
                         >
-                            <View style={{paddingRight: 20}}>
-                                <Text>我的委托</Text>
+                            <View style={{paddingRight: 20,}}>
+                                <Text style={{color: state.entrustType === 'me' ? 'green' : 'black'}}>我的委托</Text>
                             </View>
                         </TouchableHighlight>
                         <TouchableHighlight
                             underlayColor={'none'}
-                            onPress={() => {Alert.alert(
-                                "Alert Title",
-                                "My Alert Msg",
-                                [
-                                    {
-                                        text: "Cancel",
-                                        onPress: () => console.log("Cancel Pressed"),
-                                        style: "cancel"
-                                    },
-                                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                                ]
-                            )}}
+                            onPress={() => {changeEntrustType('accepted')}}
                         >
                             <View>
-                                <Text>接受的委托</Text>
+                                <Text style={{color: state.entrustType === 'accepted' ? 'green' : 'black'}}>接受的委托</Text>
                             </View>
                         </TouchableHighlight>
                     </View>
@@ -118,7 +136,9 @@ const Entrust: React.FC<NavigateProps> = (props: NavigateProps) => {
                 <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: 'Home' }}/>
                 <Tab.Screen name="Test3" component={Test3} />
                 <Tab.Screen name="Test4" component={Test3} />
+                <Tab.Screen name="Test5" component={Test4} />
             </Tab.Navigator>
+
 
         </View>
 

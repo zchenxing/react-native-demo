@@ -1,26 +1,19 @@
-import React from 'react';
-import {
-    Text,
-    View,
-    StyleSheet,
-    TouchableHighlight,
-    ActivityIndicator,
-    Keyboard,
-} from 'react-native';
-import {screenHeight, screenWidth} from '../../../config/contant';
-import {Image} from 'react-native-elements';
-import {useLanguage} from '../../../language';
-import AweKeyboard from '../../../components/awe-keyboard';
+import React from "react";
+import { ActivityIndicator, Keyboard, StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import { screenHeight, screenWidth } from "../../../config/contant";
+import { Image } from "react-native-elements";
+import { useLanguage } from "../../../language";
+import AweKeyboard from "../../../components/awe-keyboard";
 import { PostCommentProps, ReplyType } from "./type";
-import {avatarUrl} from '../../../mock';
-import CommentItem from './comment-item';
-import {themeColor} from '../../../assets/styles';
-import BottomSheet, {BottomSheetVirtualizedList} from '@gorhom/bottom-sheet';
-import {CommentProps} from '../../../interface/work';
-import dayjs from 'dayjs';
-import {observer} from 'mobx-react';
+import { avatarUrl } from "../../../mock";
+import CommentItem from "./comment-item";
+import { themeColor } from "../../../assets/styles";
+import BottomSheet, { BottomSheetVirtualizedList } from "@gorhom/bottom-sheet";
+import { CommentProps } from "../../../interface/work";
+import dayjs from "dayjs";
+import { observer } from "mobx-react";
 import { useCommentDataStore, usePostListDataStore } from "../../../store/provider";
-import AweLoadMore from '../../../components/awe-load-more';
+import AweLoadMore from "../../../components/awe-load-more";
 
 const PostCommentSheet: React.FC<PostCommentProps> = (
     props: PostCommentProps,
@@ -36,6 +29,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         sendReplyToComment,
         currentReplyData,
         setCurrentReplyData,
+        getMoreReplies,
         resetData
     } = useCommentDataStore()
 
@@ -55,13 +49,15 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
             // 都会触发重新请求
             if (
                 postStoreData[props.rowIndex].id !== currentPostId.current ||
-                dayjs().valueOf() - latestOpenTimestamp.current > 30000
+                dayjs().valueOf() - latestOpenTimestamp.current > 20000
             ) {
                 currentPostId.current = postStoreData[props.rowIndex].id;
                 latestOpenTimestamp.current = dayjs().valueOf();
 
+                // 先重置数据
                 resetData()
-                getCommentData(currentPostId.current);
+                // 再重新请求数据
+                initData()
             }
             actionSheetRef.current && actionSheetRef.current.snapToIndex(1);
         } else {
@@ -77,6 +73,17 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         }
     }, []);
 
+
+    const initData = async () => {
+        try {
+            const res = await getCommentData(currentPostId.current);
+            postStoreData[props.rowIndex].total_comment = parseInt(
+                res.headers['x-result-count'], 10)
+
+        } catch (err) {
+
+        }
+    }
 
     const onLoadMoreData = () => {
         if (moreLoad.hasMoreData) {
@@ -178,8 +185,14 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
     };
 
 
-    const getMoreReplies = () => {
+    /**
+     * 获取更多回复数据
+     * @param row
+     */
+    const getReplies = (row: any) => {
+        console.log(row);
 
+        getMoreReplies(row.index, row.item)
     }
 
     /**
@@ -253,7 +266,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                                     postStoreData[props.rowIndex].user_id ===
                                     row.item.user_id
                                 }
-                                getMoreReplies={() => getMoreReplies()}
+                                getMoreReplies={() => getReplies(row)}
                                 commentDetail={row.item}
                                 showSeparator={true}
                                 onPressAvatar={onPressAvatar}

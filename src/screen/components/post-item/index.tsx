@@ -7,27 +7,17 @@ import {pictureList} from '../../../mock';
 import PostPicture from './post-picture';
 import PostFooter from './post-footer';
 import PostAnimalCard from './post-animal-card';
-import { PostUserEventType } from "../../../enum";
+import {PostUserEventType} from '../../../enum';
+import WorkHelp from '../../../help/work';
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
-    const [followLoading, setFollowLoading] = React.useState(false)
 
-    React.useEffect(() => {
-
-    }, [])
+    React.useEffect(() => {}, []);
 
     const onPressPicture = (startIndex: number) => {
         props.onPressPicture(pictureList, startIndex);
     };
-
-
-    const onPressFollow = () => {
-        setFollowLoading(true)
-        props.onPressFollow(() => {
-            setFollowLoading(false)
-        })
-    }
 
     return (
         <TouchableHighlight
@@ -36,18 +26,11 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
             underlayColor={'#eee'}>
             <>
                 <PostHeader
-                    isFollow={
-                        props.postItem.event_types.indexOf(
-                            PostUserEventType.Follow,
-                        ) > -1
-                    }
-                    followLoading={followLoading}
                     userNickname={props.postItem.user_info.nickname}
                     userAvatar={props.postItem.user_info.avatar}
                     label={props.postItem.label}
                     hiddenFollow={props.hiddenFollow}
                     handleUser={props.onPressPersonal}
-                    handleFollow={onPressFollow}
                 />
 
                 <PostArticle contentText={props.postItem.content} />
@@ -65,14 +48,16 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
                 <PostFooter
                     isCollection={
-                        props.postItem.event_types.indexOf(
+                        WorkHelp.userEventExist(
+                            props.postItem.user_events,
                             PostUserEventType.Collection,
-                        ) > -1
+                        ).isExist
                     }
                     createdAt={props.postItem.created_at}
                     commentTotal={props.postItem.total_comment}
                     onPressCollection={props.onPressCollection}
-                    onPressComment={props.onPressComment} />
+                    onPressComment={props.onPressComment}
+                />
             </>
         </TouchableHighlight>
     );
@@ -84,7 +69,7 @@ const styles = StyleSheet.create({
         paddingBottom: 16,
         backgroundColor: '#fff',
         borderBottomWidth: 10,
-        borderBottomColor: '#F8F8F8'
+        borderBottomColor: '#F8F8F8',
     },
 });
 

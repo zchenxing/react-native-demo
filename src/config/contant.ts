@@ -6,7 +6,7 @@ export const screenWidth = Dimensions.get('window').width
 
 export const screenHeight = Dimensions.get('window').height
 
-export const PAGE_SIZE = 10
+export const PAGE_SIZE = 5
 
 
 

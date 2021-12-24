@@ -50,8 +50,8 @@ export interface PostContentProps {
     biological_card?: AnimalCardProps
     // 用户事件，1-收藏主题，2-点赞主题，3-关注用户
     user_events?: {event_type: 1 | 2 | 3}[] | null
-    //
-    event_types: number[]
+    // //
+    // event_types: number[]
 }
 
 

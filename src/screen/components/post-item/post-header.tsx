@@ -3,11 +3,8 @@ import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import {Image} from 'react-native-elements';
 import {avatarUrl} from '../../../mock';
 import {themeColor} from '../../../assets/styles';
-import FollowButton from '../follow-button';
 
 interface IProps {
-    isFollow: boolean
-    followLoading: boolean
     // 显示标签
     label?: string
     // 用户头像
@@ -18,32 +15,9 @@ interface IProps {
     hiddenFollow?: boolean
     // 点击用户跳转
     handleUser: () => void;
-    // 点击关注事件
-    handleFollow: (follow: boolean) => void
 }
 
 const PostHeader: React.FC<IProps> = (props: IProps) => {
-
-    const onPressFollow = () => {
-
-        props.handleFollow(!props.isFollow)
-        // setState({
-        //     followLoading: true
-        // })
-        //
-        // setTimeout(() => {
-        //     setState({
-        //         followLoading: false
-        //     })
-        //
-        //     Toast.showWithGravity(
-        //         followStatus ? '已关注' : '已取消关注',
-        //         1,
-        //         Toast.TOP,
-        //     );
-        // }, 900)
-
-    };
 
     return (
         <View style={postHeaderStyles.header}>
@@ -71,17 +45,6 @@ const PostHeader: React.FC<IProps> = (props: IProps) => {
                     </View>
                 </>
             </TouchableHighlight>
-
-            {
-                !props.hiddenFollow &&
-
-                <FollowButton
-                    isFollow={props.isFollow}
-                    followLoading={props.followLoading}
-                    onChangeFollow={onPressFollow}
-                />
-
-            }
 
         </View>
     );
@@ -111,16 +74,7 @@ const postHeaderStyles = StyleSheet.create({
         fontSize: 12,
         paddingLeft: 5,
         paddingRight: 5,
-    },
-
-    follow: {
-        width: 80,
-        padding: 5,
-        borderRadius: 30,
-    },
-    followText: {
-        textAlign: 'center',
-    },
+    }
 });
 
 export default React.memo(PostHeader);

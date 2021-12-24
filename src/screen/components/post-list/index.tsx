@@ -1,27 +1,20 @@
 import React from 'react';
 import {
-    ActivityIndicator,
     FlatList,
     RefreshControl,
-    TouchableHighlight,
-    Text,
-    View,
     DeviceEventEmitter,
 } from 'react-native';
 import PostItem from '../post-item';
 import AwePicturePreview from '../../../components/awe-picture-preview';
 import PostCommentSheet from '../post-comments-sheet';
-import {useLanguage} from '../../../language';
 import {useSetState} from 'ahooks';
 import {PostListProps} from './type';
 import {PostContentProps} from '../../../interface/work';
 import server from '../../../network';
 import apis from '../../../network/apis';
-import apiConfig from '../../../network/config';
 import ScreenBase from '../screen-base';
-import {EventEmitterName} from '../../../config/contant';
+import {EventEmitterName, PAGE_SIZE} from '../../../config/contant';
 import {useNetInfo} from '@react-native-community/netinfo';
-import {PostUserEventType} from '../../../enum';
 import AweKeyboard from '../../../components/awe-keyboard';
 import Toast from 'react-native-simple-toast';
 import {usePostListDataStore} from '../../../store/provider';
@@ -32,7 +25,6 @@ interface IState {
     refreshing: boolean;
     moreLoading: boolean;
     hasMoreData: boolean;
-    followLoading: boolean
 
     // 首次评论的事件
     firstKeyboardVisible: boolean;
@@ -48,14 +40,18 @@ interface IState {
 
 const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     const netInfo = useNetInfo();
-    const {postStoreData, setPostStoreData} = usePostListDataStore();
+    const {
+        postStoreData,
+        getPostData,
+        getMorePostData,
+        onCollectPost,
+    } = usePostListDataStore();
     const listRef = React.useRef<any>(null);
 
     const [state, setState] = useSetState<IState>({
         refreshing: true,
         moreLoading: false,
         hasMoreData: true,
-        followLoading: false,
 
         firstKeyboardVisible: false,
         firstContentText: '',
@@ -70,7 +66,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
     React.useEffect(() => {
         if (state.refreshing) {
-            onLoadData(false);
+            onLoadData();
         }
 
         // 监听是否发布了新的帖子
@@ -82,40 +78,13 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         return () => eventEmitter.remove();
     }, [state.refreshing]);
 
-    const getDataSource = async (id?: string) => {
-        try {
-            const res = await server.get(
-                apis.post.list(id),
-                apiConfig.pageToken(),
-            );
-
-            // 添加 event_types 字段，用于判断是否存在用户事件
-            const results: PostContentProps[] = res.data.map((data: any) => {
-                const event_types = data.user_events
-                    ? data.user_events.map((event: any) => event.event_types)
-                    : [];
-
-                return {
-                    ...data,
-                    event_types,
-                };
-            });
-
-            return Promise.resolve(results);
-        } catch (err) {
-            return Promise.reject(err);
-        }
-    };
-
     /**
      * 加载数据
      * @param scrollToTop
      */
-    const onLoadData = async (scrollToTop: boolean) => {
+    const onLoadData = async (scrollToTop?: boolean) => {
         try {
-            const data = await getDataSource();
-
-            setPostStoreData(data);
+            await getPostData();
 
             setState({
                 refreshing: false,
@@ -152,11 +121,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             });
 
             try {
-                const _id = postStoreData[postStoreData.length - 1].id;
-                const data = await getDataSource(_id);
-                if (data.length) {
-                    setPostStoreData([...postStoreData, ...data]);
-
+                const data = await getMorePostData();
+                if (data.length && data.length <= PAGE_SIZE) {
                     setState({
                         moreLoading: false,
                         hasMoreData: true,
@@ -183,7 +149,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         onLoadMoreData(true);
     };
 
-
     /**
      * 浏览图片
      * @param pictures
@@ -197,41 +162,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             pictureStartIndex: startIndex,
             pictureList: list,
         });
-    };
-
-
-    /**
-     * 执行关注
-     * @param row
-     * @param callback
-     */
-    const onPressFollow = async (row: any, callback: () => void) => {
-
-        try {
-
-            setState({ followLoading: true })
-
-            await server.post(apis.user.follow(row.item.user_id))
-
-            const index = postStoreData[row.index].event_types.indexOf(
-                PostUserEventType.Follow,
-            );
-
-            if (index === -1) {
-                postStoreData[row.index].event_types.push(
-                    PostUserEventType.Follow,
-                );
-            } else {
-                postStoreData[row.index].event_types.splice(index, 1);
-            }
-
-            callback()
-            setPostStoreData(postStoreData)
-
-        } catch (err) {
-            callback()
-            console.log(err);
-        }
     };
 
     /**
@@ -264,37 +194,15 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         }
     };
 
+
     /**
      * 点击收藏 | 取消收藏
      * @param row      具体某行的数据
-     * @param collect   是否收藏
      */
-    const onPressCollection = async (row: any, collect: boolean) => {
+    const onPressCollection = async (row: any) => {
         if (netInfo.type !== 'none') {
             try {
-                await server.post(apis.post.collect(row.item.id), {});
-                const event_types = [...postStoreData[row.index].event_types];
-
-                // 进行收藏操作，在event_types中添加收藏
-                if (collect) {
-                    postStoreData[row.index].event_types = [
-                        ...new Set([
-                            ...event_types,
-                            PostUserEventType.Collection,
-                        ]),
-                    ];
-                }
-                // 取消收藏
-                else {
-                    const deleteIndex = event_types.indexOf(
-                        PostUserEventType.Collection,
-                    );
-                    event_types.splice(deleteIndex, 1);
-                    postStoreData[row.index].event_types = event_types;
-                }
-
-                setPostStoreData(postStoreData);
-
+                await onCollectPost(row.item.id, row.index);
             } catch (err) {
                 console.log(err);
                 throw err;
@@ -328,7 +236,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
     return (
         <ScreenBase
-            onReload={getDataSource}
+            onReload={onLoadData}
             nothingPage={
                 !postStoreData.length
                     ? {
@@ -346,7 +254,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                     <AweLoadMore
                         loading={state.moreLoading}
                         hasMoreData={state.hasMoreData}
-                        handleNoMoreData={handleNoMoreData} />
+                        handleNoMoreData={handleNoMoreData}
+                    />
                 }
                 onEndReached={() => onLoadMoreData(state.hasMoreData)}
                 refreshControl={
@@ -358,13 +267,10 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 renderItem={(row: any) => (
                     <PostItem
                         postItem={postStoreData[row.index]}
-                        onPressFollow={(callback) => onPressFollow(row, callback)}
                         onPressDetail={props.onPressDetail}
                         onPressPicture={onPressPicture}
                         onPressComment={() => onPressComment(row)}
-                        onPressCollection={follow =>
-                            onPressCollection(row, follow)
-                        }
+                        onPressCollection={() => onPressCollection(row)}
                         onPressPersonal={props.onPressPersonal}
                     />
                 )}

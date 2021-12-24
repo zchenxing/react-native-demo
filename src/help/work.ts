@@ -1,3 +1,4 @@
+
 const WorkHelp: any = {
     /**
      * 根据id，获取数据源的下标
@@ -16,6 +17,38 @@ const WorkHelp: any = {
 
         return resultIndex;
     },
+
+
+    /**
+     * 判断用户是否被关注
+     * @param userEvents
+     * @param useType
+     */
+    userEventExist: (
+        userEvents: {event_type: number}[] | null,
+        useType: number,
+    ): {isExist: boolean; existIndex: number} => {
+
+        let isExist: boolean = false
+        let existIndex: number = -1
+
+        // 判断是否关注
+        if (userEvents) {
+            userEvents.forEach((event, index) => {
+                if (event.event_type === useType) {
+                    isExist = true
+                    existIndex = index
+                }
+            })
+        }
+
+        return {
+            isExist,
+            existIndex
+        }
+    },
+
+
 };
 
 

@@ -80,8 +80,25 @@ const Utils = {
         return Number(amount)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    }
+    },
 
+
+    /**
+     * 数组对象去重
+     * @param param         以此字段为基准去重
+     * @param dataSource    数据源
+     */
+    arrayObjectDeDuplication: (param: string, dataSource: any[]): any[] => {
+
+        const obj: any = {};
+        dataSource = dataSource.reduce((cur, next) => {
+            // @ts-ignore
+            obj[next[param]] ? '' : (obj[next[param]] = cur.push(next));
+            return cur;
+        }, []);
+
+        return dataSource
+    }
 
 }
 

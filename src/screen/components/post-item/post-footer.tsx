@@ -8,14 +8,14 @@ interface PostFooterProps {
     createdAt: string
     // 评论总数
     commentTotal: number
-    onPressCollection: (collect: boolean) => void
+    onPressCollection: () => void
     onPressComment: () => void
 }
 
 const PostFooter: React.FC<PostFooterProps> = (props: PostFooterProps) => {
 
     const onPressCollect = () => {
-        props.onPressCollection(!props.isCollection)
+        props.onPressCollection()
     };
 
 

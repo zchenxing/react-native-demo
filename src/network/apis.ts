@@ -42,7 +42,7 @@ const apis: any = {
         // 回复评论
         replyToComment: (comId: string) => `/v1/comment/id/${comId}/reply`,
         // 回复评论下面的回复
-        replyToReply: (comId: string, repId: string) => {
+        replyToReply: (comId: string | undefined, repId: string | undefined) => {
             return `/v1/comment/id/${comId}/reply/id/${repId}`
         },
         // 回复列表

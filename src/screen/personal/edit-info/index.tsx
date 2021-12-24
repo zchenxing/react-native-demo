@@ -29,7 +29,6 @@ const EditPersonalInfoScreen: React.FC<NavigateProps> = (props: NavigateProps) =
                 allowedLivePhotos: false,
             });
 
-            console.log(response);
 
             setState({
                 localAvatar: response,

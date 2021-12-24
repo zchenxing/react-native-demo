@@ -5940,6 +5940,11 @@ react-native-tab-view@^3.1.1:
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-3.1.1.tgz#1f8d7a835ab4f5b1b1407ec8dddc1053b53fa3c6"
   integrity sha512-M5pRN6utQfytKWoKlKVzg5NbkYu308qNoW1khGTtEOTs1k14p2dHJ/BWOJoJYHKbPVUyZldbG9MFT7gUl4YHnw==
 
+react-native-timeline-flatlist@^0.7.6:
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/react-native-timeline-flatlist/-/react-native-timeline-flatlist-0.7.6.tgz#85cfbe4c2956bfde9777766b8cc1eaf7fa7857d7"
+  integrity sha512-CrexymQd9ZN3ZDbpJdjslN2sKoJQNYp1zsqZhjCbDtzpCOurIKgjBcgxKahRX5VMq7MBkzEOmVCwcu0GueuCFw==
+
 react-native-vector-icons@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-9.0.0.tgz#ab38ec6941f3f340d39846f1e8300e59863e2fb1"

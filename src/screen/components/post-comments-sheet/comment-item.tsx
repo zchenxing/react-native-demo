@@ -11,68 +11,14 @@ import {avatarUrl} from '../../../mock';
 import Utils from '../../../help';
 import {PostCommentsItemProps, ReplyType} from './type';
 import {themeColor} from '../../../assets/styles';
-import {useSetState} from 'ahooks';
 import {isIOS} from '../../../config/contant';
 import {useLanguage} from '../../../language';
-import {CommentProps} from '../../../interface/work';
-import server from '../../../network';
-import apis from '../../../network/apis';
-import apiConfig from '../../../network/config';
 
-interface IState {
-    // 加载更多回复
-    moreLoading: boolean;
-    // 回复列表
-    // repliesList: CommentProps[];
-    // 回复消息数
-    // repliesTotal: number;
-    repliesPage: number;
-}
 
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,
 ) => {
-    const [state, setState] = useSetState<IState>({
-        moreLoading: false,
-        // repliesList: [],
-        // repliesTotal: 0,
-        repliesPage: 1,
-    });
 
-    React.useEffect(() => {
-        // if (props.commentDetail.replies) {
-        //     setState({
-        //         repliesTotal: props.commentDetail.total_reply,
-        //         repliesList: props.commentDetail.replies,
-        //     });
-        // }
-    }, []);
-
-    // /**
-    //  * 获取更多回复
-    //  */
-    // const getMoreReplies = async () => {
-    //     try {
-    //         setState({
-    //             moreLoading: true,
-    //         });
-    //         const res = await server.get(
-    //             apis.comment.replyList(
-    //                 props.commentDetail.id,
-    //                 state.repliesPage,
-    //             ),
-    //             apiConfig.pageToken(),
-    //         );
-    //
-    //         setState({
-    //             repliesList: res.data,
-    //             repliesPage: state.repliesPage + 1,
-    //             moreLoading: false,
-    //         });
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
-    // };
 
     return (
         <>
@@ -145,9 +91,7 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                             mainCommentUserId={props.mainCommentUserId}
                             key={data.id}
                             commentDetail={data}
-                            isAuthor={
-                                props.commentDetail.user_id === data.user_id
-                            }
+                            isAuthor={props.isAuthor}
                             onPressAvatar={props.onPressAvatar}
                             onPressReply={() =>
                                 props.onPressReply(ReplyType.ReplyToReply, data)
@@ -160,7 +104,7 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                             style={styles.moreReplies}
                             onPress={props.getMoreReplies}
                             underlayColor={'none'}>
-                            {!state.moreLoading ? (
+                            {!props.moreLoading ? (
                                 <Text style={styles.moreRepliesText}>
                                     {useLanguage.view_more_replies}
                                 </Text>

@@ -19,6 +19,7 @@ export interface PostCommentProps {
 export interface PostCommentsItemProps {
     // 评论下标
     commentIndex?: number
+    moreLoading?: boolean
     getMoreReplies?: () => void
     // 评论id
     mainCommentUserId: string

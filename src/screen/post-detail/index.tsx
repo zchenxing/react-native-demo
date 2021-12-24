@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     ActivityIndicator,
-    FlatList,
+    FlatList, Keyboard,
     StyleSheet,
     Text,
     TouchableHighlight,
@@ -20,29 +20,69 @@ import PostCard from './post-card';
 import UserNavigator from '../components/user-navigator';
 import { useLanguage } from "../../language";
 import { INTELINK_SCREEN_NAME } from "../../routes/screen-name";
+import server from '../../network';
+import apis from '../../network/apis';
+import { CommentProps, PostContentProps } from "../../interface/work";
+import { useCommentDataStore, usePostListDataStore } from "../../store/provider";
+import { ReplyType } from "../components/post-comments-sheet/type";
+import AweLoadMore from '../../components/awe-load-more';
+import { observer } from "mobx-react";
 
 interface IState {
+    postDetail: PostContentProps | null
+    commentTotal: number
     followStatus: boolean;
     followLoading: boolean;
     collection: boolean;
     keyboardVisible: boolean;
-    commentText: string;
-    moreLoading: boolean
 }
 
 const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const flatListRef = React.useRef<any>(null)
+    const { postId, rowIndex } = props.route.params
 
+    const {postStoreData} = usePostListDataStore()
+    const {
+        commentStoreData,
+        contentText,
+        setContentText,
+        getCommentData,
+        commentMoreLoad,
+        replyMoreLoad,
+        sendCommentToPost,
+        sendReplyToComment,
+        currentReplyData,
+        setCurrentReplyData,
+        getMoreReplies,
+        resetCommentData
+    } = useCommentDataStore()
 
     const [state, setState] = useSetState<IState>({
+        postDetail: null,
+        commentTotal: 0,
         followStatus: false,
         followLoading: false,
         collection: false,
         keyboardVisible: false,
-        commentText: '',
-        moreLoading: false
     });
+
+
+    React.useEffect(() => {
+
+        setState({
+            postDetail: postStoreData[rowIndex]
+        })
+
+        getComments()
+
+        return () => resetCommentData()
+    }, [])
+
+
+    const getComments = async () => {
+        await getCommentData(postId)
+    }
 
     /**
      * 点击生物卡片查看更多
@@ -73,32 +113,100 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     };
 
 
-    const loadMore = () => {
-        return state.moreLoading ? (
-            <View>
-                <ActivityIndicator />
-                <Text style={{textAlign: 'center'}}>
-                    {useLanguage.load_more}
-                </Text>
-            </View>
-        ) : (
-            <></>
-        );
-    };
-
-    const onLoadMoreData = () => {
-        setState({
-            moreLoading: true
-        });
-
-        setTimeout(() => {
-            setState({moreLoading: false});
-        }, 2000);
+    const onLoadMoreData = async () => {
+        if (commentMoreLoad.hasMoreData && !commentMoreLoad.moreLoading) {
+            await getCommentData(postId, true)
+        }
     }
-
 
     const onPressAvatar = () => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL)
+    }
+
+    /**
+     * 获取更多回复数据
+     * @param row
+     */
+    const getReplies = async (row: any) => {
+        await getMoreReplies(row.index, row.item);
+    };
+
+    /**
+     * 回复消息 显示键盘
+     * @param replyType
+     * @param comment
+     * @param commentRow
+     */
+    const onPressReply = (
+        replyType: ReplyType,
+        comment: CommentProps,
+        commentRow: any
+    ) => {
+
+        setContentText('')
+        setCurrentReplyData({
+            mainCommentIndex: commentRow.index,
+            commentId: commentRow.item.id,
+            replyNickname: comment.user_info.nickname,
+            replyId: replyType === ReplyType.ReplyToReply ? comment.id : '',
+        });
+
+        setState({
+            keyboardVisible: true
+        })
+    }
+
+    /**
+     * 关闭键盘
+     */
+    const onCloseKeyboard = () => {
+        // 如果是回复某条消息，那么关闭键盘
+        if (currentReplyData) {
+            setContentText('');
+            setCurrentReplyData(null);
+
+        }
+        setState({
+            keyboardVisible: false
+        })
+    };
+
+
+    const onPressSend = () => {
+        if (currentReplyData) {
+            replyToCommentOrReply()
+        } else {
+            replyToPost()
+        }
+    }
+
+    /**
+     * 回复给帖子
+     */
+    const replyToPost = async () => {
+        try {
+
+            await sendCommentToPost()
+            postStoreData[rowIndex].total_comment += 1
+
+        } catch (err) {
+
+        }
+    }
+
+    /**
+     * 回复评论
+     */
+    const replyToCommentOrReply = async () => {
+        try {
+            await sendReplyToComment()
+            Keyboard.dismiss();
+            setState({
+                keyboardVisible: false
+            })
+        } catch (err) {
+
+        }
     }
 
     return (
@@ -112,49 +220,65 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             />
 
             <ScreenBase>
-                <View style={{flex: 1}}>
-                    <FlatList
-                        ref={flatListRef}
-                        data={Array.from(new Array(22).keys())}
-                        ListFooterComponent={() => loadMore()}
-                        onEndReached={onLoadMoreData}
-                        renderItem={row => {
-                            if (row.item === 0) {
-
-                                return <PostContent />;
-                            } else if (row.item === 1) {
-
-                                return <PostCard onPressMore={onPressAnimalCardMore} />
-                            } else if (row.item === 2) {
-
-                                return (
-                                    <View style={styles.commentHeader}>
-                                        <Text style={styles.commentHeaderTitle}>
-                                            100 comments
-                                        </Text>
-                                    </View>
-                                );
-                            } else {
-                                return (
-                                    <View
-                                        style={{
-                                            paddingLeft: 20,
-                                            paddingRight: 20,
-                                        }}>
-                                        <Text>qpwojdpoqwdk</Text>
-                                        {/*<CommentItem*/}
-                                        {/*    commentDetail={}*/}
-                                        {/*    onPressReply={() => {}}*/}
-                                        {/*    onPressAvatar={onPressAvatar}*/}
-                                        {/*    showSeparator={true}*/}
-                                        {/*    subComment={[]}*/}
-                                        {/*/>*/}
-                                    </View>
-                                );
+                {
+                    state.postDetail &&
+                    <View style={{flex: 1}}>
+                        <FlatList
+                            ref={flatListRef}
+                            data={[0, 1, 2, ...commentStoreData]}
+                            ListFooterComponent={
+                                <AweLoadMore
+                                    loading={commentMoreLoad.moreLoading}
+                                    hasMoreData={commentMoreLoad.hasMoreData}
+                                    handleNoMoreData={onLoadMoreData}
+                                />
                             }
-                        }}
-                    />
-                </View>
+                            onEndReached={onLoadMoreData}
+                            renderItem={(row: any) => {
+                                if (row.item === 0) {
+
+                                    return <PostContent postDetail={state.postDetail} />;
+                                } else if (row.item === 1) {
+
+                                    return <View></View>
+                                    // return <PostCard onPressMore={onPressAnimalCardMore} />
+                                } else if (row.item === 2) {
+
+                                    return (
+                                        <View style={styles.commentHeader}>
+                                            <Text style={styles.commentHeaderTitle}>
+                                                {state.postDetail?.total_comment} comments
+                                            </Text>
+                                        </View>
+                                    );
+                                } else {
+                                    row.index = row.index - 3
+                                    return (
+                                        <View
+                                            style={{
+                                                paddingLeft: 20,
+                                                paddingRight: 20,
+                                            }}>
+                                            <CommentItem
+                                                commentIndex={row.index}
+                                                mainCommentUserId={row.item.user_id}
+                                                moreLoading={row.index === replyMoreLoad.rowIndex && replyMoreLoad.loading}
+                                                isAuthor={state.postDetail?.user_id === row.item.user_id}
+                                                getMoreReplies={() => getReplies(row)}
+                                                commentDetail={row.item}
+                                                showSeparator={true}
+                                                onPressAvatar={onPressAvatar}
+                                                onPressReply={(type, comment) =>
+                                                    onPressReply(type, comment, row)
+                                                }
+                                            />
+                                        </View>
+                                    );
+                                }
+                            }}
+                        />
+                    </View>
+                }
 
                 <View style={styles.footer}>
                     <TouchableHighlight
@@ -162,7 +286,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                         underlayColor={'none'}
                         onPress={onPressEditComment}>
                         <Text numberOfLines={1}>
-                            {state.commentText || 'Say something'}
+                            {contentText || 'Say something'}
                         </Text>
                     </TouchableHighlight>
 
@@ -195,10 +319,10 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
             <AweKeyboard
                 visible={state.keyboardVisible}
-                contentText={state.commentText}
-                onChangeText={text => setState({commentText: text})}
-                onClose={() => setState({keyboardVisible: false})}
-                onPressSend={() => {}}
+                contentText={contentText}
+                onChangeText={setContentText}
+                onClose={onCloseKeyboard}
+                onPressSend={onPressSend}
             />
         </SafeAreaProvider>
     );
@@ -240,4 +364,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PostDetailScreen;
+export default observer(PostDetailScreen);

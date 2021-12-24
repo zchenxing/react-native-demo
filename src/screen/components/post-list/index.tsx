@@ -267,7 +267,9 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 renderItem={(row: any) => (
                     <PostItem
                         postItem={postStoreData[row.index]}
-                        onPressDetail={props.onPressDetail}
+                        onPressDetail={(post) => (
+                            props.onPressDetail(post, row.index)
+                        )}
                         onPressPicture={onPressPicture}
                         onPressComment={() => onPressComment(row)}
                         onPressCollection={() => onPressCollection(row)}

@@ -4,16 +4,13 @@ import {PostItemProps} from './type';
 import PostHeader from './post-header';
 import PostArticle from './post-article';
 import {pictureList} from '../../../mock';
-import PostPicture from './post-picture';
 import PostFooter from './post-footer';
+import PostPicture from './post-picture';
 import PostAnimalCard from './post-animal-card';
 import {PostUserEventType} from '../../../enum';
 import WorkHelp from '../../../help/work';
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
-
-
-    React.useEffect(() => {}, []);
 
     const onPressPicture = (startIndex: number) => {
         props.onPressPicture(pictureList, startIndex);

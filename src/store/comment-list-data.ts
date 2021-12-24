@@ -31,16 +31,21 @@ export class CommentDataStore {
     // 回复消息的实体内容
     @observable currentReplyData: CurrentReplyProps | null = null;
 
-    @observable moreLoad: any = {
-        moreLoading: false,
+    @observable commentMoreLoad: any = {
+        moreLoading: true,
         hasMoreData: true,
     };
+
+    @observable replyMoreLoad: {rowIndex: number, loading: boolean} = {
+        rowIndex: -1,
+        loading: false
+    }
 
     /**
      * 重置数据
      */
-    @action.bound resetData = () => {
-        this.moreLoad = {
+    @action.bound resetCommentData = () => {
+        this.commentMoreLoad = {
             moreLoading: false,
             hasMoreData: true,
         };
@@ -48,6 +53,7 @@ export class CommentDataStore {
         this.currentPostId = '';
         this.latestCommentId = '';
         this.commentStoreData = [];
+        this.currentReplyData = null
     };
 
     @action.bound setCommentStoreData = (dataSource: CommentProps[]) => {
@@ -73,7 +79,7 @@ export class CommentDataStore {
         this.currentPostId = postId;
 
         if (loadMore) {
-            this.moreLoad.moreLoading = true;
+            this.commentMoreLoad.moreLoading = true;
         }
 
         try {
@@ -82,7 +88,7 @@ export class CommentDataStore {
                 apiConfig.pageToken(),
             );
 
-            this.moreLoad.moreLoading = false;
+            this.commentMoreLoad.moreLoading = false;
 
             if (res.data.length) {
                 this.latestCommentId = res.data[res.data.length - 1].id;
@@ -91,9 +97,9 @@ export class CommentDataStore {
                 this.setCommentStoreData(result);
 
                 // 数据小于 page size，表示也m没有更多数据
-                this.moreLoad.hasMoreData = res.data.length >= PAGE_SIZE;
+                this.commentMoreLoad.hasMoreData = res.data.length >= PAGE_SIZE;
             } else {
-                this.moreLoad.hasMoreData = false;
+                this.commentMoreLoad.hasMoreData = false;
             }
 
             return Promise.resolve(res);
@@ -172,6 +178,12 @@ export class CommentDataStore {
         !this.repliesPage[comment.id] && (this.repliesPage[comment.id] = 1);
 
         try {
+
+            this.replyMoreLoad = {
+                rowIndex,
+                loading: true
+            }
+
             const res = await server.get(
                 apis.comment.replyList(
                     comment.id,
@@ -192,9 +204,17 @@ export class CommentDataStore {
             this.commentStoreData[rowIndex].replies =
                 Utils.arrayObjectDeDuplication('id', [...replies, ...res.data]);
 
+            this.replyMoreLoad = {
+                rowIndex,
+                loading: false
+            }
+
             this.setCommentStoreData(this.commentStoreData);
+
+            return Promise.resolve()
         } catch (err) {
             console.log(err);
+            return Promise.reject(err)
         }
     };
 }

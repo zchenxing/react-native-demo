@@ -6,13 +6,14 @@ import PostList from '../components/post-list';
 import {StyleSheet, Text, TouchableHighlight} from 'react-native';
 import {screenHeight} from '../../config/contant';
 import {PostContentProps} from '../../interface/work';
-import { useSelfDataStore } from "../../store/provider";
+import { useCommentDataStore, useSelfDataStore } from "../../store/provider";
 import {observer} from 'mobx-react'
 
 
 const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const {selfInfoData} = useSelfDataStore()
+    const {resetCommentData} = useCommentDataStore()
 
     const onPressSearch = () => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_SEARCH);
@@ -26,10 +27,11 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL);
     };
 
-    const onPressDetail = (postContent: PostContentProps) => {
-        console.log(postContent);
+    const onPressDetail = (postContent: PostContentProps, rowIndex: number) => {
+        resetCommentData()
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL, {
-            id: postContent.id,
+            postId: postContent.id,
+            rowIndex
         });
     };
 

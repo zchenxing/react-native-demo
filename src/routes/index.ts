@@ -9,7 +9,7 @@ import PersonalScreen from '../screen/personal';
 import FollowListScreen from '../screen/personal/follow-list';
 import Test1 from '../screen/test/test1';
 import Test2 from '../screen/test/test2';
-import EditPersonalInfoScreen from "../screen/personal/edit-info";
+import EditPersonalInfoScreen from '../screen/personal/edit-info';
 
 type routeProps = {
     name: string

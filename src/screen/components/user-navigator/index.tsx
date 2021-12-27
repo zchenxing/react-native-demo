@@ -41,7 +41,7 @@ const UserNavigator: React.FC<UserNavigatorProps> = (
                             />
 
                             <Text style={styles.nickname}>
-                                Nick暗恶魔 posty
+                                {props.userInfo?.nickname}
                             </Text>
                         </>
                     </TouchableHighlight>

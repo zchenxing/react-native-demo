@@ -8,6 +8,8 @@ import {screenHeight} from '../../config/contant';
 import {PostContentProps} from '../../interface/work';
 import { useCommentDataStore, useSelfDataStore } from "../../store/provider";
 import {observer} from 'mobx-react'
+import apis from '../../network/apis';
+import { PostType } from "../../enum";
 
 
 const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
@@ -20,17 +22,26 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     };
 
     const onPublish = () => {
-        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PUBLISH);
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PUBLISH, {
+            postType: PostType.Normal
+        });
     };
 
-    const onPressPersonal = () => {
-        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL);
+    const onPressPersonal = (userId: string) => {
+        // resetCommentData('')
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL, {
+            listId: userId,
+            userId
+        });
     };
 
     const onPressDetail = (postContent: PostContentProps, rowIndex: number) => {
-        resetCommentData()
+        // 重置首页评论数据
+        resetCommentData(INTELINK_SCREEN_NAME.SCREEN_HOME)
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL, {
             postId: postContent.id,
+            // 当修改评论时，来自主页数据的评论个数也需要修改
+            fromListId: INTELINK_SCREEN_NAME.SCREEN_HOME,
             rowIndex
         });
     };
@@ -40,6 +51,8 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             <HomeNavigator onSearch={onPressSearch} onPublish={onPublish} />
 
             <PostList
+                api={apis.post.list}
+                listId={INTELINK_SCREEN_NAME.SCREEN_HOME}
                 onPressPersonal={onPressPersonal}
                 onPressDetail={onPressDetail}
             />

@@ -52,21 +52,22 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
     const [keyboardVisible, setKeyboardVisible] = React.useState(false);
 
-
     React.useEffect(() => {
         if (props.visible) {
             // 重复打开帖子的评论不需要重新请求
             // 同一个帖子打开的间隔超过20秒
             // 都会触发重新请求
             if (
-                postStoreData[props.rowIndex].id !== currentPostId.current ||
-                dayjs().valueOf() - latestOpenTimestamp.current > 5000
+                postStoreData[props.listId][props.rowIndex].id !==
+                    currentPostId.current ||
+                dayjs().valueOf() - latestOpenTimestamp.current > 10000
             ) {
-                currentPostId.current = postStoreData[props.rowIndex].id;
+                currentPostId.current =
+                    postStoreData[props.listId][props.rowIndex].id;
                 latestOpenTimestamp.current = dayjs().valueOf();
 
                 // 先重置数据
-                resetCommentData();
+                resetCommentData(props.listId);
                 // 再重新请求数据
                 initData();
             }
@@ -85,20 +86,20 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
     const initData = async () => {
         try {
-            const res = await getCommentData(currentPostId.current);
-            console.log('获取回复的条数 = ',  res.headers['x-result-count']);
-            postStoreData[props.rowIndex].total_comment = parseInt(
-                res.headers['x-result-count'],
-                10,
+            const res = await getCommentData(
+                currentPostId.current,
+                props.listId,
             );
+            postStoreData[props.listId][props.rowIndex].total_comment =
+                parseInt(res.headers['x-result-count'], 10);
 
-            setPostStoreData(postStoreData)
+            setPostStoreData(props.listId, postStoreData[props.listId]);
         } catch (err) {}
     };
 
     const onLoadMoreData = () => {
         if (commentMoreLoad.hasMoreData) {
-            getCommentData(currentPostId.current, true);
+            getCommentData(currentPostId.current, props.listId, true);
         }
     };
 
@@ -113,7 +114,6 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         comment: CommentProps,
         commentRow: any,
     ) => {
-
         setContentText('');
         setCurrentReplyData({
             mainCommentIndex: commentRow.index,
@@ -123,13 +123,6 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         });
 
         setKeyboardVisible(true);
-    };
-
-    /**
-     * 点击头像跳转到个人信息
-     */
-    const onPressAvatar = () => {
-        props.onPressAvatar();
     };
 
     /**
@@ -157,9 +150,9 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
      */
     const replyToPost = async () => {
         try {
-            await sendCommentToPost();
+            await sendCommentToPost(props.listId);
             // 评论数+1
-            postStoreData[props.rowIndex].total_comment += 1;
+            postStoreData[props.listId][props.rowIndex].total_comment += 1;
 
             Keyboard.dismiss();
             // 滚动到第一行显示最新评论
@@ -179,7 +172,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
      */
     const replyToCommentOrReply = async () => {
         try {
-            await sendReplyToComment();
+            await sendReplyToComment(props.listId);
             Keyboard.dismiss();
             setKeyboardVisible(false);
         } catch (err) {}
@@ -190,7 +183,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
      * @param row
      */
     const getReplies = async (row: any) => {
-        await getMoreReplies(row.index, row.item);
+        await getMoreReplies(row.index, row.item, props.listId);
     };
 
     /**
@@ -236,18 +229,23 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 handleComponent={() => (
                     <View style={styles.sheetHeader}>
                         <Text style={{color: '#777'}}>
-                            {postStoreData[props.rowIndex]?.total_comment || 0}{' '}
+                            {postStoreData[props.listId] && postStoreData[props.listId][props.rowIndex]
+                                ?.total_comment || 0}{' '}
                             comments
                         </Text>
                     </View>
                 )}>
-                {commentStoreData.length && props.visible ? (
+                {
+                    props.visible &&
+                    commentStoreData[props.listId] ? (
                     <BottomSheetVirtualizedList
                         ref={commentListRef}
                         style={styles.sheetContent}
-                        getItemCount={() => commentStoreData.length}
+                        getItemCount={() =>
+                            commentStoreData[props.listId].length
+                        }
                         getItem={(data, index) => data[index]}
-                        data={commentStoreData}
+                        data={commentStoreData[props.listId]}
                         keyExtractor={(item: any) => item.id}
                         onEndReached={onLoadMoreData}
                         ListFooterComponent={
@@ -257,24 +255,31 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                                 handleNoMoreData={onLoadMoreData}
                             />
                         }
-                        renderItem={(row: any) => (
-                            <CommentItem
-                                commentIndex={row.index}
-                                mainCommentUserId={row.item.user_id}
-                                moreLoading={row.index === replyMoreLoad.rowIndex && replyMoreLoad.loading}
-                                isAuthor={
-                                    postStoreData[props.rowIndex].user_id ===
-                                    row.item.user_id
-                                }
-                                getMoreReplies={() => getReplies(row)}
-                                commentDetail={row.item}
-                                showSeparator={true}
-                                onPressAvatar={onPressAvatar}
-                                onPressReply={(type, comment) =>
-                                    onPressReply(type, comment, row)
-                                }
-                            />
-                        )}
+                        renderItem={(row: any) => {
+                            return (
+                                <CommentItem
+                                    commentIndex={row.index}
+                                    mainCommentUserId={row.item.user_id}
+                                    moreLoading={
+                                        row.index === replyMoreLoad.rowIndex &&
+                                        replyMoreLoad.loading
+                                    }
+                                    isAuthor={
+                                        postStoreData[props.listId][props.rowIndex]
+                                            .user_id === row.item.user_id
+                                    }
+                                    getMoreReplies={() => getReplies(row)}
+                                    commentDetail={row.item}
+                                    showSeparator={true}
+                                    onPressAvatar={() =>
+                                        props.onPressAvatar(row.item.user_id)
+                                    }
+                                    onPressReply={(type, comment) =>
+                                        onPressReply(type, comment, row)
+                                    }
+                                />
+                            )
+                        }}
                     />
                 ) : (
                     <View style={{flex: 1, justifyContent: 'center'}}>

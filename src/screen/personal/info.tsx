@@ -9,27 +9,29 @@ import {
     View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { isIOS, screenWidth } from "../../config/contant";
+import {isIOS, screenWidth} from '../../config/contant';
 import {avatarUrl} from '../../mock';
 import {useSetState} from 'ahooks';
 import Utils from '../../help';
 import {PersonalOtherEnum} from './type';
 import FollowButton from '../components/follow-button';
 import Toast from 'react-native-simple-toast';
+import {UserInfoProps} from '../../interface/work';
 
 const imageHeight = 90 + (isIOS ? 44 : StatusBar.currentHeight || 0);
 
 interface IProps {
+    userInfo: UserInfoProps | undefined;
     imageOffsetY: Animated.Value;
     onScrollOffset: (offset: number) => void;
     onPressFollowList: (type: PersonalOtherEnum) => void;
-    onPressEdit: () => void
+    onPressEdit: () => void;
 }
 
 interface IState {
     following: boolean;
     followLoading: boolean;
-    otherInfo: any[];
+    totalInfo: any[];
 }
 
 const PersonalInfo: React.FC<IProps> = (props: IProps) => {
@@ -38,24 +40,34 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
     const [state, setState] = useSetState<IState>({
         following: false,
         followLoading: false,
-        otherInfo: [
+        totalInfo: [
             {
                 type: PersonalOtherEnum.Post,
                 title: 'Post',
-                value: 23,
+                value: 0,
             },
             {
                 type: PersonalOtherEnum.Following,
                 title: 'Following',
-                value: 4563221,
+                value: 0,
             },
             {
                 type: PersonalOtherEnum.Follower,
                 title: 'Follower',
-                value: 5462342,
+                value: 0,
             },
         ],
     });
+
+    React.useEffect(() => {
+        if (props.userInfo) {
+            const totalInfo = [...state.totalInfo];
+            totalInfo[0].value = props.userInfo?.total_theme;
+            totalInfo[1].value = props.userInfo?.total_follow;
+            totalInfo[2].value = props.userInfo?.total_fans;
+            setState({totalInfo});
+        }
+    }, [props.userInfo]);
 
     const onPressFollow = () => {
         setState({
@@ -96,7 +108,7 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
                     transform: [
                         {
                             translateY: props.imageOffsetY.interpolate({
-                                inputRange: [-imageHeight, 0, imageHeight,],
+                                inputRange: [-imageHeight, 0, imageHeight],
                                 outputRange: [-imageHeight / 2, -1, 0],
                                 extrapolate: 'clamp',
                                 // @ts-ignore
@@ -146,16 +158,13 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
             </View>
 
             <View style={styles.nameRow}>
-                <Text style={styles.username}>User nickname</Text>
+                <Text style={styles.username}>{props.userInfo?.nickname}</Text>
 
-                <Text style={styles.signature}>
-                    这是这个用户的签名这是这个用户的签名这是这个用户的签名
-                    前雾灯破口哦
-                </Text>
+                <Text style={styles.signature}>{props.userInfo?.intro}</Text>
             </View>
 
             <View style={styles.others}>
-                {state.otherInfo.map(item => (
+                {state.totalInfo.map(item => (
                     <TouchableHighlight
                         key={item.title}
                         underlayColor={'#f8f8f8'}

@@ -42,11 +42,7 @@ export interface PostContentProps {
     // 点赞数
     total_like: number
     // 用户信息
-    user_info: {
-        id: string
-        nickname: string
-        avatar: string
-    },
+    user_info: UserInfoProps,
     biological_card?: AnimalCardProps
     // 用户事件，1-收藏主题，2-点赞主题，3-关注用户
     user_events?: {event_type: 1 | 2 | 3}[] | null

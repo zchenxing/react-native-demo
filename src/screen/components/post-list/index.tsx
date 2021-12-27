@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-    FlatList,
-    RefreshControl,
-    DeviceEventEmitter,
-} from 'react-native';
+import {FlatList, RefreshControl, DeviceEventEmitter} from 'react-native';
 import PostItem from '../post-item';
 import AwePicturePreview from '../../../components/awe-picture-preview';
 import PostCommentSheet from '../post-comments-sheet';
@@ -40,18 +36,14 @@ interface IState {
 
 const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     const netInfo = useNetInfo();
-    const {
-        postStoreData,
-        getPostData,
-        getMorePostData,
-        onCollectPost,
-    } = usePostListDataStore();
+    const {postStoreData, getPostData, getMorePostData, onCollectPost} =
+        usePostListDataStore();
     const listRef = React.useRef<any>(null);
 
     const [state, setState] = useSetState<IState>({
         refreshing: true,
         moreLoading: false,
-        hasMoreData: true,
+        hasMoreData: false,
 
         firstKeyboardVisible: false,
         firstContentText: '',
@@ -84,10 +76,17 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      */
     const onLoadData = async (scrollToTop?: boolean) => {
         try {
-            await getPostData();
+            const res = await getPostData(
+                {
+                    api: props.api,
+                    apiParam: props.apiParam || '',
+                },
+                props.listId,
+            );
 
             setState({
                 refreshing: false,
+                hasMoreData: res.data.length && res.data.length === PAGE_SIZE,
             });
 
             if (scrollToTop) {
@@ -121,18 +120,18 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             });
 
             try {
-                const data = await getMorePostData();
-                if (data.length && data.length <= PAGE_SIZE) {
-                    setState({
-                        moreLoading: false,
-                        hasMoreData: true,
-                    });
-                } else {
-                    setState({
-                        moreLoading: false,
-                        hasMoreData: false,
-                    });
-                }
+                const res = await getMorePostData(
+                    {
+                        api: props.api,
+                        apiParam: props.apiParam || '',
+                    },
+                    props.listId,
+                );
+                setState({
+                    moreLoading: false,
+                    hasMoreData:
+                        res.data.length && res.data.length === PAGE_SIZE,
+                });
             } catch (err) {}
         }
     };
@@ -194,7 +193,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         }
     };
 
-
     /**
      * 点击收藏 | 取消收藏
      * @param row      具体某行的数据
@@ -202,7 +200,11 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     const onPressCollection = async (row: any) => {
         if (netInfo.type !== 'none') {
             try {
-                await onCollectPost(row.item.id, row.index);
+                await onCollectPost(
+                    row.item.id,
+                    row.index,
+                    props.listId,
+                );
             } catch (err) {
                 console.log(err);
                 throw err;
@@ -221,7 +223,9 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
             if (state.currentRowIndex > -1) {
                 // 直接修改列表数据
-                postStoreData[state.currentRowIndex].total_comment = 1;
+                postStoreData[props.listId][
+                    state.currentRowIndex
+                ].total_comment = 1;
 
                 setState({
                     firstContentText: '',
@@ -238,7 +242,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         <ScreenBase
             onReload={onLoadData}
             nothingPage={
-                !postStoreData.length
+                postStoreData[props.listId] &&
+                !postStoreData[props.listId].length
                     ? {
                           title: 'Nothing here',
                           picture: require('../../../assets/images/status/nothing.png'),
@@ -247,7 +252,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             }>
             <FlatList
                 ref={listRef}
-                data={postStoreData}
+                data={postStoreData[props.listId]}
                 removeClippedSubviews={true}
                 keyExtractor={item => item.id}
                 ListFooterComponent={
@@ -264,18 +269,26 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                         onRefresh={onRefreshData}
                     />
                 }
-                renderItem={(row: any) => (
-                    <PostItem
-                        postItem={postStoreData[row.index]}
-                        onPressDetail={(post) => (
-                            props.onPressDetail(post, row.index)
-                        )}
-                        onPressPicture={onPressPicture}
-                        onPressComment={() => onPressComment(row)}
-                        onPressCollection={() => onPressCollection(row)}
-                        onPressPersonal={props.onPressPersonal}
-                    />
-                )}
+                renderItem={(row: any) => {
+                    return (
+                        <PostItem
+                            postItem={
+                                postStoreData[props.listId][
+                                    row.index
+                                ]
+                            }
+                            onPressDetail={post =>
+                                props.onPressDetail(post, row.index)
+                            }
+                            onPressPicture={onPressPicture}
+                            onPressComment={() => onPressComment(row)}
+                            onPressCollection={() => onPressCollection(row)}
+                            onPressPersonal={() =>
+                                props.onPressPersonal(row.item.user_id)
+                            }
+                        />
+                    );
+                }}
             />
 
             <AwePicturePreview
@@ -286,6 +299,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             />
 
             <PostCommentSheet
+                listId={props.listId}
                 rowIndex={state.currentRowIndex}
                 onPressAvatar={props.onPressPersonal}
                 visible={state.commentVisible}

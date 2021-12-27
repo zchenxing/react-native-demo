@@ -8,12 +8,13 @@ export enum ReplyType {
 }
 
 export interface PostCommentProps {
+    listId: string
     rowIndex: number
     // postId: string
     visible: boolean
     // totalComment: number
     onClose: () => void
-    onPressAvatar: () => void
+    onPressAvatar: (userId: string) => void
 }
 
 export interface PostCommentsItemProps {

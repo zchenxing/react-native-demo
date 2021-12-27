@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-    ActivityIndicator,
-    FlatList, Keyboard,
+    FlatList,
+    Keyboard,
     StyleSheet,
     Text,
     TouchableHighlight,
-    View
-} from "react-native";
+    View,
+} from 'react-native';
 import {NavigateProps} from '../../interface';
 import PostContent from './post-content';
 import ScreenBase from '../components/screen-base';
@@ -18,19 +18,19 @@ import AweKeyboard from '../../components/awe-keyboard';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import PostCard from './post-card';
 import UserNavigator from '../components/user-navigator';
-import { useLanguage } from "../../language";
-import { INTELINK_SCREEN_NAME } from "../../routes/screen-name";
+import {useLanguage} from '../../language';
+import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import server from '../../network';
 import apis from '../../network/apis';
-import { CommentProps, PostContentProps } from "../../interface/work";
-import { useCommentDataStore, usePostListDataStore } from "../../store/provider";
-import { ReplyType } from "../components/post-comments-sheet/type";
+import {CommentProps, PostContentProps} from '../../interface/work';
+import {useCommentDataStore, usePostListDataStore} from '../../store/provider';
+import {ReplyType} from '../components/post-comments-sheet/type';
 import AweLoadMore from '../../components/awe-load-more';
-import { observer } from "mobx-react";
+import {observer} from 'mobx-react';
 
 interface IState {
-    postDetail: PostContentProps | null
-    commentTotal: number
+    postDetail: PostContentProps | null;
+    commentTotal: number;
     followStatus: boolean;
     followLoading: boolean;
     collection: boolean;
@@ -38,11 +38,11 @@ interface IState {
 }
 
 const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
+    const flatListRef = React.useRef<any>(null);
+    const totalRow = React.useRef<any>(null);
+    const {postId, rowIndex, fromListId} = props.route.params;
 
-    const flatListRef = React.useRef<any>(null)
-    const { postId, rowIndex } = props.route.params
-
-    const {postStoreData} = usePostListDataStore()
+    const {postStoreData, setPostStoreData} = usePostListDataStore();
     const {
         commentStoreData,
         contentText,
@@ -55,8 +55,8 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         currentReplyData,
         setCurrentReplyData,
         getMoreReplies,
-        resetCommentData
-    } = useCommentDataStore()
+        resetCommentData,
+    } = useCommentDataStore();
 
     const [state, setState] = useSetState<IState>({
         postDetail: null,
@@ -67,32 +67,29 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         keyboardVisible: false,
     });
 
-
     React.useEffect(() => {
-
         setState({
-            postDetail: postStoreData[rowIndex]
-        })
+            postDetail: postStoreData[fromListId][rowIndex],
+        });
 
-        getComments()
+        getComments();
 
-        return () => resetCommentData()
-    }, [])
-
+        return () => resetCommentData(fromListId);
+    }, []);
 
     const getComments = async () => {
-        await getCommentData(postId)
-    }
+        await getCommentData(postId, fromListId);
+    };
 
-    /**
-     * 点击生物卡片查看更多
-     */
-    const onPressAnimalCardMore = (offset: number, isPutAway: boolean) => {
-        flatListRef.current.scrollToOffset({
-            offset: offset + (isPutAway ? 340 : 0),
-            animated: true
-        })
-    }
+    // /**
+    //  * 点击生物卡片查看更多
+    //  */
+    // const onPressAnimalCardMore = (offset: number, isPutAway: boolean) => {
+    //     flatListRef.current.scrollToOffset({
+    //         offset: offset + (isPutAway ? 340 : 0),
+    //         animated: true
+    //     })
+    // }
 
     const onChangeFollow = () => {
         setState({
@@ -112,23 +109,24 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         });
     };
 
-
     const onLoadMoreData = async () => {
         if (commentMoreLoad.hasMoreData && !commentMoreLoad.moreLoading) {
-            await getCommentData(postId, true)
+            await getCommentData(postId, '', true);
         }
-    }
+    };
 
-    const onPressAvatar = () => {
-        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL)
-    }
+    const onPressAvatar = (userId: string) => {
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL, {
+            userId,
+        });
+    };
 
     /**
      * 获取更多回复数据
      * @param row
      */
     const getReplies = async (row: any) => {
-        await getMoreReplies(row.index, row.item);
+        await getMoreReplies(row.index, row.item, fromListId);
     };
 
     /**
@@ -140,10 +138,9 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const onPressReply = (
         replyType: ReplyType,
         comment: CommentProps,
-        commentRow: any
+        commentRow: any,
     ) => {
-
-        setContentText('')
+        setContentText('');
         setCurrentReplyData({
             mainCommentIndex: commentRow.index,
             commentId: commentRow.item.id,
@@ -152,9 +149,9 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         });
 
         setState({
-            keyboardVisible: true
-        })
-    }
+            keyboardVisible: true,
+        });
+    };
 
     /**
      * 关闭键盘
@@ -164,68 +161,62 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         if (currentReplyData) {
             setContentText('');
             setCurrentReplyData(null);
-
         }
         setState({
-            keyboardVisible: false
-        })
+            keyboardVisible: false,
+        });
     };
-
 
     const onPressSend = () => {
         if (currentReplyData) {
-            replyToCommentOrReply()
+            replyToCommentOrReply();
         } else {
-            replyToPost()
+            replyToPost();
         }
-    }
+    };
 
     /**
      * 回复给帖子
      */
     const replyToPost = async () => {
         try {
+            await sendCommentToPost(fromListId);
+            postStoreData[fromListId][rowIndex].total_comment += 1;
+            setPostStoreData(fromListId, postStoreData[fromListId])
 
-            await sendCommentToPost()
-            postStoreData[rowIndex].total_comment += 1
-
-        } catch (err) {
-
-        }
-    }
+            Keyboard.dismiss();
+        } catch (err) {}
+    };
 
     /**
      * 回复评论
      */
     const replyToCommentOrReply = async () => {
         try {
-            await sendReplyToComment()
+            await sendReplyToComment(fromListId);
             Keyboard.dismiss();
             setState({
-                keyboardVisible: false
-            })
-        } catch (err) {
-
-        }
-    }
+                keyboardVisible: false,
+            });
+        } catch (err) {}
+    };
 
     return (
         <SafeAreaProvider>
-
             <UserNavigator
                 isFollow={state.followStatus}
+                userInfo={state.postDetail?.user_info}
                 followLoading={state.followLoading}
                 goBack={props.navigation.goBack}
                 onChangeFollow={onChangeFollow}
             />
 
             <ScreenBase>
-                {
-                    state.postDetail &&
+                {state.postDetail && (
                     <View style={{flex: 1}}>
                         <FlatList
                             ref={flatListRef}
-                            data={[0, 1, 2, ...commentStoreData]}
+                            data={[0, 1, 2, ...commentStoreData[fromListId] || []]}
                             ListFooterComponent={
                                 <AweLoadMore
                                     loading={commentMoreLoad.moreLoading}
@@ -236,23 +227,32 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                             onEndReached={onLoadMoreData}
                             renderItem={(row: any) => {
                                 if (row.item === 0) {
-
-                                    return <PostContent postDetail={state.postDetail} />;
+                                    return (
+                                        <PostContent
+                                            postDetail={state.postDetail}
+                                        />
+                                    );
                                 } else if (row.item === 1) {
-
-                                    return <View></View>
+                                    return <View />;
                                     // return <PostCard onPressMore={onPressAnimalCardMore} />
                                 } else if (row.item === 2) {
-
                                     return (
-                                        <View style={styles.commentHeader}>
-                                            <Text style={styles.commentHeaderTitle}>
-                                                {state.postDetail?.total_comment} comments
+                                        <View
+                                            style={styles.commentHeader}
+                                            ref={totalRow}>
+                                            <Text
+                                                style={
+                                                    styles.commentHeaderTitle
+                                                }>
+                                                {
+                                                    state.postDetail?.total_comment || 0
+                                                }{' '}
+                                                comments
                                             </Text>
                                         </View>
                                     );
                                 } else {
-                                    row.index = row.index - 3
+                                    row.index = row.index - 3;
                                     return (
                                         <View
                                             style={{
@@ -261,15 +261,35 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                             }}>
                                             <CommentItem
                                                 commentIndex={row.index}
-                                                mainCommentUserId={row.item.user_id}
-                                                moreLoading={row.index === replyMoreLoad.rowIndex && replyMoreLoad.loading}
-                                                isAuthor={state.postDetail?.user_id === row.item.user_id}
-                                                getMoreReplies={() => getReplies(row)}
+                                                mainCommentUserId={
+                                                    row.item.user_id
+                                                }
+                                                moreLoading={
+                                                    row.index ===
+                                                        replyMoreLoad.rowIndex &&
+                                                    replyMoreLoad.loading
+                                                }
+                                                isAuthor={
+                                                    state.postDetail
+                                                        ?.user_id ===
+                                                    row.item.user_id
+                                                }
+                                                getMoreReplies={() =>
+                                                    getReplies(row)
+                                                }
                                                 commentDetail={row.item}
                                                 showSeparator={true}
-                                                onPressAvatar={onPressAvatar}
+                                                onPressAvatar={() =>
+                                                    onPressAvatar(
+                                                        row.item.user_id,
+                                                    )
+                                                }
                                                 onPressReply={(type, comment) =>
-                                                    onPressReply(type, comment, row)
+                                                    onPressReply(
+                                                        type,
+                                                        comment,
+                                                        row,
+                                                    )
                                                 }
                                             />
                                         </View>
@@ -278,7 +298,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                             }}
                         />
                     </View>
-                }
+                )}
 
                 <View style={styles.footer}>
                     <TouchableHighlight

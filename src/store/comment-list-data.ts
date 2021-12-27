@@ -5,6 +5,7 @@ import apis from '../network/apis';
 import apiConfig from '../network/config';
 import {PAGE_SIZE} from '../config/contant';
 import Utils from '../help';
+import dayjs from "dayjs";
 
 type CurrentReplyProps = {
     mainCommentIndex: number;
@@ -16,6 +17,7 @@ type CurrentReplyProps = {
 };
 
 export class CommentDataStore {
+
     // 帖子id
     private currentPostId: string = '';
     // 记录评论最后一条数据的id
@@ -27,13 +29,13 @@ export class CommentDataStore {
 
     @observable contentText: string = '';
     // 评论列表数据
-    @observable commentStoreData: CommentProps[] = [];
+    @observable commentStoreData: {[id: string]: CommentProps[]} = {};
     // 回复消息的实体内容
     @observable currentReplyData: CurrentReplyProps | null = null;
 
     @observable commentMoreLoad: any = {
         moreLoading: true,
-        hasMoreData: true,
+        hasMoreData: false,
     };
 
     @observable replyMoreLoad: {rowIndex: number, loading: boolean} = {
@@ -44,20 +46,28 @@ export class CommentDataStore {
     /**
      * 重置数据
      */
-    @action.bound resetCommentData = () => {
+    @action.bound resetCommentData = (listId?: string) => {
         this.commentMoreLoad = {
             moreLoading: false,
-            hasMoreData: true,
+            hasMoreData: false,
         };
         this.repliesPage = {};
         this.currentPostId = '';
         this.latestCommentId = '';
-        this.commentStoreData = [];
         this.currentReplyData = null
+        if (listId) {
+            this.commentStoreData[listId] = []
+        }
     };
 
-    @action.bound setCommentStoreData = (dataSource: CommentProps[]) => {
-        this.commentStoreData = [...dataSource];
+    @action.bound setCommentStoreData = (
+        listId: string,
+        dataSource: CommentProps[],
+    ) => {
+        this.commentStoreData = {
+            ...this.commentStoreData,
+            [listId]: [...dataSource]
+        }
     };
 
     @action.bound setContentText = (text: string) => {
@@ -73,9 +83,14 @@ export class CommentDataStore {
     /**
      *
      * @param postId
+     * @param listId
      * @param loadMore 是否加载更多数据
      */
-    public getCommentData = async (postId: string, loadMore?: boolean) => {
+    public getCommentData = async (
+        postId: string,
+        listId: string,
+        loadMore?: boolean,
+    ) => {
         this.currentPostId = postId;
 
         if (loadMore) {
@@ -93,11 +108,16 @@ export class CommentDataStore {
             if (res.data.length) {
                 this.latestCommentId = res.data[res.data.length - 1].id;
 
-                const result = [...this.commentStoreData, ...res.data];
-                this.setCommentStoreData(result);
+                const result = [
+                    ...(this.commentStoreData[listId] || []),
+                    ...res.data,
+                ];
+                this.setCommentStoreData(listId, result);
 
                 // 数据小于 page size，表示也m没有更多数据
-                this.commentMoreLoad.hasMoreData = res.data.length >= PAGE_SIZE;
+                this.commentMoreLoad.hasMoreData = !(
+                    res.data.length < PAGE_SIZE
+                );
             } else {
                 this.commentMoreLoad.hasMoreData = false;
             }
@@ -111,7 +131,7 @@ export class CommentDataStore {
     /**
      * 发送消息给主题
      */
-    public sendCommentToPost = async () => {
+    public sendCommentToPost = async (listId: string) => {
         try {
             const res = await server.post(
                 apis.post.comment.push(this.currentPostId),
@@ -119,7 +139,7 @@ export class CommentDataStore {
             );
 
             this.setContentText('');
-            this.setCommentStoreData([res.data, ...this.commentStoreData]);
+            this.setCommentStoreData(listId,[res.data, ...this.commentStoreData[listId] || []]);
 
             return Promise.resolve(res);
         } catch (err) {
@@ -130,7 +150,7 @@ export class CommentDataStore {
     /**
      * 回复评论
      */
-    public sendReplyToComment = async () => {
+    public sendReplyToComment = async (listId: string) => {
         try {
             // 判断回复评论or回复
             const replyToComment: boolean = !this.currentReplyData?.replyId;
@@ -148,20 +168,23 @@ export class CommentDataStore {
             // 向评论中插入回复
             const commentIndex = this.currentReplyData?.mainCommentIndex || 0;
             if (commentIndex > -1) {
-                const replies = this.commentStoreData[commentIndex].replies;
+                const data = this.commentStoreData[listId][commentIndex]
+                const replies = data.replies;
                 if (replies) {
                     // 回复总数要+1
-                    this.commentStoreData[commentIndex].total_reply += 1;
-                    this.commentStoreData[commentIndex].replies = [
+                    data.total_reply += 1;
+                    data.replies = [
                         ...replies,
                         res.data,
                     ];
                 } else {
-                    this.commentStoreData[commentIndex].replies = [res.data];
+                    data.replies = [res.data];
                 }
+
+                this.commentStoreData[listId][commentIndex] = data
             }
 
-            this.setCommentStoreData(this.commentStoreData);
+            this.setCommentStoreData(listId, this.commentStoreData[listId]);
             this.setContentText('');
 
             return Promise.resolve();
@@ -173,7 +196,11 @@ export class CommentDataStore {
     /**
      * 获取更多回复
      */
-    public getMoreReplies = async (rowIndex: number, comment: CommentProps) => {
+    public getMoreReplies = async (
+        rowIndex: number,
+        comment: CommentProps,
+        listId: string,
+    ) => {
         // 如果评论的回复page不存在，那么将回复页数置为1
         !this.repliesPage[comment.id] && (this.repliesPage[comment.id] = 1);
 
@@ -198,10 +225,10 @@ export class CommentDataStore {
             }
 
             const replies: CommentProps[] =
-                this.commentStoreData[rowIndex].replies || [];
+                this.commentStoreData[listId][rowIndex].replies || [];
 
             // 将回复数据去重
-            this.commentStoreData[rowIndex].replies =
+            this.commentStoreData[listId][rowIndex].replies =
                 Utils.arrayObjectDeDuplication('id', [...replies, ...res.data]);
 
             this.replyMoreLoad = {
@@ -209,7 +236,7 @@ export class CommentDataStore {
                 loading: false
             }
 
-            this.setCommentStoreData(this.commentStoreData);
+            this.setCommentStoreData(listId, this.commentStoreData[listId]);
 
             return Promise.resolve()
         } catch (err) {

@@ -29,3 +29,15 @@ export const PostUserEventType = {
     // 关注
     Follow: 3
 }
+
+
+
+// 帖子类型
+export const PostType = {
+    // 正常图文帖子
+    Normal: 'Normal',
+    // 生物卡片
+    BiologicalCard: 'BiologicalCard',
+    // 委托
+    Entrust: 'Entrust',
+}

@@ -59,7 +59,7 @@ const apis: any = {
     // 文件API
     file: {
         // 上传文件
-        upload: '/v1/file',
+        upload: '/v1/file/',
         // 删除文件
         delete: (fileId: string) => `/v1/file/id/${fileId}`,
         // 文件列表

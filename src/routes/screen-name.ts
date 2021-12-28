@@ -33,6 +33,8 @@ export const INTELINK_SCREEN_NAME = {
     SCREEN_EDIT_PERSONAL_INFO: 'EditPersonalInfoScreen',
     // 委托列表
     ENTRUST_LIST: 'EntrustList',
+    // 委托详情
+    ENTRUST_DETAIL: 'EntrustDetail',
 }
 
 

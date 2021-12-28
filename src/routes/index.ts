@@ -11,6 +11,7 @@ import Test1 from '../screen/test/test1';
 import Test2 from '../screen/test/test2';
 import EditPersonalInfoScreen from "../screen/personal/edit-info";
 import Entrust from "../screen/entrust/index";
+import EntrustDetail from "../screen/entrust/detail";
 
 type routeProps = {
     name: string
@@ -69,6 +70,10 @@ export const intelinkRoute: routeProps[] = [
     {
         name: INTELINK_SCREEN_NAME.ENTRUST_LIST,
         component: Entrust
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_DETAIL,
+        component: EntrustDetail
     }
 ];
 

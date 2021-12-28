@@ -16,6 +16,8 @@ import Toast from 'react-native-simple-toast';
 import {usePostListDataStore} from '../../../store/provider';
 import {observer} from 'mobx-react';
 import AweLoadMore from '../../../components/awe-load-more';
+import { useLanguage } from "../../../language";
+import { localImages } from "../../../assets/images";
 
 interface IState {
     refreshing: boolean;
@@ -200,11 +202,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     const onPressCollection = async (row: any) => {
         if (netInfo.type !== 'none') {
             try {
-                await onCollectPost(
-                    row.item.id,
-                    row.index,
-                    props.listId,
-                );
+                await onCollectPost(row.item.id, row.index, props.listId);
             } catch (err) {
                 console.log(err);
                 throw err;
@@ -217,9 +215,12 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      */
     const onSendComment = async () => {
         try {
-            await server.post(apis.post.comment.push(state.currentPost?.id), {
-                content: state.firstContentText,
-            });
+            await server.post(
+                apis.post.comment.push(state.currentPost?.id || ''),
+                {
+                    content: state.firstContentText,
+                },
+            );
 
             if (state.currentRowIndex > -1) {
                 // 直接修改列表数据
@@ -245,8 +246,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 postStoreData[props.listId] &&
                 !postStoreData[props.listId].length
                     ? {
-                          title: 'Nothing here',
-                          picture: require('../../../assets/images/status/nothing.png'),
+                          title: props.nothingTitle || useLanguage.nothing_here,
+                          picture: props.nothingImg || localImages.nothing,
                       }
                     : undefined
             }>
@@ -272,11 +273,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 renderItem={(row: any) => {
                     return (
                         <PostItem
-                            postItem={
-                                postStoreData[props.listId][
-                                    row.index
-                                ]
-                            }
+                            postItem={postStoreData[props.listId][row.index]}
                             onPressDetail={post =>
                                 props.onPressDetail(post, row.index)
                             }

@@ -21,7 +21,13 @@ export enum GenderProps {
 }
 
 
-export const PostUserEventType = {
+export enum EditInfoType {
+    Nickname,
+    Intro
+}
+
+
+export const UserEventType = {
     // 收藏帖子
     Collection: 1,
     // 点赞

@@ -1,142 +1,121 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableHighlight, View } from "react-native";
+import { DeviceEventEmitter, Keyboard, StyleSheet, TextInput, View } from "react-native";
 import AweSimpleNavigator from '../../../components/awe-simple-navigator';
-import { NavigateProps } from "../../../interface";
-import { avatarUrl } from "../../../mock";
-import MultipleImagePicker, { Results } from "@baronha/react-native-multiple-image-picker";
-import { isIOS } from "../../../config/contant";
-import { useSetState } from "ahooks";
+import {NavigateProps} from '../../../interface';
+import {useLanguage} from '../../../language';
+import {EditInfoType} from '../../../enum';
+import server from '../../../network';
+import apis from '../../../network/apis';
+import {useSelfDataStore} from '../../../store/provider';
+import AweOverlayLoading from '../../../components/awe-overlay-loading';
+import {useSetState} from 'ahooks';
+import { EventEmitterName } from "../../../config/contant";
 
 interface IState {
-    localAvatar: Results | null
-    localAvatarPath: string
+    editSave: boolean;
+    loading: boolean;
+    content: string;
 }
 
-const EditPersonalInfoScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
+const EditPersonalInfoScreen: React.FC<NavigateProps> = (
+    props: NavigateProps,
+) => {
+    const {editType, contentText} = props.route.params;
+    const titleText =
+        editType === EditInfoType.Nickname
+            ? useLanguage.nickname
+            : useLanguage.describe_yourself;
 
+    const {setSelfInfoData, selfInfoData} = useSelfDataStore();
+    const inputRef = React.useRef<any>(null);
     const [state, setState] = useSetState<IState>({
-        localAvatar: null,
-        localAvatarPath: ''
-    })
+        editSave: false,
+        loading: false,
+        content: '',
+    });
 
-    const openCamera = async () => {
+    React.useEffect(() => {
+        inputRef.current.focus();
+        setState({
+            content: contentText,
+        });
+    }, [inputRef.current]);
+
+    const onSave = async () => {
         try {
-            const response: any = await MultipleImagePicker.openPicker({
-                mediaType: 'image',
-                singleSelectedMode: true,
-                isPreview: true,
-                usedCameraButton: true,
-                allowedLivePhotos: false,
+            Keyboard.dismiss();
+            setState({
+                loading: true,
             });
 
-            console.log(response);
+            const data: any = {};
+            if (editType === EditInfoType.Nickname) {
+                data.nickname = state.content;
+            } else {
+                data.intro = state.content;
+            }
+
+            await server.put(apis.user.myself, data);
+
+            DeviceEventEmitter.emit(EventEmitterName.EditInfo)
+
+            setSelfInfoData({
+                ...selfInfoData,
+                ...data,
+            });
 
             setState({
-                localAvatar: response,
-                localAvatarPath: isIOS ? response.path.replace('file://', '') : `file://${response.realPath}`
-            })
+                loading: false,
+            });
+            props.navigation.goBack();
 
-        } catch (e: any) {
-            console.log('error：', e.code, e.message);
+        } catch (err) {
+            setState({
+                loading: false,
+            });
         }
     };
 
-    const onSaveInfo = () => {
-        console.log('保存数据');
-    }
 
-
-    const onChooseAvatar = () => {
-
-    }
-
+    const nicknameEditable = state.content !== contentText && !!state.content
+    const introEditable = state.content !== contentText
 
     return (
         <>
             <AweSimpleNavigator
-                centerTitle={"sss's info"}
+                centerTitle={titleText}
                 goBack={props.navigation.goBack}
-                rightActionTitle={'save'}
-                rightActionEvent={onSaveInfo}
+                rightActionTitle={useLanguage.save}
+                rightActionEvent={onSave}
+                rightActionEditable={
+                    editType === EditInfoType.Nickname
+                        ? nicknameEditable
+                        : introEditable
+                }
             />
 
-            <View style={styles.avatarRow}>
-
-                <TouchableHighlight underlayColor={'none'} onPress={onChooseAvatar}>
-                    <>
-                        <Image
-                            source={{uri: state.localAvatarPath ? state.localAvatarPath : avatarUrl}}
-                            style={styles.avatar} />
-
-                        <TouchableHighlight style={styles.avatarTouch} onPress={openCamera}>
-                            <View style={styles.avatarEdit} />
-                        </TouchableHighlight>
-                    </>
-                </TouchableHighlight>
-
-            </View>
-
-
-            <View style={styles.editRow}>
-                <Text style={styles.editTitle}>Name</Text>
-                <TextInput placeholder={'Enter name'} />
-            </View>
-
-
-            <View style={styles.editRow}>
-                <Text style={styles.editTitle}>Self introduction</Text>
+            <View style={styles.container}>
                 <TextInput
-                    placeholder={'Enter introduction'}
+                    ref={inputRef}
+                    value={state.content}
+                    onChangeText={content => setState({content})}
                     multiline={true}
-                    textAlignVertical={'top'}
-                    style={{height: 60}}
+                    placeholder={titleText}
+                    clearButtonMode={'while-editing'}
                 />
             </View>
 
+            <AweOverlayLoading visible={state.loading} />
         </>
     );
 };
 
-
 const styles = StyleSheet.create({
-    avatarRow: {
-        marginTop: 10,
-        padding: 20,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-    },
-    avatar: {
-        width: 90,
-        height: 90,
-        borderRadius: 90,
-    },
-    avatarTouch: {
-        position: 'absolute',
-        width: 40,
-        height: 40,
-        bottom: -10,
-        right: -10
-    },
-    avatarEdit: {
-        width: 24,
-        height: 24,
-        borderRadius: 30,
-        backgroundColor: 'rgba(1, 1, 1, .7)',
-        transform: [
-            {translateX: 10},
-            {translateY: 10}
-        ]
-    },
-    editRow: {
+    container: {
         backgroundColor: '#fff',
         marginTop: 10,
-        padding: 10
+        padding: 5,
     },
-    editTitle: {
-        paddingLeft: 2,
-        color: '#999',
-        fontSize: 12
-    }
-})
+});
 
 export default EditPersonalInfoScreen;

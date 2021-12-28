@@ -27,6 +27,7 @@ import {useCommentDataStore, usePostListDataStore} from '../../store/provider';
 import {ReplyType} from '../components/post-comments-sheet/type';
 import AweLoadMore from '../../components/awe-load-more';
 import {observer} from 'mobx-react';
+import AnimalCard from '../components/animal-card';
 
 interface IState {
     postDetail: PostContentProps | null;
@@ -182,7 +183,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         try {
             await sendCommentToPost(fromListId);
             postStoreData[fromListId][rowIndex].total_comment += 1;
-            setPostStoreData(fromListId, postStoreData[fromListId])
+            setPostStoreData(fromListId, postStoreData[fromListId]);
 
             Keyboard.dismiss();
         } catch (err) {}
@@ -216,7 +217,12 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     <View style={{flex: 1}}>
                         <FlatList
                             ref={flatListRef}
-                            data={[0, 1, 2, ...commentStoreData[fromListId] || []]}
+                            data={[
+                                0,
+                                1,
+                                2,
+                                ...(commentStoreData[fromListId] || []),
+                            ]}
                             ListFooterComponent={
                                 <AweLoadMore
                                     loading={commentMoreLoad.moreLoading}
@@ -233,8 +239,16 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                         />
                                     );
                                 } else if (row.item === 1) {
-                                    return <View />;
-                                    // return <PostCard onPressMore={onPressAnimalCardMore} />
+                                    return (
+                                        <View
+                                            style={{
+                                                paddingTop: 10,
+                                                padding: 20,
+                                                backgroundColor: '#f8f8f8',
+                                            }}>
+                                            <AnimalCard showMoreInfo={true} />
+                                        </View>
+                                    );
                                 } else if (row.item === 2) {
                                     return (
                                         <View
@@ -244,9 +258,8 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                                 style={
                                                     styles.commentHeaderTitle
                                                 }>
-                                                {
-                                                    state.postDetail?.total_comment || 0
-                                                }{' '}
+                                                {state.postDetail
+                                                    ?.total_comment || 0}{' '}
                                                 comments
                                             </Text>
                                         </View>

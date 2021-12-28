@@ -1,5 +1,5 @@
 
-const apis: any = {
+const apis = {
     user: {
         register: '/v1/register',
         login: '/v1/login',

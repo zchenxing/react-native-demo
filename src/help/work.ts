@@ -1,5 +1,6 @@
+import { UserEventProps } from "../interface/work";
 
-const WorkHelp: any = {
+const WorkHelp = {
     /**
      * 根据id，获取数据源的下标
      * @param id
@@ -25,7 +26,7 @@ const WorkHelp: any = {
      * @param useType
      */
     userEventExist: (
-        userEvents: {event_type: number}[] | null,
+        userEvents: UserEventProps[] | null | undefined,
         useType: number,
     ): {isExist: boolean; existIndex: number} => {
 

@@ -3,7 +3,7 @@ import {PostContentProps} from '../interface/work';
 import server from '../network';
 import apis from '../network/apis';
 import apiConfig from '../network/config';
-import {PostUserEventType} from '../enum';
+import {UserEventType} from '../enum';
 import WorkHelp from '../help/work';
 import {INTELINK_SCREEN_NAME} from '../routes/screen-name';
 
@@ -104,7 +104,7 @@ export class PostListDataStore {
 
         const index: number = WorkHelp.userEventExist(
             userEvents,
-            PostUserEventType.Collection,
+            UserEventType.Collection,
         ).existIndex;
 
         try {
@@ -114,7 +114,7 @@ export class PostListDataStore {
                 userEvents.splice(index, 1);
             } else {
                 userEvents.push({
-                    event_type: PostUserEventType.Collection,
+                    event_type: UserEventType.Collection,
                 });
             }
             this.postStoreData[listId][rowIndex].user_events = userEvents;
@@ -129,7 +129,7 @@ export class PostListDataStore {
                 userEvents.splice(index, 1);
             } else {
                 userEvents.push({
-                    event_type: PostUserEventType.Collection,
+                    event_type: UserEventType.Collection,
                 });
             }
             return Promise.reject();

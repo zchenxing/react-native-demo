@@ -276,17 +276,18 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     <DragSortableView
                         isDragFreely={true}
                         dataSource={
-                            state.selectedAssets.length === 9
-                                ? state.selectedAssets
-                                : [...state.selectedAssets, AddPicture]
+                            state.selectedAssets.length === 9 ? state.selectedAssets : [...state.selectedAssets, AddPicture]
                         }
                         parentWidth={screenWidth - 20}
                         childrenHeight={pictureWidth}
                         childrenWidth={pictureWidth}
                         onClickItem={onPreviewPicture}
-                        onDataChange={result =>
+                        onDataChange={result => {
+                            result = result.filter(
+                                item => item.fileName !== __AddPictureName__,
+                            );
                             setState({selectedAssets: result})
-                        }
+                        }}
                         fixedItems={[state.selectedAssets.length]}
                         renderItem={item => RenderItem(item, onDeletePicture)}
                     />

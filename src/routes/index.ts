@@ -9,7 +9,8 @@ import PersonalScreen from '../screen/personal';
 import FollowListScreen from '../screen/personal/follow-list';
 import Test1 from '../screen/test/test1';
 import Test2 from '../screen/test/test2';
-import EditPersonalInfoScreen from '../screen/personal/edit-info';
+import PersonalPreviewScreen from '../screen/personal/personal-info';
+import EditPersonalInfoScreen from "../screen/personal/edit-info";
 
 type routeProps = {
     name: string
@@ -52,6 +53,10 @@ export const intelinkRoute: routeProps[] = [
     {
         name: INTELINK_SCREEN_NAME.SCREEN_FOLLOW_LIST,
         component: FollowListScreen
+    },
+    {
+        name: INTELINK_SCREEN_NAME.SCREEN_PREVIEW_PERSONAL_INFO,
+        component: PersonalPreviewScreen
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_EDIT_PERSONAL_INFO,

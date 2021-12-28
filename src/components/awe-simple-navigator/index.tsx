@@ -3,7 +3,7 @@ import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Header} from 'react-native-elements';
 import {AweSimpleNavigatorProps} from './type';
-import {themeColor} from '../../assets/styles';
+import {themeColor, themeLightColor} from '../../assets/styles';
 
 const AweSimpleNavigator: React.FC<AweSimpleNavigatorProps> = (
     props: AweSimpleNavigatorProps,
@@ -35,10 +35,19 @@ const AweSimpleNavigator: React.FC<AweSimpleNavigatorProps> = (
             rightComponent={
                 props.rightActionTitle ? (
                     <TouchableHighlight
+                        disabled={!props.rightActionEditable}
                         underlayColor={'none'}
                         onPress={props.rightActionEvent}>
                         <View>
-                            <Text style={styles.post}>
+                            <Text
+                                style={[
+                                    styles.post,
+                                    {
+                                        color: props.rightActionEditable
+                                            ? themeColor
+                                            : themeLightColor,
+                                    },
+                                ]}>
                                 {props.rightActionTitle}
                             </Text>
                         </View>
@@ -54,7 +63,7 @@ const AweSimpleNavigator: React.FC<AweSimpleNavigatorProps> = (
 const styles = StyleSheet.create({
     title: {
         fontSize: 17,
-        color: '#333'
+        color: '#333',
     },
     post: {
         padding: 5,

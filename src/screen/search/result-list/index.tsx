@@ -7,6 +7,8 @@ import {NavigateProps} from '../../../interface';
 import PostList from '../../components/post-list';
 import { INTELINK_SCREEN_NAME } from "../../../routes/screen-name";
 import apis from '../../../network/apis';
+import { localImages } from "../../../assets/images";
+import { useLanguage } from "../../../language";
 
 const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
@@ -32,6 +34,8 @@ const SearchResultScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             <PostList
                 api={apis.post.search}
                 apiParam={searchName}
+                nothingImg={localImages.search}
+                nothingTitle={useLanguage.no_result_found}
                 listId={INTELINK_SCREEN_NAME.SCREEN_SEARCH_RESULT}
                 onPressPersonal={onPressPersonal}
                 onPressDetail={onPressDetail}

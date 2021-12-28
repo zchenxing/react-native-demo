@@ -28,8 +28,11 @@ export const INTELINK_SCREEN_NAME = {
     SCREEN_PERSONAL: 'PersonalScreen',
     // 关注列表
     SCREEN_FOLLOW_LIST: 'FollowListScreen',
-    // 修改个人信息
-    SCREEN_EDIT_PERSONAL_INFO: 'EditPersonalInfoScreen',
+    // 预览个人信息
+    SCREEN_PREVIEW_PERSONAL_INFO: 'PersonalPreviewScreen',
+    // 编辑个人信息
+    SCREEN_EDIT_PERSONAL_INFO: 'EditPersonalInfoScreen'
+
 }
 
 

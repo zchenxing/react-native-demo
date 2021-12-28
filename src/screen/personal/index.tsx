@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-    FlatList,
-    StatusBar,
-    View,
-    Animated,
-    StyleSheet,
-} from 'react-native';
+import { FlatList, StatusBar, View, Animated, StyleSheet, DeviceEventEmitter } from "react-native";
 import PersonalInfo from './info';
-import {screenWidth} from '../../config/contant';
+import { EventEmitterName, screenWidth } from "../../config/contant";
 import UserNavigator from '../components/user-navigator';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -18,19 +12,18 @@ import {NavigateProps} from '../../interface';
 import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import server from '../../network';
 import apis from '../../network/apis';
-import { PostContentProps, UserInfoProps } from "../../interface/work";
+import {PostContentProps, UserInfoProps} from '../../interface/work';
 import {observer} from 'mobx-react';
 import {useSetState} from 'ahooks';
 import {usePostListDataStore} from '../../store/provider';
-import AweKeyboard from "../../components/awe-keyboard";
-import Toast from "react-native-simple-toast";
-import { useNetInfo } from "@react-native-community/netinfo";
+import AweKeyboard from '../../components/awe-keyboard';
+import Toast from 'react-native-simple-toast';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 interface IState {
     userInfo: UserInfoProps | undefined;
     navOpacityOffset: Animated.Value;
     commentVisible: boolean;
-
 
     // 首次评论的事件
     firstKeyboardVisible: boolean;
@@ -74,6 +67,18 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             // @ts-ignore
             useNativeDriver: true,
         });
+
+
+        const emitter = DeviceEventEmitter.addListener(
+            EventEmitterName.EditInfo,
+            getUserInfo,
+        );
+
+        return () => {
+            emitter.remove()
+        }
+
+
     }, []);
 
     const getUserInfo = async () => {
@@ -94,7 +99,6 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 },
                 listId,
             );
-
         } catch (err) {}
     };
 
@@ -105,14 +109,13 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         });
     };
 
-
     const onPressDetail = (row: any) => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL, {
             postId: row.item.id,
             fromListId: state.userInfo?.id,
-            rowIndex: row.index
-        })
-    }
+            rowIndex: row.index,
+        });
+    };
 
     const onPressComment = (row: any) => {
         // 如果有评论，就打开评论
@@ -121,41 +124,41 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             setState({
                 currentPost: row.item,
                 commentVisible: true,
-                currentRowIndex: row.index
-            })
+                currentRowIndex: row.index,
+            });
         } else {
             // 判断是够连续查看同一条帖子的评论，如果是就不清除评论内容
             if (row.item.id === state.currentPost?.id) {
                 setState({
                     currentRowIndex: row.index,
-                    firstKeyboardVisible: true
-                })
+                    firstKeyboardVisible: true,
+                });
             } else {
                 setState({
                     currentRowIndex: row.index,
                     firstKeyboardVisible: true,
                     firstContentText: '',
                     currentPost: row.item,
-                })
+                });
             }
-
         }
-    }
+    };
 
     /**
      * 发评论
      */
     const onSendComment = async () => {
         try {
-            await server.post(apis.post.comment.push(state.currentPost?.id), {
-                content: state.firstContentText,
-            });
+            await server.post(
+                apis.post.comment.push(state.currentPost?.id || ''),
+                {
+                    content: state.firstContentText,
+                },
+            );
 
             if (state.currentRowIndex > -1) {
                 // 直接修改列表数据
-                postStoreData[listId][
-                    state.currentRowIndex
-                    ].total_comment = 1;
+                postStoreData[listId][state.currentRowIndex].total_comment = 1;
 
                 setState({
                     firstContentText: '',
@@ -168,29 +171,37 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         } catch (err) {}
     };
 
-
+    /**
+     * 点击收藏
+     * @param row
+     */
     const onPressCollection = async (row: any) => {
         if (netInfo.type !== 'none') {
             try {
-                await onCollectPost(row.item.id, row.index, listId)
+                await onCollectPost(row.item.id, row.index, listId);
             } catch (err) {
                 console.log(err);
             }
         }
-    }
+    };
 
-
+    /**
+     * 跳转到关注列表
+     * @param type
+     */
     const onPressFollowList = (type: PersonalOtherEnum) => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_FOLLOW_LIST);
     };
 
     const onPressEdit = () => {
-        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_EDIT_PERSONAL_INFO);
+        props.navigation.push(
+            INTELINK_SCREEN_NAME.SCREEN_PREVIEW_PERSONAL_INFO,
+        );
     };
 
-    const onPressAvatar = (userId: string) => {
+    const onPressAvatar = (id: string) => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PERSONAL, {
-            userId
+            userId: id,
         });
     };
 
@@ -232,10 +243,7 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     ref={flatListRef}
                     style={{flex: 1, width: screenWidth}}
                     scrollEventThrottle={1}
-                    data={[
-                        null,
-                        ...postStoreData[listId] || [],
-                    ]}
+                    data={[null, ...(postStoreData[listId] || [])]}
                     onScroll={Animated.event(
                         [
                             {
@@ -266,24 +274,20 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                             row.index = row.index - 1;
                             return (
                                 <PostItem
-                                    postItem={
-                                        postStoreData[listId][
-                                            row.index
-                                            ]
-                                    }
+                                    postItem={postStoreData[listId][row.index]}
                                     onPressDetail={() => onPressDetail(row)}
                                     onPressPicture={() => {}}
                                     onPressComment={() => onPressComment(row)}
                                     onPressPersonal={() => {}}
-                                    onPressCollection={() => onPressCollection(row)}
+                                    onPressCollection={() =>
+                                        onPressCollection(row)
+                                    }
                                 />
                             );
                         }
                     }}
                 />
-
             </SafeAreaProvider>
-
 
             <AweKeyboard
                 visible={state.firstKeyboardVisible}

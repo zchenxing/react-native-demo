@@ -1,8 +1,8 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import {Image} from 'react-native-elements';
-import {avatarUrl} from '../../../mock';
 import {themeColor} from '../../../assets/styles';
+import { localImages } from "../../../assets/images";
 
 interface IProps {
     // 显示标签
@@ -28,9 +28,8 @@ const PostHeader: React.FC<IProps> = (props: IProps) => {
                 <>
                     <Image
                         style={postHeaderStyles.avatar}
-                        source={{
-                            uri: props.userAvatar ? props.userAvatar : avatarUrl,
-                        }}
+                        defaultSource={ localImages.defaultAvatar}
+                        source={props.userAvatar ? { uri: props.userAvatar }: localImages.defaultAvatar}
                     />
 
                     <View style={{justifyContent: 'space-between'}}>

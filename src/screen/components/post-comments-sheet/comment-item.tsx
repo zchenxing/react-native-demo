@@ -7,19 +7,16 @@ import {
     View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {avatarUrl} from '../../../mock';
 import Utils from '../../../help';
 import {PostCommentsItemProps, ReplyType} from './type';
 import {themeColor} from '../../../assets/styles';
 import {isIOS} from '../../../config/contant';
 import {useLanguage} from '../../../language';
-
+import {localImages} from '../../../assets/images';
 
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,
 ) => {
-
-
     return (
         <>
             <TouchableHighlight
@@ -36,7 +33,14 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         underlayColor={'none'}>
                         <FastImage
                             style={styles.avatar}
-                            source={{uri: avatarUrl}}
+                            source={
+                                props.commentDetail.target_user_info?.avatar
+                                    ? {
+                                          uri: props.commentDetail
+                                              .target_user_info?.avatar,
+                                      }
+                                    : localImages.defaultAvatar
+                            }
                             resizeMode={FastImage.resizeMode.cover}
                         />
                     </TouchableHighlight>
@@ -63,20 +67,20 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         </View>
 
                         <Text>
-                            {
-                                props.commentDetail.target_user_info &&
-                                props.commentDetail.target_user_id !== props.mainCommentUserId && (
+                            {props.commentDetail.target_user_info &&
+                                props.commentDetail.target_user_id !==
+                                    props.mainCommentUserId && (
                                     <Text>
                                         {useLanguage.reply_to}
                                         <Text style={{color: '#aaa'}}>
                                             {
-                                                props.commentDetail.target_user_info.nickname
+                                                props.commentDetail
+                                                    .target_user_info.nickname
                                             }
                                         </Text>
                                         {':  '}
                                     </Text>
-                                )
-                            }
+                                )}
                             {props.commentDetail.content}
                             {/*{props.commentDetail.id}*/}
                         </Text>
@@ -84,7 +88,8 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                 </View>
             </TouchableHighlight>
 
-            {props.commentDetail.replies && props.commentDetail.replies.length ? (
+            {props.commentDetail.replies &&
+            props.commentDetail.replies.length ? (
                 <View style={{paddingLeft: 40}}>
                     {props.commentDetail.replies.map(data => (
                         <CommentItem
@@ -99,7 +104,8 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         />
                     ))}
 
-                    {props.commentDetail.total_reply > props.commentDetail.replies.length && (
+                    {props.commentDetail.total_reply >
+                        props.commentDetail.replies.length && (
                         <TouchableHighlight
                             style={styles.moreReplies}
                             onPress={props.getMoreReplies}

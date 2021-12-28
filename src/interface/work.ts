@@ -1,5 +1,9 @@
 import { GenderProps } from "../enum";
 
+export type UserEventProps = {
+    event_type: 1 | 2 | 3
+}
+
 
 export interface UserInfoProps {
     id: string
@@ -14,7 +18,9 @@ export interface UserInfoProps {
     job?: string
     address?: string
     birthday?: string
+    // 简介
     intro?: string
+    user_event?: UserEventProps | null
 }
 
 
@@ -45,7 +51,7 @@ export interface PostContentProps {
     user_info: UserInfoProps,
     biological_card?: AnimalCardProps
     // 用户事件，1-收藏主题，2-点赞主题，3-关注用户
-    user_events?: {event_type: 1 | 2 | 3}[] | null
+    user_events?: UserEventProps[] | null
     // //
     // event_types: number[]
 }

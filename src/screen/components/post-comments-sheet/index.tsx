@@ -12,7 +12,6 @@ import {Image} from 'react-native-elements';
 import {useLanguage} from '../../../language';
 import AweKeyboard from '../../../components/awe-keyboard';
 import {PostCommentProps, ReplyType} from './type';
-import {avatarUrl} from '../../../mock';
 import CommentItem from './comment-item';
 import {themeColor} from '../../../assets/styles';
 import BottomSheet, {BottomSheetVirtualizedList} from '@gorhom/bottom-sheet';
@@ -22,12 +21,15 @@ import {observer} from 'mobx-react';
 import {
     useCommentDataStore,
     usePostListDataStore,
+    useSelfDataStore,
 } from '../../../store/provider';
 import AweLoadMore from '../../../components/awe-load-more';
+import {localImages} from '../../../assets/images';
 
 const PostCommentSheet: React.FC<PostCommentProps> = (
     props: PostCommentProps,
 ) => {
+    const {selfInfoData} = useSelfDataStore();
     const {postStoreData, setPostStoreData} = usePostListDataStore();
     const {
         commentStoreData,
@@ -229,15 +231,15 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 handleComponent={() => (
                     <View style={styles.sheetHeader}>
                         <Text style={{color: '#777'}}>
-                            {postStoreData[props.listId] && postStoreData[props.listId][props.rowIndex]
-                                ?.total_comment || 0}{' '}
+                            {(postStoreData[props.listId] &&
+                                postStoreData[props.listId][props.rowIndex]
+                                    ?.total_comment) ||
+                                0}{' '}
                             comments
                         </Text>
                     </View>
                 )}>
-                {
-                    props.visible &&
-                    commentStoreData[props.listId] ? (
+                {props.visible && commentStoreData[props.listId] ? (
                     <BottomSheetVirtualizedList
                         ref={commentListRef}
                         style={styles.sheetContent}
@@ -265,8 +267,9 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                                         replyMoreLoad.loading
                                     }
                                     isAuthor={
-                                        postStoreData[props.listId][props.rowIndex]
-                                            .user_id === row.item.user_id
+                                        postStoreData[props.listId][
+                                            props.rowIndex
+                                        ].user_id === row.item.user_id
                                     }
                                     getMoreReplies={() => getReplies(row)}
                                     commentDetail={row.item}
@@ -278,7 +281,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                                         onPressReply(type, comment, row)
                                     }
                                 />
-                            )
+                            );
                         }}
                     />
                 ) : (
@@ -293,9 +296,12 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                     <View style={styles.sheetFooter}>
                         <Image
                             style={styles.avatar}
-                            source={{
-                                uri: avatarUrl,
-                            }}
+                            defaultSource={localImages.defaultAvatar}
+                            source={
+                                selfInfoData?.avatar
+                                    ? {uri: selfInfoData.avatar}
+                                    : localImages.defaultAvatar
+                            }
                         />
                         <View style={styles.submitText}>
                             <Text

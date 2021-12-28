@@ -9,7 +9,6 @@ export const screenHeight = Dimensions.get('window').height
 export const PAGE_SIZE = 10
 
 
-
 /**
  * 统一配置事件监听名
  */
@@ -17,6 +16,8 @@ export const EventEmitterName = {
     // 刷新首页列表
     RefreshHome: 'RefreshHome',
     // 发布 -> 选择类别
-    ChooseCategory: 'ChooseCategory'
+    ChooseCategory: 'ChooseCategory',
+    // 编辑信息后刷新数据
+    EditInfo: 'EditInfo'
 }
 

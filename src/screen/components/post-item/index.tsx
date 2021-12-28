@@ -7,8 +7,9 @@ import {pictureList} from '../../../mock';
 import PostFooter from './post-footer';
 import PostPicture from './post-picture';
 import PostAnimalCard from './post-animal-card';
-import {PostUserEventType} from '../../../enum';
+import {UserEventType} from '../../../enum';
 import WorkHelp from '../../../help/work';
+import AnimalCard from "../animal-card";
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
@@ -41,13 +42,13 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                 {/*    <PostAnimalCard />*/}
                 {/*)}*/}
 
-                {/*<PostAnimalCard />*/}
+                <AnimalCard showLocation={true} />
 
                 <PostFooter
                     isCollection={
                         WorkHelp.userEventExist(
                             props.postItem.user_events,
-                            PostUserEventType.Collection,
+                            UserEventType.Collection,
                         ).isExist
                     }
                     createdAt={props.postItem.created_at}

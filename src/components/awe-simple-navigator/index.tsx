@@ -33,23 +33,27 @@ const AweSimpleNavigator: React.FC<AweSimpleNavigatorProps> = (
                 justifyContent: 'center',
             }}
             rightComponent={
-                props.rightActionTitle ? (
+                props.rightActionTitle || props.rightActionIcon ? (
                     <TouchableHighlight
                         disabled={!props.rightActionEditable}
                         underlayColor={'none'}
                         onPress={props.rightActionEvent}>
                         <View>
-                            <Text
-                                style={[
-                                    styles.post,
-                                    {
-                                        color: props.rightActionEditable
-                                            ? themeColor
-                                            : themeLightColor,
-                                    },
-                                ]}>
-                                {props.rightActionTitle}
-                            </Text>
+                            {props.rightActionIcon ? (
+                                props.rightActionIcon
+                            ) : (
+                                <Text
+                                    style={[
+                                        styles.post,
+                                        {
+                                            color: props.rightActionEditable
+                                                ? themeColor
+                                                : themeLightColor,
+                                        },
+                                    ]}>
+                                    {props.rightActionTitle}
+                                </Text>
+                            )}
                         </View>
                     </TouchableHighlight>
                 ) : (

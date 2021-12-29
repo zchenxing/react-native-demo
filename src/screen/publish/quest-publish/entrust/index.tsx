@@ -10,14 +10,14 @@ import {
     StyleSheet
 } from "react-native";
 import {Header} from 'react-native-elements';
-import { NavigateProps } from "../../interface";
+import { NavigateProps } from "../../../../interface";
 // import Icon from "react-native-vector-icons/FontAwesome";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import Test3 from "../test/test3";
+import Test3 from "../../../test/test3";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {useSetState} from "ahooks";
-import {EventEmitterName, screenWidth} from "../../config/contant";
-import Test4 from "../test/test4";
+import {EventEmitterName, screenWidth} from "../../../../config/contant";
+import Test4 from "../../../test/test4";
 import EntrustAll from "./all";
 const Tab = createMaterialTopTabNavigator();
 

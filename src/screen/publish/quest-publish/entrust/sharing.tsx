@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {INTELINK_SCREEN_NAME} from "../../routes/screen-name";
+import {INTELINK_SCREEN_NAME} from "../../../../routes/screen-name";
 import {Header} from "react-native-elements";
 
 const EntrustSharingScreen = (props) => {

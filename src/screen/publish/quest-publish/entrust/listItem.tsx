@@ -1,6 +1,6 @@
 import React from 'react';
 import {Alert, StyleSheet, Text, TouchableHighlight, View} from "react-native";
-import {INTELINK_SCREEN_NAME} from "../../routes/screen-name";
+import {INTELINK_SCREEN_NAME} from "../../../../routes/screen-name";
 
 const ListItem: React.FC<any> = (props: any) => {
     return (

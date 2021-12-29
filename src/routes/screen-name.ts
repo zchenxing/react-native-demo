@@ -1,4 +1,4 @@
-import Entrust from "../screen/entrust";
+import Entrust from "../screen/publish/quest-publish/entrust";
 
 export const PAGE_NAME = {
     HOME: 'Home',

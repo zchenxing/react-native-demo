@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableHighlight, View} from "react-native";
-import {screenWidth} from "../../../config/contant";
-import {localImages} from "../../../assets/images";
+import {screenWidth} from "../../../../../config/contant";
+import {localImages} from "../../../../../assets/images";
 import LinearGradient from "react-native-linear-gradient";
 
 const EndAnimalCard = (props: any) => {

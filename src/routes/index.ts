@@ -11,11 +11,11 @@ import Test1 from '../screen/test/test1';
 import Test2 from '../screen/test/test2';
 import PersonalPreviewScreen from '../screen/personal/personal-info';
 import EditPersonalInfoScreen from "../screen/personal/edit-info";
-import EntrustListScreen from "../screen/entrust/index";
-import EntrustDetailScreen from "../screen/entrust/detail";
-import EntrustRecordScreen from "../screen/entrust/synchronousRecording";
-import EntrustAcceptedScreen from "../screen/entrust/accepted";
-import EntrustSharingScreen from "../screen/entrust/sharing";
+import EntrustListScreen from "../screen/publish/quest-publish/entrust/index";
+import EntrustDetailScreen from "../screen/publish/quest-publish/entrust/detail";
+import EntrustRecordScreen from "../screen/publish/quest-publish/entrust/synchronousRecording";
+import EntrustAcceptedScreen from "../screen/publish/quest-publish/entrust/accepted";
+import EntrustSharingScreen from "../screen/publish/quest-publish/entrust/sharing";
 
 type routeProps = {
     name: string

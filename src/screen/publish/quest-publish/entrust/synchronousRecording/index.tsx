@@ -2,12 +2,12 @@ import React from 'react';
 import {ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableHighlight, View} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {Header} from "react-native-elements";
-import {screenWidth} from "../../../config/contant";
+import {screenWidth} from "../../../../../config/contant";
 import ListItem from "./listItem";
 import {useSetState} from "ahooks";
-import {useLanguage} from "../../../language";
+import {useLanguage} from "../../../../../language";
 
-const EntrustAcceptedScreen = (props: any) => {
+const EntrustRecordScreen = (props: any) => {
 
     const [state, setState] = useSetState<any>({
         refreshing: false,
@@ -18,6 +18,7 @@ const EntrustAcceptedScreen = (props: any) => {
     React.useEffect(() => {
         setState({
             refreshing: false,
+
         });
 
     }, [state.refreshing]);
@@ -55,6 +56,7 @@ const EntrustAcceptedScreen = (props: any) => {
      */
     const onLoadMoreData = async (hasMoreData: boolean) => {
         // 当有更多数据时才自动加载更多数据，否则不做操作
+        console.log(hasMoreData)
         if (hasMoreData) {
             setState({
                 moreLoading: true,
@@ -129,14 +131,14 @@ const EntrustAcceptedScreen = (props: any) => {
             }
             centerComponent={
                 <View>
-                    <Text style={styles.pageTitle}>Accepted</Text>
+                    <Text style={styles.pageTitle}>Sync record</Text>
                 </View>
             }
         >
         </Header>
         <View style={styles.dataCountBox}>
-            <Text>3 people</Text>
             <Text>223,223,999 data</Text>
+            <Text>Contains 7879 but not uploaded</Text>
         </View>
         <FlatList
             data={DATA}
@@ -171,8 +173,8 @@ const styles = StyleSheet.create({
         alignItems:"center",
         justifyContent:"space-between",
         marginTop:4.5,
-        marginBottom:5
+        marginBottom:10
     }
 })
 
-export default EntrustAcceptedScreen;
+export default EntrustRecordScreen;

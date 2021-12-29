@@ -1,8 +1,8 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableHighlight, View} from "react-native";
-import {screenWidth} from "../../../config/contant";
-import {localImages} from "../../../assets/images";
-import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
+import {screenWidth} from "../../../../../config/contant";
+import {localImages} from "../../../../../assets/images";
+import {INTELINK_SCREEN_NAME} from "../../../../../routes/screen-name";
 
 const EndRecord = (props: any) => {
     return <TouchableHighlight

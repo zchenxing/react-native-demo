@@ -2,18 +2,18 @@ import React,{ useCallback, useMemo, useRef } from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View} from "react-native";
 import {Header} from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {screenHeight, screenWidth} from "../../../config/contant";
+import {screenHeight, screenWidth} from "../../../../../config/contant";
 import AnimalCard from "./animalCard";
 import {useSetState} from "ahooks";
 import BottomSelect from "./bottomSelect";
 import { BottomSheet, Button, ListItem } from 'react-native-elements';
-import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
-import IconFont from "../../../iconfont";
+import {INTELINK_SCREEN_NAME} from "../../../../../routes/screen-name";
+import IconFont from "../../../../../iconfont";
 import EndAnimalCard from "./endAnimalCard";
 import EndRecord from "./endRecord";
-import {useLanguage} from "../../../language";
-import {EditInfoType} from "../../../enum";
-import AweSimpleNavigator from "../../../components/awe-simple-navigator";
+import {useLanguage} from "../../../../../language";
+import {EditInfoType} from "../../../../../enum";
+import AweSimpleNavigator from "../../../../../components/awe-simple-navigator";
 
 const EntrustDetailScreen: React.FC<any> = (props: any) => {
     const [state, setState] = useSetState<any>({

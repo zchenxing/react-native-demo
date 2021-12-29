@@ -1,11 +1,11 @@
 import React from 'react';
 import {Alert, FlatList, RefreshControl, Text, TouchableHighlight, View} from "react-native";
-import { NavigateProps } from "../../interface";
+import { NavigateProps } from "../../../../interface";
 import {useSetState} from "ahooks";
 import ListItem from "./listItem";
-import {screenWidth} from "../../config/contant";
+import {screenWidth} from "../../../../config/contant";
 
-const EntrustAll: React.FC<NavigateProps> = (props: NavigateProps) => {
+const EntrustPending: React.FC<NavigateProps> = (props: NavigateProps) => {
     const [state, setState] = useSetState<any>({
         refreshing: false,
     });
@@ -50,8 +50,8 @@ const EntrustAll: React.FC<NavigateProps> = (props: NavigateProps) => {
             data={DATA}
             removeClippedSubviews={true}
             renderItem={renderItem}
-            style={{width: screenWidth}}
             keyExtractor={item => item.id}
+            style={{width: screenWidth}}
             refreshControl={
                 <RefreshControl
                     refreshing={state.refreshing}
@@ -64,4 +64,4 @@ const EntrustAll: React.FC<NavigateProps> = (props: NavigateProps) => {
 
 
 
-export default EntrustAll;
+export default EntrustPending;

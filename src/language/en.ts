@@ -35,21 +35,27 @@ export const languageEn = {
     show_less: 'Show less',
     show_more: 'Show more',
 
-    release_info: '释放信息',
+    installation_info: 'Installation information',
     installation: 'Installation',
     release_position: 'Release position',
     coordinate: 'Coordinate',
+    latitude: 'Latitude',
+    longitude: 'Longitude',
     release_date: 'Release date',
     banding_number: 'Banding',
     detail_info: 'Detail information',
     head_length: 'Head length', // '头长',
-    wing_length:  'Wing length', // '翅长',
+    wing_length: 'Wing length', // '翅长',
     beak_length: 'Beak length', //'喙长',
     body_length: 'Body length', //'体长',
     tarsus_length: 'Tarsus length', // '跗跖',
     tail_length: 'Tail length', // '尾长',
     wingspan: 'Wingspan', // '翼展',
     additional_info: 'Additional information', // '补充信息',
+    shoulder_height: 'Shoulder Height', // 肩高
+
+    adult: 'Adult',
+    child: 'Juvenile',
 
     x_minute_ago: (min: number) =>
         `${min} ${min > 1 ? 'minutes' : 'minute'} ago`,

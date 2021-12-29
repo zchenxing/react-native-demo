@@ -19,7 +19,7 @@ export class SelfInfoDataStore {
 
             this.setSelfInfoData(res.data)
         } catch (err) {
-            console.log(err);
+            console.log('----', err);
         }
 
     }

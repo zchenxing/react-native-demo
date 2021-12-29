@@ -28,6 +28,7 @@ import {ReplyType} from '../components/post-comments-sheet/type';
 import AweLoadMore from '../../components/awe-load-more';
 import {observer} from 'mobx-react';
 import AnimalCard from '../components/animal-card';
+import PastCard from "./post-card";
 
 interface IState {
     postDetail: PostContentProps | null;
@@ -239,16 +240,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                         />
                                     );
                                 } else if (row.item === 1) {
-                                    return (
-                                        <View
-                                            style={{
-                                                paddingTop: 10,
-                                                padding: 20,
-                                                backgroundColor: '#f8f8f8',
-                                            }}>
-                                            <AnimalCard showMoreInfo={true} />
-                                        </View>
-                                    );
+                                    return <PastCard animalId={'61caefb2aca33b1a370bf463'} />;
                                 } else if (row.item === 2) {
                                     return (
                                         <View

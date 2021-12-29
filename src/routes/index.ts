@@ -2,7 +2,7 @@ import {INTELINK_SCREEN_NAME} from './screen-name';
 import HomeScreen from '../screen/home';
 import SearchScreen from '../screen/search';
 import SearchResultScreen from '../screen/search/result-list';
-import PublishScreen from '../screen/publish';
+import PostPublishScreen from '../screen/publish/post-publish';
 import PublishTagScreen from '../screen/publish/choose-tag';
 import PostDetailScreen from '../screen/post-detail';
 import PersonalScreen from '../screen/personal';
@@ -33,7 +33,7 @@ export const intelinkRoute: routeProps[] = [
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_PUBLISH,
-        component: PublishScreen,
+        component: PostPublishScreen,
         options: {
             gestureEnabled: false
         }

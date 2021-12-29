@@ -31,7 +31,7 @@ export const UserEventType = {
     // 收藏帖子
     Collection: 1,
     // 点赞
-    Lick: 2 ,
+    Lick: 2,
     // 关注
     Follow: 3
 }
@@ -47,3 +47,5 @@ export const PostType = {
     // 委托
     Entrust: 'Entrust',
 }
+
+

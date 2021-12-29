@@ -9,28 +9,25 @@ import {
 } from 'react-native';
 import IconFont from '../../../iconfont';
 import FastImage from 'react-native-fast-image';
-import {birdCard} from '../../../mock';
 import {useLanguage} from '../../../language';
 import LinearGradient from 'react-native-linear-gradient';
 import {themeColor} from '../../../assets/styles';
 import {screenWidth} from '../../../config/contant';
-import {AnimalCardProps} from './type';
+import {AnimalAge, AnimalCardProps} from './type';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useSetState} from 'ahooks';
 import {WebView} from 'react-native-webview';
+import {localImages} from '../../../assets/images';
+import AnimalCardMore from "./more-info";
 
 interface IState {
     showMoreInfo: boolean;
-    pictureVisible: boolean;
-    pictureIndex: number;
     mapLoading: boolean;
 }
 
 const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
     const [state, setState] = useSetState<IState>({
         showMoreInfo: false,
-        pictureVisible: false,
-        pictureIndex: 0,
         mapLoading: true,
     });
 
@@ -49,6 +46,7 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
         // props.onPressMore(positionY.current, !state.showMoreInfo)
     };
 
+
     return (
         <View style={styles.container}>
             <View style={styles.card}>
@@ -58,37 +56,61 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                         style={styles.cardHeader}
                     />
 
-                    <Text style={styles.speciesName}>animal name</Text>
-                    <Text style={styles.nicknameName}>nickname</Text>
+                    <Text style={styles.speciesName}>
+                        {props.animalInfo?.biological_base.species || ''}
+                    </Text>
+                    <Text style={styles.nicknameName}>
+                        {props.shareData?.biological_name}
+                    </Text>
 
                     <View style={styles.labelBase}>
                         <IconFont name={'niao'} color={'#fff'} size={26} />
-                        <Text style={styles.labelText}>Birds</Text>
+                        <Text style={styles.labelText}>
+                            {props.shareData?.animal_category}
+                        </Text>
                     </View>
                 </View>
 
-                <FastImage style={styles.animalPic} source={{uri: birdCard}} />
+                <FastImage
+                    style={styles.animalPic}
+                    source={
+                        props.animalInfo
+                            ? {uri: props.animalInfo?.imageUrls[0]}
+                            : localImages.defaultPicture
+                    }
+                    resizeMode={'cover'}
+                />
 
                 <View style={styles.infoBase}>
+                    {/* 生物信息 */}
                     <View style={styles.infoItem}>
                         <Text style={styles.infoItemTitle}>
                             {useLanguage.age}
                         </Text>
-                        <Text style={styles.infoItemValue}>12 d902</Text>
+                        <Text style={styles.infoItemValue}>
+                            {props.animalInfo?.biological_base.age ===
+                            AnimalAge.Adult
+                                ? useLanguage.adult
+                                : useLanguage.child}
+                        </Text>
                     </View>
 
                     <View style={styles.infoItem}>
                         <Text style={styles.infoItemTitle}>
                             {useLanguage.gender}
                         </Text>
-                        <Text style={styles.infoItemValue}>12 d902</Text>
+                        <Text style={styles.infoItemValue}>
+                            {props.animalInfo?.biological_base.gender}
+                        </Text>
                     </View>
 
                     <View style={[styles.infoItem, {borderRightWidth: 0}]}>
                         <Text style={styles.infoItemTitle}>
                             {useLanguage.weight}
                         </Text>
-                        <Text style={styles.infoItemValue}>12 d902</Text>
+                        <Text style={styles.infoItemValue}>
+                            {props.animalInfo?.biological_base.weight}
+                        </Text>
                     </View>
                 </View>
 
@@ -107,23 +129,8 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
 
             {props.showMoreInfo && (
                 <>
-                    {state.showMoreInfo && (
-                        <View style={{backgroundColor: '#FFF', height: 300}}>
-                            <View style={styles.pictures}>
-                                <ScrollView
-                                    horizontal={true}
-                                    showsHorizontalScrollIndicator={false}
-                                    style={styles.scrollView}>
-                                    {[1, 2, 3, 4, 5, 6, 7].map(picture => (
-                                        <FastImage
-                                            key={picture}
-                                            source={{uri: birdCard}}
-                                            style={[styles.pictureItem, {}]}
-                                        />
-                                    ))}
-                                </ScrollView>
-                            </View>
-                        </View>
+                    {state.showMoreInfo && props.animalInfo && (
+                       <AnimalCardMore animalInfo={props.animalInfo} />
                     )}
 
                     <TouchableHighlight
@@ -150,18 +157,20 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                         </View>
                     </TouchableHighlight>
 
-                    <View style={{height: 300}}>
+                    <View style={styles.mapBase}>
                         {!state.mapLoading && (
                             <WebView
                                 automaticallyAdjustContentInsets={false}
                                 source={{
-                                    uri: 'https://www.google.com/maps',
+                                    uri: 'https://map.tianditu.gov.cn/',
                                 }}
                             />
                         )}
                     </View>
                 </>
             )}
+
+
         </View>
     );
 };
@@ -270,22 +279,13 @@ const styles = StyleSheet.create({
         color: '#999',
     },
 
-    pictures: {
-        flexDirection: 'row',
-        width: screenWidth,
-        left: -20,
-        paddingRight: 35,
-    },
-    scrollView: {
-        paddingLeft: 20,
-        paddingRight: 140,
-        overflow: 'visible',
-    },
-    pictureItem: {
-        borderWidth: 1,
-        borderColor: '#f8f8f8',
-        marginRight: 5,
-        width: (screenWidth - 30) / 3.2,
-        height: (screenWidth - 30) / 3.2,
-    },
+
+    mapBase: {
+        height: 300,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        overflow: 'hidden'
+    }
+
+
 });

@@ -1,18 +1,21 @@
 import axios, { AxiosRequestConfig } from "axios";
-import myToken from "./token";
+import myToken from './token';
+import { isIOS } from "../config/contant";
 
-// const testBaseURL = 'http://intelink.coolhei.com/api'
-const testBaseURL = 'http://154.17.3.8:9003'
+const testBaseURL = `${isIOS ? 'https' : 'http'}://intelink.coolhei.com/api`
+// const testBaseURL = 'http://154.17.3.8:9003'
 
 /**
  http://intelink.coolhei.com/api
  本地需要加一下hosts
  154.17.3.8:9003 intelink.coolhei.com
  */
+
+
+
 const server = axios.create({
     baseURL: process.env.NODE_ENV === 'development' ? testBaseURL : '154.17.3.8/api',
     timeout: 100000,
-
 })
 
 /**

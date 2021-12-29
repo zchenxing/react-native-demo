@@ -1,3 +1,8 @@
+import { isIOS } from "../config/contant";
+
+const ecotopiaHost = `${
+    isIOS ? 'https' : 'http'
+}://bird.coolhei.com/public/api`;
 
 const apis = {
     user: {
@@ -64,6 +69,20 @@ const apis = {
         delete: (fileId: string) => `/v1/file/id/${fileId}`,
         // 文件列表
         list: (param = '') => `/v1/file/page/${param}`
+    },
+    ecotopia: {
+        // 查看分享
+        share: (id: string) => `${ecotopiaHost}/v1/share/id/${id}`,
+        // 查看生物信息
+        info: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/biological`,
+        // 查看生物照片
+        image: (id: string, imgId: string) => {
+            return `${ecotopiaHost}/v1/share/id/${id}/biological/image/${imgId}`
+        },
+        // 查看生物的最新位置
+        location: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/location`,
+        // 查看生物的轨迹
+        track: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/track`,
     }
 }
 

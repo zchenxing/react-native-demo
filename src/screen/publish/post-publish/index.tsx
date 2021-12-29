@@ -11,33 +11,33 @@ import {
     Alert,
     DeviceEventEmitter,
 } from 'react-native';
-import {themeColor, themeLightColor} from '../../assets/styles';
-import {NavigateProps, PictureProps} from '../../interface';
-import {EventEmitterName, isIOS, screenWidth} from '../../config/contant';
+import {themeColor, themeLightColor} from '../../../assets/styles';
+import {NavigateProps, PictureProps} from '../../../interface';
+import {EventEmitterName, isIOS, screenWidth} from '../../../config/contant';
 import {DragSortableView} from 'react-native-drag-sort';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import AwePicturePreview from '../../components/awe-picture-preview';
+import AwePicturePreview from '../../../components/awe-picture-preview';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
-import AweSimpleNavigator from '../../components/awe-simple-navigator';
+import {INTELINK_SCREEN_NAME} from '../../../routes/screen-name';
+import AweSimpleNavigator from '../../../components/awe-simple-navigator';
 import {observer} from 'mobx-react';
 import {useSetState} from 'ahooks';
-import {useLanguage} from '../../language';
-import server from '../../network';
-import apis from '../../network/apis';
+import {useLanguage} from '../../../language';
+import server from '../../../network';
+import apis from '../../../network/apis';
 import Toast from 'react-native-simple-toast';
-import Utils from '../../help';
-import IconFont from '../../iconfont';
+import Utils from '../../../help';
+import IconFont from '../../../iconfont';
 import axios from "axios";
 import dayjs from "dayjs";
-import myToken from "../../network/token";
+import myToken from "../../../network/token";
 
 const pictureWidth = (screenWidth - 20) / 3;
 
 const __AddPictureName__ = 'addPicture';
 const AddPicture = {
     fileName: __AddPictureName__,
-    uri: require('../../assets/images/icons/add_picture.png'),
+    uri: require('../../../assets/images/icons/add_picture.png'),
 };
 
 interface IState {
@@ -49,7 +49,7 @@ interface IState {
     postContent: string;
 }
 
-const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
+const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const inputRef = React.useRef<any>(null);
     const contentText = React.useRef<any>('');
     const backListener = React.useRef<any>(null);
@@ -391,4 +391,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default observer(PublishScreen);
+export default observer(PostPublishScreen);

@@ -42,7 +42,7 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                 {/*    <PostAnimalCard />*/}
                 {/*)}*/}
 
-                <AnimalCard showLocation={true} />
+                {/*<AnimalCard showLocation={true} />*/}
 
                 <PostFooter
                     isCollection={

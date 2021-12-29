@@ -58,10 +58,9 @@ export class PostListDataStore {
             });
 
             this.setPostStoreData(listId, res.data);
-
             return Promise.resolve(res);
         } catch (err) {
-            console.log(err);
+            console.log('getPostData = ',err);
             return Promise.reject(err);
         }
     };

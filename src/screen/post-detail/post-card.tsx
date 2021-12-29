@@ -1,13 +1,14 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {birdCard, pictureList} from '../../mock';
+import {pictureList} from '../../mock';
 import {screenWidth} from '../../config/contant';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSetState } from "ahooks";
 import {useLanguage} from '../../language';
 import AwePicturePreview from '../../components/awe-picture-preview';
 import { WebView } from "react-native-webview";
+import PostAnimalCard from '../components/post-item/post-animal-card';
 
 interface IProps {
     onPressMore: (offset: number, isPutAway: boolean) => void
@@ -64,66 +65,40 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
         <>
             <View style={styles.container}>
                 <View style={styles.card}>
-                    <Image
-                        source={require('../../assets/images/card_header.png')}
-                        style={styles.cardHeader}
-                    />
 
                     <View style={styles.gradient}>
-                        <View style={styles.animalPicture}>
-                            {pictures.map((picture, index) => (
-                                <TouchableHighlight
-                                    key={picture.uri}
-                                    underlayColor={'none'}
-                                    onPress={() => onPressPicture(index)}
-                                >
-                                    <FastImage
-                                        style={[
-                                            styles.animalPictureItem,
-                                            {
-                                                width: (screenWidth - 50) / 2,
-                                            },
-                                        ]}
-                                        source={{uri: picture.uri}}
-                                    />
-                                </TouchableHighlight>
-                            ))}
-                        </View>
 
-                        <View style={styles.animalInfo}>
-                            {Array.from(new Array(20).keys()).map(i => (
-                                <View key={i} style={styles.animalInfoItem}>
-                                    <Text style={styles.animalInfoItemText}>
-                                        wdwa
-                                    </Text>
-                                </View>
-                            ))}
-                        </View>
+
+                        <PostAnimalCard />
+
 
                         <View style={styles.moreBase} onLayout={e => {positionY.current = e.nativeEvent.layout.y}}>
                             <View style={styles.moreInfo}>
                                 {state.showMoreInfo && (
                                     <>
-                                        <Text style={styles.special_title}>
-                                            {useLanguage.animal_special} (cm)
-                                        </Text>
 
-                                        {[1, 2, 3, 4, 5, 6, 7].map(i => (
-                                            <View
-                                                key={i}
-                                                style={styles.moreInfoItem}>
-                                                <Text
-                                                    style={
-                                                        styles.moreInfoItemTitle
-                                                    }>
-                                                    特征
-                                                </Text>
-                                                <Text
-                                                    style={styles.moreInfoItemText}>
-                                                    222
-                                                </Text>
-                                            </View>
-                                        ))}
+
+
+                                        {/*<Text style={styles.specialTitle}>*/}
+                                        {/*    {useLanguage.animal_special} (cm)*/}
+                                        {/*</Text>*/}
+
+                                        {/*{[1, 2, 3, 4, 5, 6, 7].map(i => (*/}
+                                        {/*    <View*/}
+                                        {/*        key={i}*/}
+                                        {/*        style={styles.moreInfoItem}>*/}
+                                        {/*        <Text*/}
+                                        {/*            style={*/}
+                                        {/*                styles.moreInfoItemTitle*/}
+                                        {/*            }>*/}
+                                        {/*            特征*/}
+                                        {/*        </Text>*/}
+                                        {/*        <Text*/}
+                                        {/*            style={styles.moreInfoItemText}>*/}
+                                        {/*            222*/}
+                                        {/*        </Text>*/}
+                                        {/*    </View>*/}
+                                        {/*))}*/}
                                     </>
                                 )}
 
@@ -136,7 +111,11 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
                                             },
                                         ]}>
                                         <Text style={{color: '#999'}}>
-                                            {state.showMoreInfo ? 'Put away' : 'See all information'}
+                                            {
+                                                state.showMoreInfo ?
+                                                    useLanguage.show_less :
+                                                    useLanguage.show_more
+                                            }
                                         </Text>
                                         <Icon
                                             name={state.showMoreInfo ? 'angle-double-up' : 'angle-double-down'}
@@ -149,21 +128,17 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
 
                     </View>
 
-
-                    <View style={{height: 300, width: screenWidth - 20, transform: [{translateX: -10}]}}>
+                    <View style={{height: 300}}>
                         {
                             !state.mapLoading &&
                             <WebView
                                 automaticallyAdjustContentInsets={false}
                                 source={{
-                                    uri: 'https://leafletjs.com/examples/quick-start/example.html'
+                                    uri: 'https://www.google.com/maps'
                                 }}
                             />}
                     </View>
 
-                    <Text style={styles.animalName}>animal name</Text>
-
-                    <FastImage style={styles.animalBase} source={{uri: birdCard}} />
                 </View>
             </View>
 
@@ -255,6 +230,7 @@ const styles = StyleSheet.create({
         color: '#666',
     },
     moreBase: {
+        paddingTop: 20,
         padding: 15,
     },
     moreInfo: {
@@ -264,7 +240,7 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
         position: 'relative',
     },
-    special_title: {
+    specialTitle: {
         color: '#999',
     },
     moreInfoItem: {
@@ -287,28 +263,17 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: '50%',
         width: 135,
-        transform: [{translateX: -55}],
+        transform: [{translateX: -135 / 2}],
         backgroundColor: '#fff',
-        padding: 5
+        paddingLeft: 5,
+        paddingRight: 5
     },
     showMoreAngle: {
         fontSize: 16,
         marginTop: 5,
         color: '#999'
     }
-    // seeInfo: {
-    //     backgroundColor: '#fff',
-    //     paddingLeft: 5,
-    //     paddingRight: 5
-    // },
-    // divider: {
-    //     width: screenWidth - 50,
-    //     height: 1,
-    //     backgroundColor: '#ddd',
-    //     transform: [
-    //         {translateY: 12}
-    //     ]
-    // }
+
 });
 
 export default PastCard;

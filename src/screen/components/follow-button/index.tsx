@@ -19,6 +19,7 @@ const FollowButton: React.FC<FollowButtonProps> = (
                 styles.followButton,
                 {
                     backgroundColor: props.isFollow ? '#f8f8f8' : '#bbe1e6',
+                    ...props.containerStyle
                 },
             ]}>
             {props.followLoading ? (

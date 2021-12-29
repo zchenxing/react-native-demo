@@ -1,79 +1,109 @@
 import React from 'react';
 import {
     Animated,
-    Image,
     StatusBar,
     StyleSheet,
     Text,
     TouchableHighlight,
     View,
+    Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { isIOS, screenWidth } from "../../config/contant";
-import {avatarUrl} from '../../mock';
+import {isIOS, screenWidth} from '../../config/contant';
 import {useSetState} from 'ahooks';
 import Utils from '../../help';
 import {PersonalOtherEnum} from './type';
 import FollowButton from '../components/follow-button';
 import Toast from 'react-native-simple-toast';
+import {UserInfoProps} from '../../interface/work';
+import {localImages} from '../../assets/images';
+import IconFont from '../../iconfont';
+import {themeColor} from '../../assets/styles';
+import {useSelfDataStore} from '../../store/provider';
+import server from "../../network";
+import apis from "../../network/apis";
+import WorkHelp from "../../help/work";
+import { UserEventType } from "../../enum";
 
 const imageHeight = 90 + (isIOS ? 44 : StatusBar.currentHeight || 0);
 
 interface IProps {
+    userInfo: UserInfoProps | undefined;
     imageOffsetY: Animated.Value;
     onScrollOffset: (offset: number) => void;
     onPressFollowList: (type: PersonalOtherEnum) => void;
-    onPressEdit: () => void
+    onPressEdit: () => void;
 }
 
 interface IState {
     following: boolean;
-    followLoading: boolean;
-    otherInfo: any[];
+    followLoading: boolean
+    totalInfo: any[];
 }
 
 const PersonalInfo: React.FC<IProps> = (props: IProps) => {
+    const {selfInfoData} = useSelfDataStore();
     const containerHeight = React.useRef<number>(0);
 
     const [state, setState] = useSetState<IState>({
         following: false,
         followLoading: false,
-        otherInfo: [
+        totalInfo: [
             {
                 type: PersonalOtherEnum.Post,
                 title: 'Post',
-                value: 23,
+                value: 0,
             },
             {
                 type: PersonalOtherEnum.Following,
                 title: 'Following',
-                value: 4563221,
+                value: 0,
             },
             {
                 type: PersonalOtherEnum.Follower,
                 title: 'Follower',
-                value: 5462342,
+                value: 0,
             },
         ],
     });
 
-    const onPressFollow = () => {
-        setState({
-            followLoading: true,
-        });
+    React.useEffect(() => {
+        if (props.userInfo) {
 
-        setTimeout(() => {
+            const totalInfo = [...state.totalInfo];
+            totalInfo[0].value = props.userInfo?.total_theme;
+            totalInfo[1].value = props.userInfo?.total_follow;
+            totalInfo[2].value = props.userInfo?.total_fans;
             setState({
-                following: !state.following,
-                followLoading: false,
+                totalInfo,
+                following: !!props.userInfo.user_event
             });
+        }
+    }, [props.userInfo]);
 
-            Toast.showWithGravity(
-                !state.following ? '已关注' : '已取消关注',
-                1,
-                Toast.TOP,
-            );
-        }, 900);
+    const onPressFollow = async () => {
+
+        setState({
+            followLoading: true
+        })
+
+        try {
+            await server.post(apis.user.follow(props.userInfo?.id), {})
+
+            const totalInfo = [...state.totalInfo];
+            totalInfo[2].value = totalInfo[2].value + (state.following ? -1 : 1);
+
+            setState({
+                totalInfo,
+                followLoading: false,
+                following: !state.following
+            })
+        } catch (err) {
+            console.log(err);
+            setState({
+                followLoading: false
+            })
+        }
     };
 
     const onPressOtherItem = (type: PersonalOtherEnum) => {
@@ -96,7 +126,7 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
                     transform: [
                         {
                             translateY: props.imageOffsetY.interpolate({
-                                inputRange: [-imageHeight, 0, imageHeight,],
+                                inputRange: [-imageHeight, 0, imageHeight],
                                 outputRange: [-imageHeight / 2, -1, 0],
                                 extrapolate: 'clamp',
                                 // @ts-ignore
@@ -119,43 +149,79 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
                     start={{x: 0, y: 0}}
                     end={{x: 0, y: 1}}
                     style={{height: imageHeight}}>
-                    <Image source={{uri: avatarUrl}} style={{flex: 1}} />
+                    {props.userInfo?.avatar && (
+                        <Image
+                            source={{uri: props.userInfo.avatar}}
+                            style={{flex: 1}}
+                        />
+                    )}
                 </LinearGradient>
 
-                <View
-                    style={[
-                        styles.blur,
-                        {backgroundColor: 'rgba(0, 0, 0, .6)'},
-                    ]}
-                />
+                {props.userInfo?.avatar && (
+                    <View
+                        style={[
+                            styles.blur,
+                            {backgroundColor: 'rgba(0, 0, 0, .6)'},
+                        ]}
+                    />
+                )}
             </Animated.View>
 
             <View style={styles.info}>
-                <Image source={{uri: avatarUrl}} style={styles.avatar} />
+                <Image
+                    defaultSource={localImages.defaultAvatar}
+                    source={
+                        props.userInfo?.avatar
+                            ? {uri: props.userInfo.avatar}
+                            : localImages.defaultAvatar
+                    }
+                    style={styles.avatar}
+                />
 
                 <View style={styles.actions}>
-                    <FollowButton
-                        isFollow={state.following}
-                        followLoading={state.followLoading}
-                        onChangeFollow={onPressFollow}
-                    />
-                    <TouchableHighlight onPress={props.onPressEdit}>
-                        <Text>编辑</Text>
-                    </TouchableHighlight>
+                    {props.userInfo?.id && (
+                        <>
+                            {selfInfoData?.id !== props.userInfo?.id ? (
+                                <>
+                                    <FollowButton
+                                        containerStyle={{marginRight: 10}}
+                                        isFollow={state.following}
+                                        followLoading={state.followLoading}
+                                        onChangeFollow={onPressFollow}
+                                    />
+                                    <TouchableHighlight>
+                                        <IconFont
+                                            name={'jiaoliu'}
+                                            color={themeColor}
+                                            size={40}
+                                        />
+                                    </TouchableHighlight>
+                                </>
+                            ) : (
+                                <TouchableHighlight
+                                    onPress={props.onPressEdit}
+                                    underlayColor={'none'}
+                                >
+                                    <IconFont
+                                        name={'bianjiziliao'}
+                                        color={themeColor}
+                                        size={20}
+                                    />
+                                </TouchableHighlight>
+                            )}
+                        </>
+                    )}
                 </View>
             </View>
 
             <View style={styles.nameRow}>
-                <Text style={styles.username}>User nickname</Text>
+                <Text style={styles.username}>{props.userInfo?.nickname}</Text>
 
-                <Text style={styles.signature}>
-                    这是这个用户的签名这是这个用户的签名这是这个用户的签名
-                    前雾灯破口哦
-                </Text>
+                <Text style={styles.signature}>{props.userInfo?.intro}</Text>
             </View>
 
             <View style={styles.others}>
-                {state.otherInfo.map(item => (
+                {state.totalInfo.map(item => (
                     <TouchableHighlight
                         key={item.title}
                         underlayColor={'#f8f8f8'}
@@ -195,7 +261,9 @@ const styles = StyleSheet.create({
     actions: {
         height: 40,
         flex: 1,
+        paddingRight: 10,
         flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'flex-end',
     },
     nameRow: {

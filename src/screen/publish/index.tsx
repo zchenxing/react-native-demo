@@ -8,11 +8,12 @@ import {
     TouchableHighlight,
     BackHandler,
     View,
-    Alert, DeviceEventEmitter
-} from "react-native";
+    Alert,
+    DeviceEventEmitter,
+} from 'react-native';
 import {themeColor, themeLightColor} from '../../assets/styles';
 import {NavigateProps, PictureProps} from '../../interface';
-import { EventEmitterName, isIOS, screenWidth } from "../../config/contant";
+import {EventEmitterName, isIOS, screenWidth} from '../../config/contant';
 import {DragSortableView} from 'react-native-drag-sort';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import AwePicturePreview from '../../components/awe-picture-preview';
@@ -20,13 +21,16 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import AweSimpleNavigator from '../../components/awe-simple-navigator';
 import {observer} from 'mobx-react';
-import {useSmartDataStore} from '../../store/provider';
-import {useSetState} from 'ahooks'
+import {useSetState} from 'ahooks';
 import {useLanguage} from '../../language';
 import server from '../../network';
 import apis from '../../network/apis';
 import Toast from 'react-native-simple-toast';
-import Utils from "../../help";
+import Utils from '../../help';
+import IconFont from '../../iconfont';
+import axios from "axios";
+import dayjs from "dayjs";
+import myToken from "../../network/token";
 
 const pictureWidth = (screenWidth - 20) / 3;
 
@@ -37,33 +41,33 @@ const AddPicture = {
 };
 
 interface IState {
-    selectedAssets: any[]
-    startIndex: number
-    preview: boolean
-    inputHeight: number
-    postContent: string
+    publishTag: any;
+    selectedAssets: any[];
+    startIndex: number;
+    preview: boolean;
+    inputHeight: number;
+    postContent: string;
 }
 
 const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
-
-    const {publishTag} = useSmartDataStore();
-    const inputRef = React.useRef<any>(null)
-    const contentText = React.useRef<any>('')
-    const backListener = React.useRef<any>(null)
+    const inputRef = React.useRef<any>(null);
+    const contentText = React.useRef<any>('');
+    const backListener = React.useRef<any>(null);
+    const postType = props.route.params.postType
 
     const [state, setState] = useSetState<IState>({
+        publishTag: { color: '#fff', icon: 'huati', name: useLanguage.choose_category_first },
         selectedAssets: [],
         startIndex: 0,
         preview: false,
         inputHeight: 170,
-        postContent: ''
-    })
+        postContent: '',
+    });
 
     React.useEffect(() => {
-
         setTimeout(() => {
-            inputRef.current.focus()
-        }, 500)
+            inputRef.current.focus();
+        }, 500);
 
         if (!isIOS) {
             backListener.current = BackHandler.addEventListener(
@@ -72,14 +76,24 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             );
         }
 
+        const emitter = DeviceEventEmitter.addListener(
+            EventEmitterName.ChooseCategory,
+            setCategory,
+        );
 
         return () => {
+            emitter.remove();
             if (!isIOS) {
-                backListener.current.remove()
+                backListener.current.remove();
             }
-        }
+        };
+    }, []);
 
-    }, [])
+    const setCategory = (param: any) => {
+        setState({
+            publishTag: param.tag,
+        });
+    };
 
     const onPreviewPicture = (data: any[], item: any, index: number) => {
         if (item.fileName === __AddPictureName__) {
@@ -87,8 +101,8 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         } else {
             setState({
                 startIndex: index,
-                preview: true
-            })
+                preview: true,
+            });
         }
     };
 
@@ -122,7 +136,7 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
             console.log(selectedAssets);
 
-            setState({ selectedAssets })
+            setState({selectedAssets});
         } catch (e: any) {
             console.log('error：', e.code, e.message);
         }
@@ -134,16 +148,14 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
         const selected = [...state.selectedAssets];
         selected.splice(deleteIndex, 1);
-        setState({ selectedAssets: selected })
+        setState({selectedAssets: selected});
     };
-
 
     /**
      *
      * @param isNavigationBack 是否用导航栏返回
      */
     const goBack = (isNavigationBack?: boolean) => {
-
         if (contentText.current) {
             Alert.alert('', useLanguage.save_post_to_draft, [
                 {
@@ -151,54 +163,69 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     onPress: () => props.navigation.goBack(),
                     style: 'cancel',
                 },
-                { text: useLanguage.save, onPress: savePostToDraft}
+                {text: useLanguage.save, onPress: savePostToDraft},
             ]);
-            return true
-
-        }
-        else {
+            return true;
+        } else {
             if (isNavigationBack) {
-                props.navigation.goBack()
+                props.navigation.goBack();
             }
-            return false
+            return false;
         }
-    }
-
+    };
 
     /**
      * 将帖子保存至草稿
      */
-    const savePostToDraft = () => {
-
-    }
-
+    const savePostToDraft = () => {};
 
     const onPressSubmit = async () => {
-        try {
 
-            const data = {
-                label: publishTag.name,
-                content: Utils.removeSpaceAndEnter(state.postContent)
+        console.log(state.selectedAssets);
+
+        let formData = new FormData()
+        state.selectedAssets.forEach((data) => {
+            const file = {
+                uri: data.uri,
+                type: 'multipart/form-data',
+                name: `${dayjs().valueOf()}-${data.fileName}`
             }
+            formData.append('file', file)
+        })
 
-            console.log('发布内容', data);
+        console.log({file: formData});
 
-            await server.post(apis.post.create, data)
-            Toast.show('发布成功')
-            // 刷新首页列表
-            DeviceEventEmitter.emit(EventEmitterName.RefreshHome)
-
-            props.navigation.goBack()
-        } catch (err) {
+        server.post(apis.file.upload, formData).then(res => {
+            console.log(res.data);
+        }).catch(err => {
             console.log(err);
-        }
+        })
 
-    }
+
+        // try {
+        //     const data = {
+        //         label: state.publishTag.name,
+        //         type: postType,
+        //         content: Utils.removeSpaceAndEnter(state.postContent),
+        //     };
+        //
+        //     console.log('发布内容', data);
+        //
+        //     await server.post(apis.post.create, data);
+        //     Toast.show('发布成功');
+        //     // 刷新首页列表
+        //     DeviceEventEmitter.emit(EventEmitterName.RefreshHome);
+        //
+        //     props.navigation.goBack();
+        // } catch (err) {
+        //     console.log(err);
+        // }
+    };
 
     return (
         <>
             <AweSimpleNavigator
-                centerTitle={'Publish'}
+                centerTitle={useLanguage.create_post}
                 goBack={() => goBack(true)}
                 rightActionTitle={'Post'}
                 rightActionEvent={onPressSubmit}
@@ -208,8 +235,15 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 underlayColor={themeLightColor}
                 onPress={onPressChooseTag}>
                 <View style={styles.labelHeader}>
+
+                    <IconFont
+                        style={{marginRight: 10}}
+                        size={18}
+                        name={state.publishTag.icon}
+                        color={'#fff'}
+                    />
                     <Text style={styles.labelText}>
-                        {publishTag ? publishTag.name : 'Choose category'}
+                        {state.publishTag.name}
                     </Text>
                 </View>
             </TouchableHighlight>
@@ -219,8 +253,8 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     ref={inputRef}
                     value={state.postContent}
                     onChangeText={text => {
-                        contentText.current = text
-                        setState({postContent: text})
+                        contentText.current = text;
+                        setState({postContent: text});
                     }}
                     placeholder={'Share your content'}
                     multiline={true}
@@ -230,11 +264,10 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     maxLength={300}
                     onContentSizeChange={event => {
                         setState({
-                            inputHeight:
-                                Math.max(
-                                    170,
-                                    event.nativeEvent.contentSize.height,
-                                ),
+                            inputHeight: Math.max(
+                                170,
+                                event.nativeEvent.contentSize.height,
+                            ),
                         });
                     }}
                 />
@@ -243,19 +276,21 @@ const PublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     <DragSortableView
                         isDragFreely={true}
                         dataSource={
-                            state.selectedAssets.length === 9
-                                ? state.selectedAssets
-                                : [...state.selectedAssets, AddPicture]
+                            state.selectedAssets.length === 9 ? state.selectedAssets : [...state.selectedAssets, AddPicture]
                         }
                         parentWidth={screenWidth - 20}
                         childrenHeight={pictureWidth}
                         childrenWidth={pictureWidth}
                         onClickItem={onPreviewPicture}
-                        onDataChange={result => setState({selectedAssets: result})}
+                        onDataChange={result => {
+                            result = result.filter(
+                                item => item.fileName !== __AddPictureName__,
+                            );
+                            setState({selectedAssets: result})
+                        }}
                         fixedItems={[state.selectedAssets.length]}
-                        renderItem={item =>  RenderItem(item, onDeletePicture)}
+                        renderItem={item => RenderItem(item, onDeletePicture)}
                     />
-
                 </View>
             </ScrollView>
 
@@ -273,7 +308,6 @@ const RenderItem = (
     item: PictureProps,
     onDeleteItem: (item: PictureProps) => void,
 ) => {
-
     return (
         <View style={styles.pictureItem}>
             <Image
@@ -294,7 +328,6 @@ const RenderItem = (
                     </View>
                 </TouchableHighlight>
             )}
-
         </View>
     );
 };

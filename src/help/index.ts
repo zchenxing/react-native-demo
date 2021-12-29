@@ -45,7 +45,6 @@ const Utils = {
         }
         // 48h <= time < 168h   发布当天到现在间隔n天, 显示 n+1天前
         else if (day > 1 && seconds < 168 * 3600) {
-            console.log(seconds);
             const days = dayjs().diff(time, 'days')
             return useLanguage.x_day_ago(days)
         }
@@ -81,9 +80,25 @@ const Utils = {
         return Number(amount)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    },
+
+
+    /**
+     * 数组对象去重
+     * @param param         以此字段为基准去重
+     * @param dataSource    数据源
+     */
+    arrayObjectDeDuplication: (param: string, dataSource: any[]): any[] => {
+
+        const obj: any = {};
+        dataSource = dataSource.reduce((cur, next) => {
+            // @ts-ignore
+            obj[next[param]] ? '' : (obj[next[param]] = cur.push(next));
+            return cur;
+        }, []);
+
+        return dataSource
     }
-
-
 
 }
 

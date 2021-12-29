@@ -21,6 +21,7 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
     const netInfo = useNetInfo()
     const inputRef = React.useRef<any>(null);
     const [textValue, setTextValue] = React.useState<string>('')
+    const [placeholder, setPlaceholder] = React.useState<string>('')
 
     React.useEffect(() => {
         if (props.visible) {
@@ -31,6 +32,12 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
 
             setTimeout(() => {
                 setTextValue(props.contentText)
+                if (props.replyUser) {
+                    setPlaceholder(`${useLanguage.reply_to}${props.replyUser.replyNickname}`)
+                } else {
+                    setPlaceholder(useLanguage.say_something)
+                }
+
             }, 140)
         }
 
@@ -53,10 +60,8 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
 
     const onPressSend = () => {
         if (netInfo.type !== 'none') {
-             props.onPressSend(Utils.removeSpaceAndEnter(textValue))
+            props.onPressSend(Utils.removeSpaceAndEnter(textValue))
         }
-        // setTextValue(Utils.removeSpaceAndEnter(textValue))
-        // Keyboard.dismiss();
     };
 
     const onClose = () => {
@@ -84,7 +89,7 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
                     <TextInput
                         ref={inputRef}
                         value={textValue}
-                        placeholder={useLanguage.say_something}
+                        placeholder={placeholder}
                         underlineColorAndroid="transparent"
                         clearButtonMode={'while-editing'}
                         style={[styles.textInput, {height: 80}]}

@@ -1,6 +1,11 @@
 import { PostContentProps } from "../../../interface/work";
 
 export interface PostListProps {
-    onPressDetail: (postContent: PostContentProps) => void
-    onPressPersonal: () => void
+    api: any
+    apiParam?: string
+    listId: string
+    nothingImg?: any
+    nothingTitle?: string
+    onPressDetail: (postContent: PostContentProps, rowIndex: number) => void
+    onPressPersonal: (userId: string) => void
 }

@@ -39,6 +39,11 @@ export const INTELINK_SCREEN_NAME = {
     ENTRUST_RECORDING: 'EntrustSynchronousRecording',
     // 接受委托的人
     ENTRUST_ACCEPTED: 'EntrustAccepted',
+    // 预览个人信息
+    SCREEN_PREVIEW_PERSONAL_INFO: 'PersonalPreviewScreen',
+    // 编辑个人信息
+    SCREEN_EDIT_PERSONAL_INFO: 'EditPersonalInfoScreen'
+
 }
 
 

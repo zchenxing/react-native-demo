@@ -3,6 +3,8 @@ import {Image, Text, StyleSheet, View, TouchableHighlight} from 'react-native';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {screenWidth} from '../../../config/contant';
 import { NetworkStatus } from "../../../enum";
+import { useLanguage } from "../../../language";
+import { localImages } from "../../../assets/images";
 
 
 interface ScreenBaseProps {
@@ -37,10 +39,10 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
                     <Image
                         style={styles.noNetworkImg}
                         resizeMode={'contain'}
-                        source={require('../../../assets/images/status/no_network.png')}
+                        source={localImages.network}
                     />
                     <Text style={styles.noNetworkText}>
-                        Abnormal network connection
+                        {useLanguage.check_connection}
                     </Text>
                 </View>
             ) : props.nothingPage ? (

@@ -1,39 +1,34 @@
 import React from 'react';
-import {
-    ActivityIndicator,
-    FlatList,
-    RefreshControl,
-    TouchableHighlight,
-    Text,
-    View,
-    DeviceEventEmitter,
-} from 'react-native';
+import {FlatList, RefreshControl, DeviceEventEmitter} from 'react-native';
 import PostItem from '../post-item';
 import AwePicturePreview from '../../../components/awe-picture-preview';
 import PostCommentSheet from '../post-comments-sheet';
-import {useLanguage} from '../../../language';
 import {useSetState} from 'ahooks';
 import {PostListProps} from './type';
 import {PostContentProps} from '../../../interface/work';
 import server from '../../../network';
 import apis from '../../../network/apis';
-import apiConfig from '../../../network/config';
 import ScreenBase from '../screen-base';
-import {EventEmitterName} from '../../../config/contant';
+import {EventEmitterName, PAGE_SIZE} from '../../../config/contant';
 import {useNetInfo} from '@react-native-community/netinfo';
-import {PostUserEventType} from '../../../enum';
 import AweKeyboard from '../../../components/awe-keyboard';
 import Toast from 'react-native-simple-toast';
+import {usePostListDataStore} from '../../../store/provider';
+import {observer} from 'mobx-react';
+import AweLoadMore from '../../../components/awe-load-more';
+import { useLanguage } from "../../../language";
+import { localImages } from "../../../assets/images";
 
 interface IState {
-    dataSource: PostContentProps[];
     refreshing: boolean;
     moreLoading: boolean;
     hasMoreData: boolean;
+
     // 首次评论的事件
-    firstKeyboardVisible: boolean
-    firstContentText: string
-    firstPostId: string
+    firstKeyboardVisible: boolean;
+    firstContentText: string;
+    currentPost: PostContentProps | null;
+    currentRowIndex: number;
 
     pictureVisible: boolean;
     pictureStartIndex: number;
@@ -43,16 +38,19 @@ interface IState {
 
 const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     const netInfo = useNetInfo();
+    const {postStoreData, getPostData, getMorePostData, onCollectPost} =
+        usePostListDataStore();
+    const listRef = React.useRef<any>(null);
 
     const [state, setState] = useSetState<IState>({
-        refreshing: false,
+        refreshing: true,
         moreLoading: false,
-        dataSource: [],
-        hasMoreData: true,
+        hasMoreData: false,
 
         firstKeyboardVisible: false,
         firstContentText: '',
-        firstPostId: '',
+        currentPost: null,
+        currentRowIndex: -1,
 
         pictureVisible: false,
         pictureStartIndex: 0,
@@ -61,52 +59,44 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     });
 
     React.useEffect(() => {
-        onLoadData();
+        if (state.refreshing) {
+            onLoadData();
+        }
 
         // 监听是否发布了新的帖子
         const eventEmitter = DeviceEventEmitter.addListener(
             EventEmitterName.RefreshHome,
-            onLoadData,
+            () => onLoadData(true),
         );
 
         return () => eventEmitter.remove();
     }, [state.refreshing]);
 
-    const getDataSource = async (id?: string) => {
-        try {
-            const res = await server.get(
-                apis.post.list(id),
-                apiConfig.pageToken(),
-            );
-
-            // 添加 event_types 字段，用于判断是否存在用户事件
-            const results: PostContentProps[] = res.data.map((data: any) => {
-                const event_types = data.user_events
-                    ? data.user_events.map((event: any) => event.event_types)
-                    : [];
-
-                return {
-                    ...data,
-                    event_types,
-                };
-            });
-
-            return Promise.resolve(results);
-        } catch (err) {
-            return Promise.reject(err);
-        }
-    };
-
     /**
      * 加载数据
+     * @param scrollToTop
      */
-    const onLoadData = async () => {
+    const onLoadData = async (scrollToTop?: boolean) => {
         try {
-            const data = await getDataSource();
+            const res = await getPostData(
+                {
+                    api: props.api,
+                    apiParam: props.apiParam || '',
+                },
+                props.listId,
+            );
+
             setState({
-                dataSource: data,
                 refreshing: false,
+                hasMoreData: res.data.length && res.data.length === PAGE_SIZE,
             });
+
+            if (scrollToTop) {
+                listRef.current.scrollToOffset({
+                    offset: 0,
+                    animated: true,
+                });
+            }
         } catch (err) {
             console.log(err);
         }
@@ -132,20 +122,18 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             });
 
             try {
-                const _id = state.dataSource[state.dataSource.length - 1].id;
-                const data = await getDataSource(_id);
-                if (data.length) {
-                    setState({
-                        dataSource: [...state.dataSource, ...data],
-                        moreLoading: false,
-                        hasMoreData: true,
-                    });
-                } else {
-                    setState({
-                        moreLoading: false,
-                        hasMoreData: false,
-                    });
-                }
+                const res = await getMorePostData(
+                    {
+                        api: props.api,
+                        apiParam: props.apiParam || '',
+                    },
+                    props.listId,
+                );
+                setState({
+                    moreLoading: false,
+                    hasMoreData:
+                        res.data.length && res.data.length === PAGE_SIZE,
+                });
             } catch (err) {}
         }
     };
@@ -160,27 +148,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         });
 
         onLoadMoreData(true);
-    };
-
-    const loadMore = () => {
-        return state.moreLoading ? (
-            <View>
-                <ActivityIndicator />
-                <Text style={{textAlign: 'center'}}>
-                    {useLanguage.load_more}
-                </Text>
-            </View>
-        ) : (
-            <>
-                {!state.hasMoreData && (
-                    <TouchableHighlight
-                        style={{padding: 10}}
-                        onPress={handleNoMoreData}>
-                        <Text style={{textAlign: 'center'}}>没有更多数据</Text>
-                    </TouchableHighlight>
-                )}
-            </>
-        );
     };
 
     /**
@@ -202,64 +169,40 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      * 查看评论
      */
     const onPressComment = (row: any) => {
-
         // 如果有评论，就打开评论
         // 没有评论就截止回复
         if (row.item.total_comment) {
             setState({
+                currentPost: row.item,
                 commentVisible: true,
+                currentRowIndex: row.index,
             });
         } else {
-            if (row.item.id === state.firstPostId) {
+            // 判断是够连续查看同一条帖子的评论，如果是就不清除评论内容
+            if (row.item.id === state.currentPost?.id) {
                 setState({
+                    currentRowIndex: row.index,
                     firstKeyboardVisible: true,
-                })
+                });
             } else {
                 setState({
+                    currentRowIndex: row.index,
                     firstKeyboardVisible: true,
                     firstContentText: '',
-                    firstPostId: row.item.id
-                })
+                    currentPost: row.item,
+                });
             }
-
         }
     };
 
     /**
      * 点击收藏 | 取消收藏
      * @param row      具体某行的数据
-     * @param collect   是否收藏
      */
-    const onPressCollection = async (row: any, collect: boolean) => {
+    const onPressCollection = async (row: any) => {
         if (netInfo.type !== 'none') {
             try {
-                await server.post(apis.post.collect(row.item.id), {});
-                console.log('收藏操作成功');
-
-                const posts = [...state.dataSource];
-                const event_types = [...posts[row.index].event_types];
-
-                // 进行收藏操作，在event_types中添加收藏
-                if (collect) {
-                    posts[row.index].event_types = [
-                        ...new Set([
-                            ...event_types,
-                            PostUserEventType.Collection,
-                        ]),
-                    ];
-                }
-                // 取消收藏
-                else {
-                    const deleteIndex = event_types.indexOf(
-                        PostUserEventType.Collection,
-                    );
-                    event_types.splice(deleteIndex, 1);
-                    posts[row.index].event_types = event_types;
-                }
-
-                setState({
-                    dataSource: posts,
-                });
+                await onCollectPost(row.item.id, row.index, props.listId);
             } catch (err) {
                 console.log(err);
                 throw err;
@@ -271,45 +214,55 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      * 发评论
      */
     const onSendComment = async () => {
-        console.log(state.firstPostId, state.firstContentText);
-
         try {
+            await server.post(
+                apis.post.comment.push(state.currentPost?.id || ''),
+                {
+                    content: state.firstContentText,
+                },
+            );
 
-            await server.post(apis.post.comment.push(state.firstPostId), {
-                content: state.firstContentText
-            })
+            if (state.currentRowIndex > -1) {
+                // 直接修改列表数据
+                postStoreData[props.listId][
+                    state.currentRowIndex
+                ].total_comment = 1;
 
-            setState({
-                firstKeyboardVisible: false,
-                firstContentText: '',
-                firstPostId: ''
-            })
+                setState({
+                    firstContentText: '',
+                    currentPost: null,
+                    firstKeyboardVisible: false,
+                });
+            }
 
-
-            Toast.show('消息发送成功')
-
-        } catch (err) {
-
-        }
-
-    }
+            Toast.show('消息发送成功');
+        } catch (err) {}
+    };
 
     return (
         <ScreenBase
-            onReload={getDataSource}
+            onReload={onLoadData}
             nothingPage={
-                !state.dataSource.length
+                postStoreData[props.listId] &&
+                !postStoreData[props.listId].length
                     ? {
-                          title: 'Nothing here',
-                          picture: require('../../../assets/images/status/nothing.png'),
+                          title: props.nothingTitle || useLanguage.nothing_here,
+                          picture: props.nothingImg || localImages.nothing,
                       }
                     : undefined
             }>
             <FlatList
-                data={state.dataSource}
+                ref={listRef}
+                data={postStoreData[props.listId]}
                 removeClippedSubviews={true}
                 keyExtractor={item => item.id}
-                ListFooterComponent={() => loadMore()}
+                ListFooterComponent={
+                    <AweLoadMore
+                        loading={state.moreLoading}
+                        hasMoreData={state.hasMoreData}
+                        handleNoMoreData={handleNoMoreData}
+                    />
+                }
                 onEndReached={() => onLoadMoreData(state.hasMoreData)}
                 refreshControl={
                     <RefreshControl
@@ -317,18 +270,22 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                         onRefresh={onRefreshData}
                     />
                 }
-                renderItem={(row: any) => (
-                    <PostItem
-                        postItem={row.item}
-                        onPressDetail={props.onPressDetail}
-                        onPressPicture={onPressPicture}
-                        onPressComment={() => onPressComment(row)}
-                        onPressCollection={follow =>
-                            onPressCollection(row, follow)
-                        }
-                        onPressPersonal={props.onPressPersonal}
-                    />
-                )}
+                renderItem={(row: any) => {
+                    return (
+                        <PostItem
+                            postItem={postStoreData[props.listId][row.index]}
+                            onPressDetail={post =>
+                                props.onPressDetail(post, row.index)
+                            }
+                            onPressPicture={onPressPicture}
+                            onPressComment={() => onPressComment(row)}
+                            onPressCollection={() => onPressCollection(row)}
+                            onPressPersonal={() =>
+                                props.onPressPersonal(row.item.user_id)
+                            }
+                        />
+                    );
+                }}
             />
 
             <AwePicturePreview
@@ -339,11 +296,12 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             />
 
             <PostCommentSheet
+                listId={props.listId}
+                rowIndex={state.currentRowIndex}
                 onPressAvatar={props.onPressPersonal}
                 visible={state.commentVisible}
                 onClose={() => setState({commentVisible: false})}
             />
-
 
             <AweKeyboard
                 visible={state.firstKeyboardVisible}
@@ -352,9 +310,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 onClose={() => setState({firstKeyboardVisible: false})}
                 onPressSend={onSendComment}
             />
-
         </ScreenBase>
     );
 };
 
-export default PostList;
+export default observer(PostList);

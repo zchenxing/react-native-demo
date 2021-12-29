@@ -1,16 +1,15 @@
 import React from 'react';
 import {
-    Image,
     StyleSheet,
     Text,
     TouchableHighlight,
     View,
 } from 'react-native';
-import {Header} from 'react-native-elements';
+import {Header, Image} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {avatarUrl} from '../../../mock';
-import { UserNavigatorProps } from "./type";
+import {UserNavigatorProps} from './type';
 import FollowButton from '../follow-button';
+import { localImages } from "../../../assets/images";
 
 const UserNavigator: React.FC<UserNavigatorProps> = (
     props: UserNavigatorProps,
@@ -36,12 +35,12 @@ const UserNavigator: React.FC<UserNavigatorProps> = (
                     <TouchableHighlight style={styles.userInfo}>
                         <>
                             <Image
-                                source={{uri: avatarUrl}}
+                                source={props.userInfo?.avatar ? {uri: props.userInfo.avatar} : localImages.defaultAvatar}
                                 style={styles.avatar}
                             />
 
                             <Text style={styles.nickname}>
-                                Nick暗恶魔 posty
+                                {props.userInfo?.nickname}
                             </Text>
                         </>
                     </TouchableHighlight>
@@ -50,16 +49,16 @@ const UserNavigator: React.FC<UserNavigatorProps> = (
             centerContainerStyle={{
                 display: 'none',
             }}
-            rightContainerStyle={{
-                justifyContent: 'center',
-            }}
-            rightComponent={
-                <FollowButton
-                    isFollow={props.isFollow}
-                    followLoading={props.followLoading}
-                    onChangeFollow={props.onChangeFollow}
-                />
-            }
+            // rightContainerStyle={{
+            //     justifyContent: 'center',
+            // }}
+            // rightComponent={
+            //     <FollowButton
+            //         isFollow={props.isFollow}
+            //         followLoading={props.followLoading}
+            //         onChangeFollow={props.onChangeFollow}
+            //     />
+            // }
         />
     );
 };

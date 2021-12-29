@@ -6,14 +6,22 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {EntrustRoute, intelinkRoute} from "./routes";
 import { globalStyles } from "./assets/styles";
 import myToken from "./network/token";
+import { useSelfDataStore } from "./store/provider";
 
 const Stack = createStackNavigator();
 
 const App = () => {
 
+    const { getSelfInfo } = useSelfDataStore()
+
     React.useEffect(() => {
-        myToken.getToken()
+        init()
     }, [])
+
+    const init = async () => {
+        await myToken.getToken()
+        getSelfInfo()
+    }
 
     return (
         <SafeAreaProvider style={globalStyles.container}>

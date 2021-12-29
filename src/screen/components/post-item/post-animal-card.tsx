@@ -3,95 +3,143 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import {birdCard} from '../../../mock';
+import IconFont from '../../../iconfont';
+import {screenWidth} from '../../../config/contant';
+import {themeColor} from '../../../assets/styles';
+import {useLanguage} from '../../../language';
 
-const PostAnimalCard: React.FC = props => {
+interface IProps {
+    showLocation?: boolean
+}
+
+const PostAnimalCard: React.FC<IProps> = (props: IProps) => {
     return (
         <View style={styles.card}>
-            <Image
-                source={require('../../../assets/images/card_header.png')}
-                style={styles.cardHeader}
-            />
+            <View>
+                <Image
+                    source={require('../../../assets/images/card_header.png')}
+                    style={styles.cardHeader}
+                />
 
-            <LinearGradient
-                colors={['#fff', '#def5f7']}
-                start={{x: 0.3, y: 0.3}}
-                end={{x: 0.4, y: 1}}
-                style={styles.gradient}>
-                <View style={styles.animalInfo}>
-                    {Array.from(new Array(20).keys()).map(i => (
-                        <View key={i} style={styles.animalInfoItem}>
-                            <Text style={styles.animalInfoItemText}>wdwa</Text>
-                        </View>
-                    ))}
+                <Text style={styles.speciesName}>animal name</Text>
+                <Text style={styles.nicknameName}>nickname</Text>
+
+                <View style={styles.labelBase}>
+                    <IconFont name={'niao'} color={'#fff'} size={26} />
+                    <Text style={styles.labelText}>Birds</Text>
                 </View>
-            </LinearGradient>
+            </View>
 
-            <Text style={styles.animalName}>animal name</Text>
+            <FastImage style={styles.animalPic} source={{uri: birdCard}} />
 
-            <FastImage style={styles.animalBase} source={{uri: birdCard}} />
+            <View style={styles.infoBase}>
+                <View style={styles.infoItem}>
+                    <Text style={styles.infoItemTitle}>{useLanguage.age}</Text>
+                    <Text style={styles.infoItemValue}>12 d902</Text>
+                </View>
+
+                <View style={styles.infoItem}>
+                    <Text style={styles.infoItemTitle}>
+                        {useLanguage.gender}
+                    </Text>
+                    <Text style={styles.infoItemValue}>12 d902</Text>
+                </View>
+
+                <View style={[styles.infoItem, {borderRightWidth: 0}]}>
+                    <Text style={styles.infoItemTitle}>
+                        {useLanguage.weight}
+                    </Text>
+                    <Text style={styles.infoItemValue}>12 d902</Text>
+                </View>
+            </View>
+
+            {
+                props.showLocation &&
+                <LinearGradient
+                    colors={['#96dce3', '#6fd1df']}
+                    start={{x: 0.2, y: 0.2}}
+                    end={{x: 0.5, y: 1}}
+                    style={styles.location}>
+                    <Text style={styles.locationText}>
+                        {useLanguage.latest_location}
+                    </Text>
+                </LinearGradient>
+            }
+
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     card: {
-        borderRadius: 10,
+        borderRadius: 6,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: themeColor,
         overflow: 'hidden',
         position: 'relative',
+        marginBottom: 6
     },
     cardHeader: {
         width: '100%',
         height: 69,
     },
-    gradient: {
-        height: 140,
-        justifyContent: 'flex-end',
-    },
-    animalName: {
+    speciesName: {
         position: 'absolute',
         top: 13,
-        left: 0,
+        left: 15,
         right: 0,
         fontSize: 15,
         fontWeight: '600',
-        textAlign: 'center',
-        color: '#fff',
+        color: '#333',
     },
-    animalBase: {
-        width: 78,
-        height: 78,
-        borderRadius: 78,
+    nicknameName: {
         position: 'absolute',
-        borderColor: '#fff',
-        borderWidth: 3,
-        left: '50%',
-        top: 40,
-        transform: [{translateX: -39}],
+        top: 35,
+        left: 15,
+        right: 0,
+        fontSize: 15,
+        color: '#333',
     },
-    animalInfo: {
-        paddingTop: 10,
-        paddingLeft: 10,
-        height: 65,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        overflow: 'hidden',
-        transform: [{translateY: -10}],
+    labelBase: {
+        position: 'absolute',
+        right: 20,
+        top: 15,
     },
-    animalInfoItem: {
-        marginRight: 13,
-        backgroundColor: '#c1e3e6',
-        padding: 2,
-        paddingLeft: 10,
-        paddingRight: 10,
-        paddingBottom: 5,
-        marginBottom: 8,
-        borderRadius: 15,
-    },
-    animalInfoItemText: {
+    labelText: {
+        color: '#fff',
         fontSize: 12,
-        color: '#666',
+    },
+    animalPic: {
+        height: screenWidth * 0.45,
+        borderColor: '#fff',
+    },
+    infoBase: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    infoItem: {
+        alignItems: 'center',
+        padding: 12,
+        width: '33%',
+        borderRightColor: themeColor,
+        borderRightWidth: 1,
+    },
+    infoItemTitle: {
+        fontSize: 13,
+        color: '#333',
+        marginBottom: 1,
+    },
+    infoItemValue: {
+        color: '#333',
+        fontWeight: '600',
+    },
+    location: {
+        height: 44,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    locationText: {
+        color: '#fff',
     },
 });
 

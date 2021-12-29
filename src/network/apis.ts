@@ -1,5 +1,5 @@
 
-const apis: any = {
+const apis = {
     user: {
         register: '/v1/register',
         login: '/v1/login',
@@ -40,9 +40,9 @@ const apis: any = {
     // 评论API
     comment: {
         // 回复评论
-        reply: (comId: string) => `/v1/comment/id/${comId}/reply`,
+        replyToComment: (comId: string) => `/v1/comment/id/${comId}/reply`,
         // 回复评论下面的回复
-        replyToReply: (comId: string, repId: string) => {
+        replyToReply: (comId: string | undefined, repId: string | undefined) => {
             return `/v1/comment/id/${comId}/reply/id/${repId}`
         },
         // 回复列表
@@ -59,7 +59,7 @@ const apis: any = {
     // 文件API
     file: {
         // 上传文件
-        upload: '/v1/file',
+        upload: '/v1/file/',
         // 删除文件
         delete: (fileId: string) => `/v1/file/id/${fileId}`,
         // 文件列表

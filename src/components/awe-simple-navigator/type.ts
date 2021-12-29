@@ -3,4 +3,5 @@ export interface AweSimpleNavigatorProps {
     goBack: () => void
     rightActionEvent?: () => void
     rightActionTitle?: string
+    rightActionEditable?: boolean
 }

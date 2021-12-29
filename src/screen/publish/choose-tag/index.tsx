@@ -1,34 +1,40 @@
 import React from 'react';
 import {NavigateProps} from '../../../interface';
 import AweSimpleNavigator from '../../../components/awe-simple-navigator';
-import {View, Text, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { useSmartDataStore } from "../../../store/provider";
+import { View, Text, StyleSheet, ScrollView, TouchableHighlight, DeviceEventEmitter } from "react-native";
 import { themeColor } from "../../../assets/styles";
+import IconFont from '../../../iconfont';
+import { useLanguage } from "../../../language";
+import { EventEmitterName } from "../../../config/contant";
 
 
-const PostTags = [
+const PostTags: any = [
     {
-        icon: '',
+        icon: 'niao',
+        color: '#5eb6c3',
         name: 'Birds'
     },
     {
-        icon: '',
         // 哺乳
+        icon: 'xiong',
+        color: '#c29c8a',
         name: 'Mammals'
     },
     {
-        icon: '',
+        icon: 'yu',
+        color: '#466eed',
         name: 'Fishes'
     },
     {
-        icon: '',
         // 爬行动物
+        icon: 'pahang',
+        color: '#51a35c',
         name: 'Reptiles'
     },
     {
-        icon: '',
-        // 爬行动物
+        // 两栖动物
+        icon: 'liangqi',
+        color: '#f66554',
         name: 'Amphibian'
     }
 ]
@@ -36,22 +42,22 @@ const PostTags = [
 
 const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
-    const {setPublishTag} = useSmartDataStore()
 
     const onSelectTag = (tag: any) => {
-        setPublishTag(tag)
+        DeviceEventEmitter.emit(EventEmitterName.ChooseCategory, {tag});
+
         props.navigation.goBack()
     }
 
     return (
         <>
             <AweSimpleNavigator
-                centerTitle={'Choose label'}
+                centerTitle={useLanguage.choose_category}
                 goBack={props.navigation.goBack}
             />
 
             <ScrollView style={styles.container}>
-                {PostTags.map(tag => (
+                {PostTags.map((tag: any) => (
                     <TouchableHighlight
                         key={tag.name}
                         style={styles.listItem}
@@ -59,16 +65,20 @@ const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                         underlayColor={'#efefef'}>
                         <>
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <Icon
-                                    name={'bookmark'}
-                                    style={{marginRight: 10, color: themeColor}}
+
+                                <IconFont
+                                    style={{marginRight: 10}}
+                                    name={tag.icon}
+                                    color={tag.color}
+                                    size={26}
                                 />
+
                                 <Text style={{fontSize: 15}}>
                                     {tag.name}
                                 </Text>
                             </View>
 
-                            <Icon name={'angle-right'} style={{fontSize: 16}} />
+                            <Text style={{color: themeColor}}>Select</Text>
                         </>
                     </TouchableHighlight>
                 ))}

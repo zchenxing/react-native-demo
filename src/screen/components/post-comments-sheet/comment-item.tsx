@@ -1,108 +1,130 @@
 import React from 'react';
 import {
     ActivityIndicator,
-    FlatList,
     StyleSheet,
     Text,
     TouchableHighlight,
     View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {avatarUrl, postList} from '../../../mock';
 import Utils from '../../../help';
-import {PostCommentsItemProps} from './type';
+import {PostCommentsItemProps, ReplyType} from './type';
 import {themeColor} from '../../../assets/styles';
-import {useSetState} from 'ahooks';
 import {isIOS} from '../../../config/contant';
-
-interface IState {
-    // 加载更多回复
-    moreLoading: boolean;
-}
-
+import {useLanguage} from '../../../language';
+import {localImages} from '../../../assets/images';
 
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,
 ) => {
-    const [state, setState] = useSetState<IState>({
-        moreLoading: false,
-    });
-
-    const onPressLoadMore = () => {
-        setState({
-            moreLoading: true,
-        });
-
-        setTimeout(() => {
-            setState({
-                moreLoading: false,
-            });
-        }, 1000);
-    };
-
     return (
         <>
             <TouchableHighlight
-                onPress={() => props.onPressReply()}
+                onPress={() =>
+                    props.onPressReply(
+                        ReplyType.ReplyToComment,
+                        props.commentDetail,
+                    )
+                }
                 underlayColor={'#fafafa'}>
                 <View style={styles.container}>
                     <TouchableHighlight
                         onPress={props.onPressAvatar}
-                        underlayColor={'none'}
-                    >
+                        underlayColor={'none'}>
                         <FastImage
                             style={styles.avatar}
-                            source={{uri: avatarUrl}}
+                            source={
+                                props.commentDetail.target_user_info?.avatar
+                                    ? {
+                                          uri: props.commentDetail
+                                              .target_user_info?.avatar,
+                                      }
+                                    : localImages.defaultAvatar
+                            }
                             resizeMode={FastImage.resizeMode.cover}
                         />
                     </TouchableHighlight>
 
                     <View style={[styles.rightView]}>
                         <View style={styles.postHeader}>
-                            <Text style={{color: '#999'}}>
-                                Coconut Island Games
-                            </Text>
+                            <View style={styles.nameBase}>
+                                <Text style={{color: '#999'}}>
+                                    {props.commentDetail.user_info.nickname}
+                                </Text>
+                                {props.isAuthor && (
+                                    <View style={styles.authorBase}>
+                                        <Text style={styles.author}>
+                                            {useLanguage.author}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
                             <Text style={styles.postTime}>
-                                {Utils.getPostTime('2021-12-07 12:33:22')}
+                                {Utils.getPostTime(
+                                    props.commentDetail.created_at,
+                                )}
                             </Text>
                         </View>
 
                         <Text>
-                            <Text>
-                                I am excited to share he latest trajectory of
-                                the seagulls seagulls seagu2233333lls sea.
-                            </Text>
+                            {props.commentDetail.target_user_info &&
+                                props.commentDetail.target_user_id !==
+                                    props.mainCommentUserId && (
+                                    <Text>
+                                        {useLanguage.reply_to}
+                                        <Text style={{color: '#aaa'}}>
+                                            {
+                                                props.commentDetail
+                                                    .target_user_info.nickname
+                                            }
+                                        </Text>
+                                        {':  '}
+                                    </Text>
+                                )}
+                            {props.commentDetail.content}
+                            {/*{props.commentDetail.id}*/}
                         </Text>
                     </View>
                 </View>
             </TouchableHighlight>
 
-            {props.subComment && (
+            {props.commentDetail.replies &&
+            props.commentDetail.replies.length ? (
                 <View style={{paddingLeft: 40}}>
-                    {/*{[...postList].splice(0, 2).map(data => (*/}
-                    {/*    <CommentItem*/}
-                    {/*        key={data.id}*/}
-                    {/*        onPressAvatar={props.onPressAvatar}*/}
-                    {/*        onPressReply={props.onPressReply}*/}
-                    {/*    />*/}
-                    {/*))}*/}
+                    {props.commentDetail.replies.map(data => (
+                        <CommentItem
+                            mainCommentUserId={props.mainCommentUserId}
+                            key={data.id}
+                            commentDetail={data}
+                            isAuthor={props.isAuthor}
+                            onPressAvatar={props.onPressAvatar}
+                            onPressReply={() =>
+                                props.onPressReply(ReplyType.ReplyToReply, data)
+                            }
+                        />
+                    ))}
 
-                    <TouchableHighlight
-                        style={styles.moreReplies}
-                        onPress={onPressLoadMore}
-                        underlayColor={'none'}>
-                        {!state.moreLoading ? (
-                            <Text style={styles.moreRepliesText}>
-                                View more replies
-                            </Text>
-                        ) : (
-                            <Text style={styles.moreRepliesText}>
-                                <ActivityIndicator />
-                                Load more
-                            </Text>
-                        )}
-                    </TouchableHighlight>
+                    {props.commentDetail.total_reply >
+                        props.commentDetail.replies.length && (
+                        <TouchableHighlight
+                            style={styles.moreReplies}
+                            onPress={props.getMoreReplies}
+                            underlayColor={'none'}>
+                            {!props.moreLoading ? (
+                                <Text style={styles.moreRepliesText}>
+                                    {useLanguage.view_more_replies}
+                                </Text>
+                            ) : (
+                                <Text style={styles.moreRepliesText}>
+                                    <ActivityIndicator />
+                                    {useLanguage.load_more}
+                                </Text>
+                            )}
+                        </TouchableHighlight>
+                    )}
                 </View>
+            ) : (
+                <></>
             )}
 
             {props.showSeparator && <View style={styles.separator} />}
@@ -119,6 +141,22 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 32,
+    },
+    nameBase: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    authorBase: {
+        backgroundColor: '#EBEBEB',
+        borderRadius: 10,
+        marginLeft: 5,
+        padding: 1,
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+    author: {
+        color: '#fff',
+        fontSize: 12,
     },
     rightView: {
         flex: 1,

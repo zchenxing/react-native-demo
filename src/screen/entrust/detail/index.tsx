@@ -1,13 +1,66 @@
-import React from 'react';
+import React,{ useCallback, useMemo, useRef } from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View} from "react-native";
 import {Header} from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {screenWidth} from "../../../config/contant";
+import {screenHeight, screenWidth} from "../../../config/contant";
 import AnimalCard from "./animalCard";
+import {useSetState} from "ahooks";
+import BottomSelect from "./bottomSelect";
+import { BottomSheet, Button, ListItem } from 'react-native-elements';
+import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
 
 const EntrustDetail: React.FC<any> = (props: any) => {
+    const [state, setState] = useSetState<any>({
+        visible: false,
+        isVisible: false,
+        selectVisible: false,
+    });
+    const actionSheetRef = React.createRef<any>();
+    const selectSheetRef = React.createRef<any>();
+    // variables
+
+    // callbacks
+    const handleSheetChanges = (index: number) => {
+        if (index === 0) {
+            setState({
+                visible:false
+            })
+        }
+    };
+
+    const handleSelectSheetChanges = useCallback((index: number) => {
+        if (index === 0) {
+            setState({
+                selectVisible:false
+            })
+        }
+    }, []);
+
+    const onClose = () => {
+        actionSheetRef.current.snapToPosition(1);
+
+        setState({
+            visible:false
+        })
+
+    };
+
+    const onSelectClose = () => {
+        selectSheetRef.current.snapToPosition(1);
+
+        setState({
+            selectVisible:false
+        })
+
+    };
+
+    const endChange = () => {
+        actionSheetRef.current && actionSheetRef.current.snapToIndex(1);
+        setState({visible:true})
+    }
     return (
         <>
+
             <Header
                 backgroundColor='#AAE3E9'
                 leftComponent={
@@ -30,7 +83,7 @@ const EntrustDetail: React.FC<any> = (props: any) => {
                 rightComponent={
                     <TouchableHighlight
                         underlayColor={'none'}
-                        onPress={props.navigation.goBack}>
+                        onPress={()=>{props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_RECORDING)}}>
                         <View style={{width: 100, paddingLeft: 10, justifyContent: "flex-end", flexDirection: "row"}}>
                             <Icon
                                 name={'angle-left'}
@@ -59,7 +112,7 @@ const EntrustDetail: React.FC<any> = (props: any) => {
                 </View>
                 <TouchableHighlight
                     underlayColor={'none'}
-                    onPress={props.navigation.goBack}>
+                    onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_ACCEPTED)}}>
                     <View style={styles.accept}>
                         <View>
                             <Text style={styles.acceptText}>Accepted (3)</Text>
@@ -79,28 +132,37 @@ const EntrustDetail: React.FC<any> = (props: any) => {
                 <View style={styles.footBtnBox}>
                     <TouchableHighlight
                         underlayColor={'none'}
-                        onPress={props.navigation.goBack}>
+                        onPress={endChange}>
                         <View style={styles.deleteBtn}>
                             <Text style={styles.deleteBtnText}>ENDED</Text>
                         </View>
                     </TouchableHighlight>
                     <TouchableHighlight
                         underlayColor={'none'}
-                        onPress={props.navigation.goBack}>
+                        onPress={()=> {setState({isVisible:true})}}>
                         <View style={styles.creaturesBtn}>
                             <Text style={styles.creaturesBtnText}>Looking for creatures</Text>
                         </View>
                     </TouchableHighlight>
-
                 </View>
             </SafeAreaView>
-
-
+            <BottomSelect
+                onClose={onClose}
+                onSelectClose={onSelectClose}
+                selectVisible={state.selectVisible}
+                visible={state.visible}
+                actionSheetRef={actionSheetRef}
+                handleSheetChanges={handleSheetChanges}
+                handleSelectSheetChanges={handleSelectSheetChanges}
+                selectChange={()=>{ selectSheetRef.current && selectSheetRef.current.snapToIndex(1);
+                    setState({selectVisible:true})}}
+                selectSheetRef={selectSheetRef}/>
         </>
     );
 }
 
 const styles = StyleSheet.create({
+
     pageTitle:{
         color:'#333333',
         fontSize:17,

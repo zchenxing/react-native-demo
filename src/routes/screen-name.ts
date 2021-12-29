@@ -35,6 +35,10 @@ export const INTELINK_SCREEN_NAME = {
     ENTRUST_LIST: 'EntrustList',
     // 委托详情
     ENTRUST_DETAIL: 'EntrustDetail',
+    // 同步记录
+    ENTRUST_RECORDING: 'EntrustSynchronousRecording',
+    // 接受委托的人
+    ENTRUST_ACCEPTED: 'EntrustAccepted',
 }
 
 

@@ -12,6 +12,8 @@ import Test2 from '../screen/test/test2';
 import EditPersonalInfoScreen from "../screen/personal/edit-info";
 import Entrust from "../screen/entrust/index";
 import EntrustDetail from "../screen/entrust/detail";
+import SynchronousRecording from "../screen/entrust/synchronousRecording";
+import Accepted from "../screen/entrust/accepted";
 
 type routeProps = {
     name: string
@@ -74,6 +76,14 @@ export const intelinkRoute: routeProps[] = [
     {
         name: INTELINK_SCREEN_NAME.ENTRUST_DETAIL,
         component: EntrustDetail
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_RECORDING,
+        component: SynchronousRecording
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_ACCEPTED,
+        component: Accepted
     }
 ];
 

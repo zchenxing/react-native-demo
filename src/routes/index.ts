@@ -76,30 +76,30 @@ export const intelinkRoute: routeProps[] = [
         component: Test2
     },
     {
-        name: INTELINK_SCREEN_NAME.ENTRUST_LIST,
+        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST,
         component: EntrustListScreen
     },
     {
-        name: INTELINK_SCREEN_NAME.ENTRUST_DETAIL,
+        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_DETAIL,
         component: EntrustDetailScreen
     },
     {
-        name: INTELINK_SCREEN_NAME.ENTRUST_RECORDING,
+        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_RECORDING,
         component: EntrustRecordScreen
     },
     {
-        name: INTELINK_SCREEN_NAME.ENTRUST_ACCEPTED,
+        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_ACCEPTED,
         component: EntrustAcceptedScreen
     },
     {
-        name: INTELINK_SCREEN_NAME.ENTRUST_SHARING,
+        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_SHARING,
         component: EntrustSharingScreen
     }
 ];
 
 export const EntrustRoute: routeProps[] = [
     {
-        name: INTELINK_SCREEN_NAME.ENTRUST_LIST,
+        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST,
         component: EntrustListScreen
     }
 ]

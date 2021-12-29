@@ -73,7 +73,7 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 activeOpacity={1}
                 underlayColor={'white'}
                 onPress={() => {
-                    props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_LIST);
+                    props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST);
                 }}>
                 <Text>委托</Text>
             </TouchableHighlight>

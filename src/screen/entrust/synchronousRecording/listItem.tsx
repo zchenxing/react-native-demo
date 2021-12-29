@@ -6,7 +6,7 @@ const ListItem: React.FC<any> = (props: any) => {
     return (
         <TouchableHighlight
             underlayColor={'none'}
-            onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_DETAIL)}}
+            onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_DETAIL)}}
         >
             <View style={styles.list}>
                 <View style={styles.content}>

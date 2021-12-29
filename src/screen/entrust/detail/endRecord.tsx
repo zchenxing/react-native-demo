@@ -7,7 +7,7 @@ import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
 const EndRecord = (props: any) => {
     return <TouchableHighlight
            underlayColor={'none'}
-           onPress={()=>{props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_SHARING)}}>
+           onPress={()=>{props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_SHARING)}}>
     <View style={styles.endRecordBox}>
         <View style={styles.li}>
             <Text style={styles.title}>End Time</Text>

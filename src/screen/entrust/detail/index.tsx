@@ -99,7 +99,7 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
                 rightComponent={
                     <TouchableHighlight
                         underlayColor={'none'}
-                        onPress={()=>{props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_RECORDING)}}>
+                        onPress={()=>{props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_RECORDING)}}>
                         <View style={{width: 100, paddingLeft: 10, justifyContent: "flex-end", flexDirection: "row"}}>
                             <Icon
                                 name={'angle-left'}
@@ -123,7 +123,7 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
                 <EndRecord navigation={props.navigation}/>
                 <TouchableHighlight
                     underlayColor={'none'}
-                    onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_ACCEPTED)}}>
+                    onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_ACCEPTED)}}>
                     <View style={styles.accept}>
                         <View>
                             <Text style={styles.acceptText}>Accepted (3)</Text>

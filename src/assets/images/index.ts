@@ -5,5 +5,8 @@ export const localImages = {
 
     nothing: require('./status/nothing.png'),
     network: require('./status/no_network.png'),
-    search: require('./status/search_nothing.png')
+    search: require('./status/search_nothing.png'),
+    animalCardTop: require('./animalCardTop.png'),
+    endAnimalCardTop: require('./endAnimalCardTop.png'),
+    endEdImg: require('./endedImg.png'),
 }

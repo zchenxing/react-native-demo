@@ -68,6 +68,15 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                    <Text>{selfInfoData?.nickname}</Text>
                </>
             </TouchableHighlight>
+            <TouchableHighlight
+                style={styles.test}
+                activeOpacity={1}
+                underlayColor={'white'}
+                onPress={() => {
+                    props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_LIST);
+                }}>
+                <Text>委托</Text>
+            </TouchableHighlight>
         </>
     );
 };
@@ -88,4 +97,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         opacity: .3
     },
+    test: {
+        position: 'absolute',
+        width: 40,
+        height: 40,
+        bottom: screenHeight / 3,
+        right: 20,
+        zIndex: 100,
+        backgroundColor: '#f1f1f1',
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
 });

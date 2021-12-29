@@ -11,6 +11,11 @@ import Test1 from '../screen/test/test1';
 import Test2 from '../screen/test/test2';
 import PersonalPreviewScreen from '../screen/personal/personal-info';
 import EditPersonalInfoScreen from "../screen/personal/edit-info";
+import EntrustListScreen from "../screen/entrust/index";
+import EntrustDetailScreen from "../screen/entrust/detail";
+import EntrustRecordScreen from "../screen/entrust/synchronousRecording";
+import EntrustAcceptedScreen from "../screen/entrust/accepted";
+import EntrustSharingScreen from "../screen/entrust/sharing";
 
 type routeProps = {
     name: string
@@ -69,5 +74,32 @@ export const intelinkRoute: routeProps[] = [
     {
         name: 'Test2',
         component: Test2
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_LIST,
+        component: EntrustListScreen
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_DETAIL,
+        component: EntrustDetailScreen
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_RECORDING,
+        component: EntrustRecordScreen
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_ACCEPTED,
+        component: EntrustAcceptedScreen
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_SHARING,
+        component: EntrustSharingScreen
     }
 ];
+
+export const EntrustRoute: routeProps[] = [
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_LIST,
+        component: EntrustListScreen
+    }
+]

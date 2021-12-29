@@ -6,6 +6,8 @@ import {screenWidth} from "../../../../../config/contant";
 import ListItem from "./listItem";
 import {useSetState} from "ahooks";
 import {useLanguage} from "../../../../../language";
+import {INTELINK_SCREEN_NAME} from "../../../../../routes/screen-name";
+import AweSimpleNavigator from "../../../../../components/awe-simple-navigator";
 
 const EntrustAcceptedScreen = (props: any) => {
 
@@ -113,27 +115,10 @@ const EntrustAcceptedScreen = (props: any) => {
     };
 
     return <>
-        <Header
-            backgroundColor='#fff'
-            leftComponent={
-                <TouchableHighlight
-                    underlayColor={'none'}
-                    onPress={props.navigation.goBack}>
-                    <View style={{width: 100, paddingLeft: 10}}>
-                        <Icon
-                            name={'angle-left'}
-                            style={{fontSize: 30, color: '#aaa'}}
-                        />
-                    </View>
-                </TouchableHighlight>
-            }
-            centerComponent={
-                <View>
-                    <Text style={styles.pageTitle}>Accepted</Text>
-                </View>
-            }
-        >
-        </Header>
+        <AweSimpleNavigator
+            centerTitle={'Accepted'}
+            goBack={props.navigation.goBack}
+        />
         <View style={styles.dataCountBox}>
             <Text>3 people</Text>
             <Text>223,223,999 data</Text>

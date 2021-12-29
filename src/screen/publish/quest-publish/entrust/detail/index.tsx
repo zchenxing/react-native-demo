@@ -29,7 +29,7 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
     const handleSheetChanges = (index: number) => {
         if (index === 0) {
             setState({
-                visible:false
+                visible: false
             })
         }
     };
@@ -37,7 +37,7 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
     const handleSelectSheetChanges = useCallback((index: number) => {
         if (index === 0) {
             setState({
-                selectVisible:false
+                selectVisible: false
             })
         }
     }, []);
@@ -46,7 +46,7 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
         actionSheetRef.current.snapToPosition(1);
 
         setState({
-            visible:false
+            visible: false
         })
 
     };
@@ -55,75 +55,46 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
         selectSheetRef.current.snapToPosition(1);
 
         setState({
-            selectVisible:false
+            selectVisible: false
         })
 
     };
 
     const endChange = () => {
         actionSheetRef.current && actionSheetRef.current.snapToIndex(1);
-        setState({visible:true})
+        setState({visible: true})
     }
     return (
         <>
-            {/*<AweSimpleNavigator*/}
-            {/*    centerTitle={'11111'}*/}
-            {/*    goBack={props.navigation.goBack}*/}
-            {/*    rightActionTitle={useLanguage.save}*/}
-            {/*    rightActionEvent={()=>{props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_RECORDING)}}*/}
-            {/*    rightActionEditable={*/}
-            {/*        editType === EditInfoType.Nickname*/}
-            {/*            ? nicknameEditable*/}
-            {/*            : introEditable*/}
-            {/*    }*/}
-            {/*/>*/}
-            <Header
-                backgroundColor='#fff'
-                leftComponent={
-                    <TouchableHighlight
-                        underlayColor={'none'}
-                        onPress={props.navigation.goBack}>
-                        <View style={{width: 100, paddingLeft: 10}}>
-                            <Icon
-                                name={'angle-left'}
-                                style={{fontSize: 30, color: '#aaa'}}
-                            />
-                        </View>
-                    </TouchableHighlight>
-                }
-                centerComponent={
-                    <View>
-                        <Text style={styles.pageTitle}>11111</Text>
-                    </View>
-                }
-                rightComponent={
-                    <TouchableHighlight
-                        underlayColor={'none'}
-                        onPress={()=>{props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_RECORDING)}}>
-                        <View style={{width: 100, paddingLeft: 10, justifyContent: "flex-end", flexDirection: "row"}}>
-                            <Icon
-                                name={'angle-left'}
-                                style={{fontSize: 30, color: '#aaa'}}
-                            />
-                        </View>
-                    </TouchableHighlight>
-                }
-            >
-            </Header>
-            <ScrollView style={{flex: 1,backgroundColor:'#F0F2F5',paddingTop:10,paddingBottom:20}}>
+            <AweSimpleNavigator
+                centerTitle={'11111'}
+                goBack={props.navigation.goBack}
+                rightActionTitle={useLanguage.save}
+                rightActionEvent={() => {
+                    props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_RECORDING)
+                }}
+                rightActionIcon={<Icon
+                    name={'angle-left'}
+                    style={{fontSize: 30, color: '#aaa'}}
+                />}
+                rightActionEditable={true}
+            />
+            <ScrollView style={{flex: 1, backgroundColor: '#F0F2F5', paddingTop: 10, paddingBottom: 20}}>
                 <AnimalCard navigation={props.navigation}/>
                 {/*<EndAnimalCard navigation={props.navigation}/>*/}
                 <View style={styles.mapBox}>
                     <View style={styles.mapImg}></View>
                     <View style={styles.mapInfo}>
                         <Text style={styles.localText}>Lost contact 22 dey</Text>
-                        <Text style={styles.localText}>17:42   2021/03/03</Text>
+                        <Text style={styles.localText}>17:42 2021/03/03</Text>
                     </View>
                 </View>
                 <EndRecord navigation={props.navigation}/>
                 <TouchableHighlight
                     underlayColor={'none'}
-                    onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_ACCEPTED)}}>
+                    onPress={() => {
+                        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_ACCEPTED)
+                    }}>
                     <View style={styles.accept}>
                         <View>
                             <Text style={styles.acceptText}>Accepted (3)</Text>
@@ -134,11 +105,11 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
                     </View>
                 </TouchableHighlight>
 
-                <View style={{height:15}}/>
+                <View style={{height: 15}}/>
             </ScrollView>
             <SafeAreaView style={styles.pageFoot}>
                 <View style={styles.time}>
-                    <Text style={{textAlign:"center"}}>Validity period：356 day 14h 45min 32s</Text>
+                    <Text style={{textAlign: "center"}}>Validity period：356 day 14h 45min 32s</Text>
                 </View>
                 <View style={styles.footBtnBox}>
                     <TouchableHighlight
@@ -150,7 +121,9 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
                     </TouchableHighlight>
                     <TouchableHighlight
                         underlayColor={'none'}
-                        onPress={()=> {setState({isVisible:true})}}>
+                        onPress={() => {
+                            setState({isVisible: true})
+                        }}>
                         <View style={styles.creaturesBtn}>
                             <Text style={styles.creaturesBtnText}>Looking for creatures</Text>
                         </View>
@@ -165,8 +138,10 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
                 actionSheetRef={actionSheetRef}
                 handleSheetChanges={handleSheetChanges}
                 handleSelectSheetChanges={handleSelectSheetChanges}
-                selectChange={()=>{ selectSheetRef.current && selectSheetRef.current.snapToIndex(1);
-                    setState({selectVisible:true})}}
+                selectChange={() => {
+                    selectSheetRef.current && selectSheetRef.current.snapToIndex(1);
+                    setState({selectVisible: true})
+                }}
                 selectSheetRef={selectSheetRef}/>
         </>
     );

@@ -11,10 +11,11 @@ import Test1 from '../screen/test/test1';
 import Test2 from '../screen/test/test2';
 import PersonalPreviewScreen from '../screen/personal/personal-info';
 import EditPersonalInfoScreen from "../screen/personal/edit-info";
-import Entrust from "../screen/entrust/index";
-import EntrustDetail from "../screen/entrust/detail";
-import SynchronousRecording from "../screen/entrust/synchronousRecording";
-import Accepted from "../screen/entrust/accepted";
+import EntrustListScreen from "../screen/entrust/index";
+import EntrustDetailScreen from "../screen/entrust/detail";
+import EntrustRecordScreen from "../screen/entrust/synchronousRecording";
+import EntrustAcceptedScreen from "../screen/entrust/accepted";
+import EntrustSharingScreen from "../screen/entrust/sharing";
 
 type routeProps = {
     name: string
@@ -76,25 +77,29 @@ export const intelinkRoute: routeProps[] = [
     },
     {
         name: INTELINK_SCREEN_NAME.ENTRUST_LIST,
-        component: Entrust
+        component: EntrustListScreen
     },
     {
         name: INTELINK_SCREEN_NAME.ENTRUST_DETAIL,
-        component: EntrustDetail
+        component: EntrustDetailScreen
     },
     {
         name: INTELINK_SCREEN_NAME.ENTRUST_RECORDING,
-        component: SynchronousRecording
+        component: EntrustRecordScreen
     },
     {
         name: INTELINK_SCREEN_NAME.ENTRUST_ACCEPTED,
-        component: Accepted
+        component: EntrustAcceptedScreen
+    },
+    {
+        name: INTELINK_SCREEN_NAME.ENTRUST_SHARING,
+        component: EntrustSharingScreen
     }
 ];
 
 export const EntrustRoute: routeProps[] = [
     {
         name: INTELINK_SCREEN_NAME.ENTRUST_LIST,
-        component: Entrust
+        component: EntrustListScreen
     }
 ]

@@ -8,8 +8,14 @@ import {useSetState} from "ahooks";
 import BottomSelect from "./bottomSelect";
 import { BottomSheet, Button, ListItem } from 'react-native-elements';
 import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
+import IconFont from "../../../iconfont";
+import EndAnimalCard from "./endAnimalCard";
+import EndRecord from "./endRecord";
+import {useLanguage} from "../../../language";
+import {EditInfoType} from "../../../enum";
+import AweSimpleNavigator from "../../../components/awe-simple-navigator";
 
-const EntrustDetail: React.FC<any> = (props: any) => {
+const EntrustDetailScreen: React.FC<any> = (props: any) => {
     const [state, setState] = useSetState<any>({
         visible: false,
         isVisible: false,
@@ -60,9 +66,19 @@ const EntrustDetail: React.FC<any> = (props: any) => {
     }
     return (
         <>
-
+            {/*<AweSimpleNavigator*/}
+            {/*    centerTitle={'11111'}*/}
+            {/*    goBack={props.navigation.goBack}*/}
+            {/*    rightActionTitle={useLanguage.save}*/}
+            {/*    rightActionEvent={()=>{props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_RECORDING)}}*/}
+            {/*    rightActionEditable={*/}
+            {/*        editType === EditInfoType.Nickname*/}
+            {/*            ? nicknameEditable*/}
+            {/*            : introEditable*/}
+            {/*    }*/}
+            {/*/>*/}
             <Header
-                backgroundColor='#AAE3E9'
+                backgroundColor='#fff'
                 leftComponent={
                     <TouchableHighlight
                         underlayColor={'none'}
@@ -95,14 +111,8 @@ const EntrustDetail: React.FC<any> = (props: any) => {
             >
             </Header>
             <ScrollView style={{flex: 1,backgroundColor:'#F0F2F5',paddingTop:10,paddingBottom:20}}>
-                <View style={styles.deviceBox}>
-                    <View style={styles.deviceImg}></View>
-                    <View style={{flex:1,justifyContent:"space-between"}}>
-                        <View><Text style={styles.deviceType}>LOGO</Text></View>
-                        <View><Text style={styles.uuid}>UUID: ecde2809d9e5</Text></View>
-                    </View>
-                </View>
                 <AnimalCard navigation={props.navigation}/>
+                {/*<EndAnimalCard navigation={props.navigation}/>*/}
                 <View style={styles.mapBox}>
                     <View style={styles.mapImg}></View>
                     <View style={styles.mapInfo}>
@@ -110,6 +120,7 @@ const EntrustDetail: React.FC<any> = (props: any) => {
                         <Text style={styles.localText}>17:42   2021/03/03</Text>
                     </View>
                 </View>
+                <EndRecord navigation={props.navigation}/>
                 <TouchableHighlight
                     underlayColor={'none'}
                     onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.ENTRUST_ACCEPTED)}}>
@@ -118,7 +129,7 @@ const EntrustDetail: React.FC<any> = (props: any) => {
                             <Text style={styles.acceptText}>Accepted (3)</Text>
                         </View>
                         <View>
-                            <Text>图片</Text>
+                            <IconFont name={'arrow-right'} size={15} color={'#979797'}/>
                         </View>
                     </View>
                 </TouchableHighlight>
@@ -167,24 +178,6 @@ const styles = StyleSheet.create({
         color:'#333333',
         fontSize:17,
         marginTop:4
-    },
-    deviceBox:{
-        flexDirection:"row",
-        // borderWidth:2,
-        // borderColor:'#000000',
-        borderRadius:8,
-        marginLeft:16,
-        marginRight:16,
-        paddingLeft:18,
-        paddingRight:18,
-        paddingTop:10,
-        paddingBottom:10,
-        shadowColor:'#000000',
-        shadowOffset: {width: 0, height: 0},
-        shadowRadius: 2,
-        backgroundColor:'white',
-        shadowOpacity: 0.3,
-        marginBottom:10
     },
     pageFoot:{
         // height:20,
@@ -235,21 +228,6 @@ const styles = StyleSheet.create({
         color:'#ffffff',
         textAlign:"center"
     },
-    deviceType:{
-        color:'#6FC1CE',
-        fontSize:18,
-    },
-    deviceImg:{
-        width:44,
-        height:44,
-        backgroundColor:'green',
-        borderRadius:50,
-        marginRight:12,
-    },
-    uuid:{
-        color:'#999999',
-        fontSize:12
-    },
     mapBox:{
         height:229,
         marginLeft:16,
@@ -296,4 +274,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default EntrustDetail;
+export default EntrustDetailScreen;

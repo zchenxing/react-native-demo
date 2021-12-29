@@ -23,7 +23,7 @@ const Tab = createMaterialTopTabNavigator();
 
 
 
-const Entrust: React.FC<NavigateProps> = (props: NavigateProps) => {
+const EntrustListScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const [state, setState] = useSetState<any>({
         entrustType: 'me',
@@ -122,4 +122,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Entrust;
+export default EntrustListScreen;

@@ -32,13 +32,15 @@ export const INTELINK_SCREEN_NAME = {
     // 修改个人信息
     SCREEN_EDIT_PERSONAL_INFO: 'EditPersonalInfoScreen',
     // 委托列表
-    ENTRUST_LIST: 'EntrustList',
+    ENTRUST_LIST: 'EntrustListScreen',
     // 委托详情
-    ENTRUST_DETAIL: 'EntrustDetail',
+    ENTRUST_DETAIL: 'EntrustDetailScreen',
     // 同步记录
-    ENTRUST_RECORDING: 'EntrustSynchronousRecording',
+    ENTRUST_RECORDING: 'EntrustRecordScreen',
     // 接受委托的人
-    ENTRUST_ACCEPTED: 'EntrustAccepted',
+    ENTRUST_ACCEPTED: 'EntrustAcceptedScreen',
+    // 分享委托
+    ENTRUST_SHARING: 'EntrustSharingScreen',
     // 预览个人信息
     SCREEN_PREVIEW_PERSONAL_INFO: 'PersonalPreviewScreen',
     // 编辑个人信息

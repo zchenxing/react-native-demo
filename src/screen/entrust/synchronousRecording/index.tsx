@@ -7,7 +7,7 @@ import ListItem from "./listItem";
 import {useSetState} from "ahooks";
 import {useLanguage} from "../../../language";
 
-const SynchronousRecording = (props: any) => {
+const EntrustRecordScreen = (props: any) => {
 
     const [state, setState] = useSetState<any>({
         refreshing: false,
@@ -177,4 +177,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default SynchronousRecording;
+export default EntrustRecordScreen;

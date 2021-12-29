@@ -4,7 +4,7 @@ import {screenWidth} from "../../../config/contant";
 import {localImages} from "../../../assets/images";
 import LinearGradient from "react-native-linear-gradient";
 
-const AnimalCard = (props: any) => {
+const EndAnimalCard = (props: any) => {
     return <TouchableHighlight
         underlayColor={'none'}
         onPress={props.navigation.goBack}>
@@ -12,7 +12,7 @@ const AnimalCard = (props: any) => {
             <Image
                 style={styles.backgroundImg}
                 resizeMode={'stretch'}
-                source={localImages.animalCardTop}
+                source={localImages.endAnimalCardTop}
             />
             <View style={styles.nameBox}>
                 <View style={styles.animalImg}></View>
@@ -24,9 +24,9 @@ const AnimalCard = (props: any) => {
                 </View>
             </View>
             <LinearGradient
-                colors={['#6FC1CE', '#A8E2E9']}
+                colors={['#C3C3C3', '#C3C3C3']}
                 start={{x: 0, y: 0}}
-                end={{x: 1, y: 0}}
+                end={{x: 0, y: 1}}
                 style={styles.animalInfoBox}>
                 <Text style={styles.deviceType}>Age</Text>
                 <Text style={styles.uuid}>UUID: ecde2809d9e5</Text>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         // backgroundColor:'#A2E0E7',
     },
     nameBox:{
-      flexDirection:"row",
+        flexDirection:"row",
         height:55.5
     },
     infoBox:{
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
         marginLeft:25
     },
     speciesName:{
-        color:'#6FC1CE',
+        color:'#333333',
         fontSize:15
     },
     birdName:{
@@ -108,4 +108,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AnimalCard;
+export default EndAnimalCard;

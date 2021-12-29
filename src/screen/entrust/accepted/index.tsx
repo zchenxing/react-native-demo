@@ -7,7 +7,7 @@ import ListItem from "./listItem";
 import {useSetState} from "ahooks";
 import {useLanguage} from "../../../language";
 
-const Accepted = (props: any) => {
+const EntrustAcceptedScreen = (props: any) => {
 
     const [state, setState] = useSetState<any>({
         refreshing: false,
@@ -175,4 +175,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Accepted;
+export default EntrustAcceptedScreen;

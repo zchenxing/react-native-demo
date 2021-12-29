@@ -98,8 +98,29 @@ const Utils = {
         }, []);
 
         return dataSource
-    }
+    },
 
+
+    /**
+     * 获取到期时间
+     * @param time
+     */
+    getExpireTime: (time: string) => {
+
+        const hours = Math.abs(dayjs().diff(time, 'hours'))
+
+        if (hours > 24) {
+            const days = Math.floor(hours / 24)
+            const hour = hours - (days * 24)
+
+            const dayStr = `${days} days`
+            const hourStr = `${hour} hours`
+            return `${dayStr} ${hour ? hourStr : ''}`
+        } else {
+            return hours <= 1 ? 1 : hours
+        }
+
+    }
 }
 
 

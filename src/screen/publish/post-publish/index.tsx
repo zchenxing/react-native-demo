@@ -229,6 +229,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 goBack={() => goBack(true)}
                 rightActionTitle={'Post'}
                 rightActionEvent={onPressSubmit}
+                rightActionEditable={!!state.postContent}
             />
 
             <TouchableHighlight

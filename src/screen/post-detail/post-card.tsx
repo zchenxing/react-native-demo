@@ -1,9 +1,9 @@
-import React from 'react';
-import {View} from 'react-native';
-import AnimalCard from '../components/animal-card';
-import axios from 'axios';
-import apis from '../../network/apis';
-import { ShareAnimalProps, ShareProps } from "../components/animal-card/type";
+import React from "react";
+import { View } from "react-native";
+import AnimalCard from "../components/animal-card";
+import axios from "axios";
+import apis from "../../network/apis";
+import { AnimalCardType, ShareAnimalProps, ShareProps } from "../components/animal-card/type";
 import { useSetState } from "ahooks";
 
 interface IProps {
@@ -78,7 +78,8 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
                 backgroundColor: '#FFF',
             }}>
             <AnimalCard
-                showMoreInfo={true}
+                animalType={AnimalCardType.ShareType}
+                showOtherInfo={true}
                 shareData={state.shareData}
                 animalInfo={state.animalData}
             />

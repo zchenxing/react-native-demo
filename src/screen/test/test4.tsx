@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {Text, TouchableHighlight, View,StyleSheet} from "react-native";
 import { NavigateProps } from "../../interface";
-import Spinner from 'react-native-loading-spinner-overlay';
 import {useSetState} from "ahooks";
 import Timeline from 'react-native-timeline-flatlist'
 
@@ -27,11 +26,6 @@ const Test4: React.FC<NavigateProps> = (props: NavigateProps) => {
     }
     return (
         <View style={{flex: 1}}>
-            <Spinner
-                visible={state.loading}
-                textContent={'Loading...'}
-                textStyle={styles.spinnerTextStyle}
-            />
             <TouchableHighlight
                 activeOpacity={0.5}
                 underlayColor={'green'}

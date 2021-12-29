@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Text, View, StyleSheet, Pressable, Alert, TouchableHighlight} from "react-native";
 import AweSimpleNavigator from '../../components/awe-simple-navigator';
 import { NavigateProps } from "../../interface";
-import SwipeableFlatList from 'react-native-swipeable-list';
+// import SwipeableFlatList from 'react-native-swipeable-list';
 import {useSetState} from "ahooks";
 const darkColors = {
     background: '#121212',
@@ -118,18 +118,18 @@ const Test3: React.FC<NavigateProps> = (props: NavigateProps) => {
     }
     return (
         <View style={{flex: 1}}>
-            <SwipeableFlatList
-                keyExtractor={extractItemKey}
-                data={state.data}
-                renderItem={({item}) => (
-                    <Item item={item} deleteItem={() => deleteItem} goBack={goBack} />
-                )}
-                maxSwipeDistance={240}
-                renderQuickActions={({index, item}) => QuickActions(index, item)}
-                contentContainerStyle={styles.contentContainerStyle}
-                shouldBounceOnMount={true}
-                ItemSeparatorComponent={renderItemSeparator}
-            />
+            {/*<SwipeableFlatList*/}
+            {/*    keyExtractor={extractItemKey}*/}
+            {/*    data={state.data}*/}
+            {/*    renderItem={({item}) => (*/}
+            {/*        <Item item={item} deleteItem={() => deleteItem} goBack={goBack} />*/}
+            {/*    )}*/}
+            {/*    maxSwipeDistance={240}*/}
+            {/*    renderQuickActions={({index, item}) => QuickActions(index, item)}*/}
+            {/*    contentContainerStyle={styles.contentContainerStyle}*/}
+            {/*    shouldBounceOnMount={true}*/}
+            {/*    ItemSeparatorComponent={renderItemSeparator}*/}
+            {/*/>*/}
         </View>
     );
 };

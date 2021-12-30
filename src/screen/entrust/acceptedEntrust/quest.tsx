@@ -1,9 +1,9 @@
 import React from 'react';
-import {Alert, FlatList, RefreshControl, Text, TouchableHighlight, View} from "react-native";
+import {FlatList, RefreshControl} from "react-native";
 import { NavigateProps } from "../../../interface";
 import {useSetState} from "ahooks";
-import ListItem from "../listItem";
 import {screenWidth} from "../../../config/contant";
+import AcceptListItem from "../acceptListItem";
 
 const AcceptEntrustQuest: React.FC<NavigateProps> = (props: NavigateProps) => {
     const [state, setState] = useSetState<any>({
@@ -18,7 +18,6 @@ const AcceptEntrustQuest: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     }, [state.refreshing]);
 
-    // This hook returns `true` if the screen is focused, `false` otherwise
     const DATA = [
         {
             id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -35,7 +34,7 @@ const AcceptEntrustQuest: React.FC<NavigateProps> = (props: NavigateProps) => {
     ];
 
     const renderItem = ({ item }: any) => (
-        <ListItem title={item.title} navigation={props.navigation} type={props.type}/>
+        <AcceptListItem title={item.title} navigation={props.navigation}/>
     );
     /**
      * 下拉刷新数据

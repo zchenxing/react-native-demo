@@ -36,7 +36,7 @@ const EntrustPending: React.FC<NavigateProps> = (props: NavigateProps) => {
     ];
 
     const renderItem = ({ item }: any) => (
-        <ListItem title={item.title} navigation={props.navigation} type={props.type}/>
+        <ListItem title={item.title} navigation={props.navigation}/>
     );
     /**
      * 下拉刷新数据

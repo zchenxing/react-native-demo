@@ -60,18 +60,6 @@ const EntrustListScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
             <Header
                 backgroundColor='#92D0D9'
-                // leftComponent={
-                //     <TouchableHighlight
-                //         underlayColor={'none'}
-                //         onPress={props.navigation.goBack}>
-                //         <View style={{width: 100, paddingLeft: 10}}>
-                //             <Icon
-                //                 name={'angle-left'}
-                //                 style={{fontSize: 30, color: '#aaa'}}
-                //             />
-                //         </View>
-                //     </TouchableHighlight>
-                // }
                 centerComponent={
                     <View style={{flexDirection:'row',justifyContent:"space-between",alignItems:"center",}}>
                         <TouchableHighlight

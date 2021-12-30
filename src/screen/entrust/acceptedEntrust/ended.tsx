@@ -5,6 +5,7 @@ import {useSetState} from "ahooks";
 import ListItem from "../listItem";
 import {screenWidth} from "../../../config/contant";
 import {EntrustType} from "../../../enum";
+import AcceptListItem from "../acceptListItem";
 
 const AcceptEntrustEnded: React.FC<NavigateProps> = (props: NavigateProps) => {
     const [state, setState] = useSetState<any>({
@@ -36,7 +37,7 @@ const AcceptEntrustEnded: React.FC<NavigateProps> = (props: NavigateProps) => {
     ];
 
     const renderItem = ({ item }: any) => (
-        <ListItem title={item.title} navigation={props.navigation} type={props.type}/>
+        <AcceptListItem title={item.title} navigation={props.navigation}/>
     );
     /**
      * 下拉刷新数据

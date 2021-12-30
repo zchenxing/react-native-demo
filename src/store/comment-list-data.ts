@@ -5,7 +5,6 @@ import apis from '../network/apis';
 import apiConfig from '../network/config';
 import {PAGE_SIZE} from '../config/contant';
 import Utils from '../help';
-import dayjs from "dayjs";
 
 type CurrentReplyProps = {
     mainCommentIndex: number;
@@ -157,7 +156,9 @@ export class CommentDataStore {
 
             // 回复评论
             const api = replyToComment
-                ? apis.comment.replyToComment(this.currentReplyData?.commentId)
+                ? apis.comment.replyToComment(
+                      this.currentReplyData?.commentId || '',
+                  )
                 : apis.comment.replyToReply(
                       this.currentReplyData?.commentId,
                       this.currentReplyData?.replyId,

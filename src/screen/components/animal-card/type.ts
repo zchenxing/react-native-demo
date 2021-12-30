@@ -1,16 +1,22 @@
 
 export interface AnimalCardProps {
+    animalType: AnimalCardType
     // 展示最近定位，列表用
     showLocation?: boolean
     // 显示更多信息，详情用
-    showMoreInfo?: boolean
-    // 分析的信息
-    shareData: ShareProps | null
+    showOtherInfo?: boolean
+    // 分享的信息
+    shareData?: ShareProps | null
     // 分享数据
-    animalInfo: ShareAnimalProps | null
+    animalInfo?: ShareAnimalProps | null
 
 }
 
+
+export enum AnimalCardType {
+    ShareType,
+    QuestType
+}
 
 
 // 分享类型

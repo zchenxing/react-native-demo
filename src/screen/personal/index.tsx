@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, StatusBar, View, Animated, StyleSheet, DeviceEventEmitter } from "react-native";
 import PersonalInfo from './info';
-import { EventEmitterName, screenWidth } from "../../config/contant";
+import { EventEmitterName, PAGE_SIZE, screenWidth } from "../../config/contant";
 import UserNavigator from '../components/user-navigator';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -12,24 +12,34 @@ import {NavigateProps} from '../../interface';
 import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import server from '../../network';
 import apis from '../../network/apis';
-import {PostContentProps, UserInfoProps} from '../../interface/work';
+import { PostContentProps, PostImageProps, UserInfoProps } from "../../interface/work";
 import {observer} from 'mobx-react';
 import {useSetState} from 'ahooks';
 import {usePostListDataStore} from '../../store/provider';
 import AweKeyboard from '../../components/awe-keyboard';
 import Toast from 'react-native-simple-toast';
 import {useNetInfo} from '@react-native-community/netinfo';
+import AweLoadMore from "../../components/awe-load-more";
+import AwePicturePreview from "../../components/awe-picture-preview";
 
 interface IState {
+    refreshing: boolean;
+    moreLoading: boolean;
+    hasMoreData: boolean;
+
     userInfo: UserInfoProps | undefined;
     navOpacityOffset: Animated.Value;
-    commentVisible: boolean;
 
     // 首次评论的事件
     firstKeyboardVisible: boolean;
     firstContentText: string;
     currentPost: PostContentProps | null;
     currentRowIndex: number;
+
+    pictureVisible: boolean;
+    pictureStartIndex: number;
+    pictureList: any[];
+    commentVisible: boolean;
 }
 
 const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
@@ -44,14 +54,22 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         usePostListDataStore();
 
     const [state, setState] = useSetState<IState>({
+        refreshing: true,
+        moreLoading: false,
+        hasMoreData: false,
+
         userInfo: undefined,
         navOpacityOffset: new Animated.Value(0),
-        commentVisible: false,
 
         firstKeyboardVisible: false,
         firstContentText: '',
         currentPost: null,
         currentRowIndex: -1,
+
+        pictureVisible: false,
+        pictureStartIndex: 0,
+        pictureList: [],
+        commentVisible: false,
     });
 
     React.useEffect(() => {
@@ -87,7 +105,9 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             setState({
                 userInfo: res.data,
             });
-        } catch (err) {}
+        } catch (err) {
+            console.log('get user info', err);
+        }
     };
 
     const onLoadData = async () => {
@@ -99,7 +119,53 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 },
                 listId,
             );
+
+            setState({
+                refreshing: false,
+                hasMoreData: res.data.length && res.data.length === PAGE_SIZE,
+            });
+
         } catch (err) {}
+    };
+
+    /**
+     * 加载更多数据
+     */
+    const onLoadMoreData = async (hasMoreData: boolean) => {
+        // 当有更多数据时才自动加载更多数据，否则不做操作
+        if (hasMoreData) {
+            setState({
+                moreLoading: true,
+            });
+
+            try {
+                const res = await getMorePostData(
+                    {
+                        api: apis.user.posts,
+                        apiParam: userId || '',
+                    },
+                    listId,
+                );
+                setState({
+                    moreLoading: false,
+                    hasMoreData:
+                        res.data.length && res.data.length === PAGE_SIZE,
+                });
+            } catch (err) {}
+        }
+    };
+
+
+    /**
+     * 点击"没有更多数据"，手动加载更多数据
+     */
+    const handleNoMoreData = () => {
+        setState({
+            moreLoading: true,
+            hasMoreData: true,
+        });
+
+        onLoadMoreData(true);
     };
 
     const onScrollOffset = (offset: number) => {
@@ -185,6 +251,22 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         }
     };
 
+
+    /**
+     * 浏览图片
+     * @param pictures
+     * @param startIndex
+     */
+    const onPressPicture = (pictures: PostImageProps[], startIndex: number) => {
+        const list = pictures.map(picture => picture.url_origin);
+
+        setState({
+            pictureVisible: true,
+            pictureStartIndex: startIndex,
+            pictureList: list,
+        });
+    }
+
     /**
      * 跳转到关注列表
      * @param type
@@ -244,6 +326,15 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     style={{flex: 1, width: screenWidth}}
                     scrollEventThrottle={1}
                     data={[null, ...(postStoreData[listId] || [])]}
+                    showsVerticalScrollIndicator={false}
+                    onEndReached={() => onLoadMoreData(state.hasMoreData)}
+                    ListFooterComponent={
+                        <AweLoadMore
+                            loading={state.moreLoading}
+                            hasMoreData={state.hasMoreData}
+                            handleNoMoreData={handleNoMoreData}
+                        />
+                    }
                     onScroll={Animated.event(
                         [
                             {
@@ -258,7 +349,6 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                             useNativeDriver: false,
                         },
                     )}
-                    showsVerticalScrollIndicator={false}
                     renderItem={row => {
                         if (row.index === 0) {
                             return (
@@ -276,9 +366,8 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                 <PostItem
                                     postItem={postStoreData[listId][row.index]}
                                     onPressDetail={() => onPressDetail(row)}
-                                    onPressPicture={() => {}}
+                                    onPressPicture={onPressPicture}
                                     onPressComment={() => onPressComment(row)}
-                                    onPressPersonal={() => {}}
                                     onPressCollection={() =>
                                         onPressCollection(row)
                                     }
@@ -288,6 +377,14 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     }}
                 />
             </SafeAreaProvider>
+
+
+            <AwePicturePreview
+                visible={state.pictureVisible}
+                onClick={() => setState({pictureVisible: false})}
+                imageUrls={state.pictureList}
+                startIndex={state.pictureStartIndex}
+            />
 
             <AweKeyboard
                 visible={state.firstKeyboardVisible}

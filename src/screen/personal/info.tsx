@@ -88,7 +88,7 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
         })
 
         try {
-            await server.post(apis.user.follow(props.userInfo?.id), {})
+            await server.post(apis.user.follow(props.userInfo?.id || ''), {})
 
             const totalInfo = [...state.totalInfo];
             totalInfo[2].value = totalInfo[2].value + (state.following ? -1 : 1);
@@ -151,7 +151,7 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
                     style={{height: imageHeight}}>
                     {props.userInfo?.avatar && (
                         <Image
-                            source={{uri: props.userInfo.avatar}}
+                            source={{uri: props.userInfo.avatar.url_thumb}}
                             style={{flex: 1}}
                         />
                     )}
@@ -172,7 +172,7 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
                     defaultSource={localImages.defaultAvatar}
                     source={
                         props.userInfo?.avatar
-                            ? {uri: props.userInfo.avatar}
+                            ? {uri: props.userInfo.avatar.url_normal}
                             : localImages.defaultAvatar
                     }
                     style={styles.avatar}

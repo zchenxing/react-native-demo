@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, StatusBar, View } from "react-native";
 import ImageViewer from 'react-native-image-zoom-viewer';
 import {AwePicturePreviewProps} from './type';
+import { localImages } from "../../assets/images";
 
 const AwePicturePreview: React.FC<AwePicturePreviewProps> = (
     props: AwePicturePreviewProps,
@@ -29,12 +30,10 @@ const AwePicturePreview: React.FC<AwePicturePreviewProps> = (
                 dataSource.length ?
                 <ImageViewer
                     imageUrls={dataSource}
-                    failImageSource={{
-                        url: 'https://img2.baidu.com/it/u=283216396,3208798936&fm=26&fmt=auto'
-                    }}
+                    failImageSource={localImages.defaultPicture}
                     onClick={props.onClick}
                     index={props.startIndex}
-                    saveToLocalByLongPress={true}
+                    saveToLocalByLongPress={false}
                     swipeDownThreshold={10}
                     menuContext={{ saveToLocal: '保存到本地', cancel: '取消' }}
                     onSaveToCamera={(e) => console.log(e)}

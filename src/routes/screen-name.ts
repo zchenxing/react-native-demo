@@ -21,6 +21,8 @@ export const INTELINK_SCREEN_NAME = {
     SCREEN_SEARCH_RESULT: 'SearchResultScreen',
     // 发布页面
     SCREEN_PUBLISH: 'PostPublishScreen',
+    // 发布分析页面
+    SCREEN_PUBLISH_SHARE: 'SharePublishScreen',
     // 发布页面 -> 选择标签
     SCREEN_PUBLISH_TAG: 'PublishTagScreen',
     // 内容详情

@@ -16,6 +16,7 @@ import EntrustDetailScreen from "../screen/publish/quest-publish/entrust/detail"
 import EntrustRecordScreen from "../screen/publish/quest-publish/entrust/synchronousRecording";
 import EntrustAcceptedScreen from "../screen/publish/quest-publish/entrust/accepted";
 import EntrustSharingScreen from "../screen/publish/quest-publish/entrust/sharing";
+import SharePublishScreen from "../screen/publish/share-publish";
 
 type routeProps = {
     name: string
@@ -40,6 +41,15 @@ export const intelinkRoute: routeProps[] = [
         name: INTELINK_SCREEN_NAME.SCREEN_PUBLISH,
         component: PostPublishScreen,
         options: {
+            // 禁止返回手势
+            gestureEnabled: false
+        }
+    },
+    {
+        name: INTELINK_SCREEN_NAME.SCREEN_PUBLISH_SHARE,
+        component: SharePublishScreen,
+        options: {
+            // 禁止返回手势
             gestureEnabled: false
         }
     },

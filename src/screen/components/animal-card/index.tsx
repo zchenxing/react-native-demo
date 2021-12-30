@@ -1,24 +1,19 @@
-import React from 'react';
-import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableHighlight,
-    View,
-} from 'react-native';
-import IconFont from '../../../iconfont';
-import FastImage from 'react-native-fast-image';
-import {useLanguage} from '../../../language';
-import LinearGradient from 'react-native-linear-gradient';
-import {themeColor} from '../../../assets/styles';
-import {screenWidth} from '../../../config/contant';
-import {AnimalAge, AnimalCardProps} from './type';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {useSetState} from 'ahooks';
-import {WebView} from 'react-native-webview';
-import {localImages} from '../../../assets/images';
-import AnimalCardMore from "./more-info";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import IconFont from "../../../iconfont";
+import FastImage from "react-native-fast-image";
+import { useLanguage } from "../../../language";
+import LinearGradient from "react-native-linear-gradient";
+import { themeColor } from "../../../assets/styles";
+import { screenWidth } from "../../../config/contant";
+import { AnimalAge, AnimalCardProps, AnimalCardType } from "./type";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { useSetState } from "ahooks";
+import { WebView } from "react-native-webview";
+import { localImages } from "../../../assets/images";
+import AnimalCardShareMore from "./more-info";
+import AnimalMorePicture from "./more-picture";
+import Utils from "../../../help";
 
 interface IState {
     showMoreInfo: boolean;
@@ -45,7 +40,6 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
         });
         // props.onPressMore(positionY.current, !state.showMoreInfo)
     };
-
 
     return (
         <View style={styles.container}>
@@ -127,50 +121,79 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                 )}
             </View>
 
-            {props.showMoreInfo && (
+            {props.showOtherInfo && (
                 <>
-                    {state.showMoreInfo && props.animalInfo && (
-                       <AnimalCardMore animalInfo={props.animalInfo} />
+                    {props.animalType === AnimalCardType.ShareType ? (
+                        state.showMoreInfo &&
+                        props.animalInfo && (
+                            <AnimalCardShareMore animalInfo={props.animalInfo} />
+                        )
+                    ) : (
+                        <AnimalMorePicture
+                            imageUrls={props.animalInfo?.imageUrls || []}
+                        />
                     )}
 
-                    <TouchableHighlight
-                        onPress={onPressMore}
-                        underlayColor={'none'}>
-                        <View style={styles.moreButton}>
-                            <View style={styles.divider} />
+                    {
+                        props.animalType === AnimalCardType.ShareType &&
+                        <TouchableHighlight
+                            onPress={onPressMore}
+                            underlayColor={'none'}>
+                            <View style={styles.moreButton}>
+                                <View style={styles.divider} />
 
-                            <View style={styles.moreButtonText}>
-                                <Text style={{color: '#999'}}>
-                                    {state.showMoreInfo
-                                        ? useLanguage.show_less
-                                        : useLanguage.show_more}
-                                </Text>
-                                <Icon
-                                    name={
-                                        state.showMoreInfo
-                                            ? 'angle-double-up'
-                                            : 'angle-double-down'
-                                    }
-                                    style={styles.showMoreAngle}
-                                />
+                                <View style={styles.moreButtonText}>
+                                    <Text style={{color: '#999'}}>
+                                        {state.showMoreInfo
+                                            ? useLanguage.show_less
+                                            : useLanguage.show_more}
+                                    </Text>
+                                    <Icon
+                                        name={
+                                            state.showMoreInfo
+                                                ? 'angle-double-up'
+                                                : 'angle-double-down'
+                                        }
+                                        style={styles.showMoreAngle}
+                                    />
+                                </View>
                             </View>
+                        </TouchableHighlight>
+                    }
+
+                    {
+                        // 委托就要显示设备信息
+                        props.animalType === AnimalCardType.QuestType &&
+                        <View style={styles.deviceBase}>
+                            <Text style={styles.deviceType}>LEGO</Text>
+                            <Text style={styles.deviceUUId}>UUID: 12380192830912</Text>
                         </View>
-                    </TouchableHighlight>
+                    }
+
 
                     <View style={styles.mapBase}>
                         {!state.mapLoading && (
                             <WebView
                                 automaticallyAdjustContentInsets={false}
                                 source={{
-                                    uri: 'https://map.tianditu.gov.cn/',
+                                    uri: 'https://bird.coolhei.com/appmap/en/#/',
                                 }}
                             />
                         )}
                     </View>
+
+
+                    {
+                        props.animalType === AnimalCardType.QuestType &&
+                            <View style={styles.expiryBase}>
+                                <Text style={styles.expiryText}>
+                                    {Utils.getExpireTime('2022-12-22 22:33:22')}
+                                </Text>
+                            </View>
+                    }
+
                 </>
             )}
-
-
         </View>
     );
 };
@@ -279,13 +302,43 @@ const styles = StyleSheet.create({
         color: '#999',
     },
 
-
+    deviceBase: {
+        padding: 10,
+        paddingLeft: 15,
+        paddingRight: 15,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderRadius: 10
+    },
+    deviceType: {
+        color: themeColor,
+        fontSize: 18,
+        fontWeight: '600'
+    },
+    deviceUUId: {
+        fontSize: 12,
+        color: '#999'
+    },
     mapBase: {
+        marginTop: 10,
         height: 300,
-        backgroundColor: 'red',
         borderRadius: 10,
-        overflow: 'hidden'
+        overflow: 'hidden',
+    },
+    expiryBase: {
+        marginTop: 10,
+        padding: 3,
+        alignItems: 'center',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ddd'
+    },
+    expiryText: {
+        color: '#333',
+        fontSize: 12
     }
-
-
 });

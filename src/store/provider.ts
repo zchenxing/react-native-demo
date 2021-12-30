@@ -1,14 +1,16 @@
 import {createContext, useContext} from 'react';
-import { COMMENT_LIST_DATA, POST_LIST_DATA, SELF_INFO_DATA } from "./constant";
+import { COMMENT_LIST_DATA, POST_LIST_DATA, PUBLISH_DATA, SELF_INFO_DATA } from "./constant";
 import { PostListDataStore } from "./post-list-data";
 import { SelfInfoDataStore } from "./self-info-data";
 import { CommentDataStore } from "./comment-list-data";
+import { PublishDataStore } from "./publish-data";
 
 function createStores() {
     return {
         [POST_LIST_DATA]: new PostListDataStore(),
         [SELF_INFO_DATA]: new SelfInfoDataStore(),
-        [COMMENT_LIST_DATA]: new CommentDataStore()
+        [COMMENT_LIST_DATA]: new CommentDataStore(),
+        [PUBLISH_DATA]: new PublishDataStore()
     };
 }
 
@@ -34,21 +36,29 @@ function useCommentDataStore() {
 }
 
 
-const selfDataStore = stores[SELF_INFO_DATA];
-const postListDataStore = stores[POST_LIST_DATA];
-const commentDataStore = stores[COMMENT_LIST_DATA]
+function usePublishDataStore() {
+    const {publish_data} = useStores()
+    return publish_data
+}
+
+
+// const selfDataStore = stores[SELF_INFO_DATA];
+// const postListDataStore = stores[POST_LIST_DATA];
+// const commentDataStore = stores[COMMENT_LIST_DATA]
 
 export {
     stores,
     StoresContext,
     useStores,
 
-    postListDataStore,
+    // postListDataStore,
+    // selfDataStore,
+    // commentDataStore,
+
     usePostListDataStore,
-
-    selfDataStore,
     useSelfDataStore,
+    useCommentDataStore,
+    usePublishDataStore
 
-    commentDataStore,
-    useCommentDataStore
+
 };

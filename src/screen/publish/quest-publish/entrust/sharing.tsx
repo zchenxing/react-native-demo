@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text, TextInput, TouchableHighlight, View} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {INTELINK_SCREEN_NAME} from "../../../../routes/screen-name";
@@ -7,6 +7,9 @@ import {useLanguage} from "../../../../language";
 import AweSimpleNavigator from "../../../../components/awe-simple-navigator";
 import AnimalCard from "../../../components/animal-card";
 import {useSetState} from "ahooks";
+import server from "../../../../network";
+import apiConfig from "../../../../network/config";
+import apis from "../../../../network/apis";
 
 const EntrustSharingScreen = (props: any) => {
     const inputRef = React.useRef<any>(null);
@@ -20,6 +23,21 @@ const EntrustSharingScreen = (props: any) => {
             textValue:text
         })
     }
+
+    const getEntrustDetail = async () => {
+        try {
+            const res =  await server.get(apis.entrust.info('61cc20abaca33b662a0af029'),
+                apiConfig.pageToken(),
+            );
+            console.log(res.data)
+        }catch (err) {
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
+        getEntrustDetail()
+    },[])
 
 
     return <>

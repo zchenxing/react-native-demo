@@ -9,7 +9,7 @@ const ListItem: React.FC<any> = (props: any) => {
             onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_DETAIL)}}
         >
             {/*<View style={styles.list}>*/}
-            {/*    <View style={styles.avatars}></View>*/}
+            {/*    /!*<View style={styles.avatars}></View>*!/*/}
             {/*    <View style={styles.content}>*/}
             {/*        <View style={styles.contentLeft}>*/}
             {/*            <View><Text style={styles.deviceName}>Mini-2G-Lite</Text></View>*/}
@@ -26,53 +26,66 @@ const ListItem: React.FC<any> = (props: any) => {
             {/*            </View>*/}
             {/*        </View>*/}
             {/*    </View>*/}
-            {/*</View>*/}
-            {/*<View style={styles.list}>*/}
-            {/*    <View style={styles.avatars}></View>*/}
-            {/*    <View style={styles.content}>*/}
-            {/*        <View style={styles.contentLeft}>*/}
-            {/*            <View><Text style={styles.deviceName}>Mini-2G-Lite</Text></View>*/}
-            {/*            <View><Text style={styles.uuid}>UUID: ecde2809d9e5</Text></View>*/}
-            {/*        </View>*/}
-            {/*        <View style={styles.contentRight}>*/}
-            {/*            <View style={styles.contactBox}>*/}
-            {/*                <View style={styles.status}></View>*/}
-            {/*                <Text style={styles.text}>Lost contact 22 dey</Text>*/}
-            {/*                <Text>图片</Text>*/}
-            {/*            </View>*/}
-            {/*            <View style={styles.timeBox}>*/}
-            {/*                <Text style={styles.hour}>17:42</Text>*/}
-            {/*                <Text style={styles.date}>2021/03/03</Text>*/}
-            {/*            </View>*/}
+            {/*    <View style={styles.animalBox}>*/}
+            {/*        <View style={styles.avatars}></View>*/}
+            {/*        <View>*/}
+            {/*            <Text style={styles.speciesName}>Species name</Text>*/}
+            {/*            <Text style={styles.birdName}>Bird name</Text>*/}
             {/*        </View>*/}
             {/*    </View>*/}
             {/*</View>*/}
-            <View>
-                <View style={styles.list}>
-                    <View style={styles.avatars}></View>
-                    <View style={styles.content}>
-                        <View style={styles.contentLeft}>
-                            <View><Text style={styles.deviceName}>Mini-2G-Lite</Text></View>
-                            <View><Text style={styles.uuid}>UUID: ecde2809d9e5</Text></View>
+            <View style={styles.list}>
+                <View style={styles.content}>
+                    <View style={styles.contentLeft}>
+                        <View><Text style={styles.deviceName}>Mini-2G-Lite</Text></View>
+                        <View><Text style={styles.uuid}>UUID: ecde2809d9e5</Text></View>
+                    </View>
+                    <View style={styles.contentRight}>
+                        <View style={styles.contactBox}>
+                            <View style={styles.status}></View>
+                            <Text style={styles.text}>Lost contact 22 dey</Text>
+                            <Text>图片</Text>
                         </View>
-                        <View style={styles.contentRight}>
-                            <View style={styles.endEdImg}>
-
-                            </View>
-                            <View style={styles.endTimeBox}>
-                                <Text style={styles.hour}>17:42</Text>
-                                <Text style={styles.date}>2021/03/03</Text>
-                            </View>
+                        <View style={styles.timeBox}>
+                            <Text style={styles.hour}>17:42</Text>
+                            <Text style={styles.date}>2021/03/03</Text>
                         </View>
                     </View>
                 </View>
-                <View style={styles.reasonBox}>
-                    <View style={styles.reason}>
-                        <Text style={styles.reasonTitle}>End reason:</Text>
-                        <Text style={styles.reasonText}>Reason for ending Reason for ending Reason for ending</Text>
+                <View style={styles.animalBox}>
+                    <View style={styles.avatars}></View>
+                    <View>
+                        <Text style={styles.speciesName}>Species name</Text>
+                        <Text style={styles.birdName}>Bird name</Text>
                     </View>
                 </View>
             </View>
+            {/*<View>*/}
+            {/*    <View style={styles.list}>*/}
+            {/*        <View style={styles.avatars}></View>*/}
+            {/*        <View style={styles.content}>*/}
+            {/*            <View style={styles.contentLeft}>*/}
+            {/*                <View><Text style={styles.deviceName}>Mini-2G-Lite</Text></View>*/}
+            {/*                <View><Text style={styles.uuid}>UUID: ecde2809d9e5</Text></View>*/}
+            {/*            </View>*/}
+            {/*            <View style={styles.contentRight}>*/}
+            {/*                <View style={styles.endEdImg}>*/}
+
+            {/*                </View>*/}
+            {/*                <View style={styles.endTimeBox}>*/}
+            {/*                    <Text style={styles.hour}>17:42</Text>*/}
+            {/*                    <Text style={styles.date}>2021/03/03</Text>*/}
+            {/*                </View>*/}
+            {/*            </View>*/}
+            {/*        </View>*/}
+            {/*    </View>*/}
+            {/*    <View style={styles.reasonBox}>*/}
+            {/*        <View style={styles.reason}>*/}
+            {/*            <Text style={styles.reasonTitle}>End reason:</Text>*/}
+            {/*            <Text style={styles.reasonText}>Reason for ending Reason for ending Reason for ending</Text>*/}
+            {/*        </View>*/}
+            {/*    </View>*/}
+            {/*</View>*/}
 
         </TouchableHighlight>
     );
@@ -87,13 +100,31 @@ const styles = StyleSheet.create({
         backgroundColor:'white',
         marginTop:5,
         flex:1,
-        flexDirection: 'row',
+        // flexDirection: 'row',
+    },
+    animalBox:{
+        height:43,
+        padding:5,
+        borderWidth:0.5,
+        borderColor:'#E0E0E0',
+        flexDirection:"row",
+        alignItems:"center"
+    },
+    speciesName:{
+        color:'#999999',
+        fontSize:12
+    },
+    birdName:{
+        color:'#999999',
+        fontSize:12,
+        marginTop:3
     },
     avatars:{
-        width:44,
-        height:44,
-        borderRadius:50,
-        backgroundColor:'green'
+        width:33,
+        height:33,
+        borderRadius:4,
+        backgroundColor:'green',
+        marginRight:5
     },
     content:{
         // backgroundColor:'red',

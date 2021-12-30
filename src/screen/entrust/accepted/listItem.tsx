@@ -1,9 +1,9 @@
 import React from 'react';
 import {Alert, StyleSheet, Text, TouchableHighlight, View} from "react-native";
-import {INTELINK_SCREEN_NAME} from "../../../../../routes/screen-name";
+import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
 import Timeline from "react-native-timeline-flatlist";
 import {useSetState} from "ahooks";
-import {screenWidth} from "../../../../../config/contant";
+import {screenWidth} from "../../../config/contant";
 
 const ListItem: React.FC<any> = (props: any) => {
 

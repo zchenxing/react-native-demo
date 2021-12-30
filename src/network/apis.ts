@@ -85,7 +85,9 @@ const apis = {
         track: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/track`,
     },
     entrust:{
-        info:(id: string) => `${ecotopiaHost}/v1/entrust/id/${id}`
+        info:(id: string) => `${ecotopiaHost}/v1/entrust/id/${id}`,
+        biologicalInfo:(id: string) => `${ecotopiaHost}/v1/entrust/id/${id}/biological`,
+        biologicalImage:(id: string,imageId:string) => `${ecotopiaHost}/v1/entrust/id/${id}/biological/image/${imageId}`,
     },
 
 }

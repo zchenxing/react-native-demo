@@ -41,6 +41,8 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
         // props.onPressMore(positionY.current, !state.showMoreInfo)
     };
 
+    console.log(props.animalInfo)
+
     return (
         <View style={styles.container}>
             <View style={styles.card}>

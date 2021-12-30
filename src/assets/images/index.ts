@@ -9,4 +9,6 @@ export const localImages = {
     animalCardTop: require('./animalCardTop.png'),
     endAnimalCardTop: require('./endAnimalCardTop.png'),
     endEdImg: require('./endedImg.png'),
+    questForMe: require('./questForMe.png'),
+    questFromMe: require('./questFromMe.png'),
 }

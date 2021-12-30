@@ -1,4 +1,4 @@
-import Entrust from "../screen/publish/quest-publish/entrust";
+import Entrust from "../screen/entrust";
 
 export const PAGE_NAME = {
     HOME: 'Home',
@@ -35,8 +35,10 @@ export const INTELINK_SCREEN_NAME = {
     SCREEN_EDIT_PERSONAL_INFO: 'EditPersonalInfoScreen',
     // 委托列表
     SCREEN_ENTRUST_LIST: 'EntrustListScreen',
-    // 委托详情
+    // 接受委托详情
     SCREEN_ENTRUST_DETAIL: 'EntrustDetailScreen',
+    // 我的委托详情
+    SCREEN_MY_ENTRUST_DETAIL: 'EntrustMyDetailScreen',
     // 同步记录
     SCREEN_ENTRUST_RECORDING: 'EntrustRecordScreen',
     // 接受委托的人

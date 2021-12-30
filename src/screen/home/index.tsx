@@ -67,12 +67,12 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             {/*        title={selfInfoData?.nickname}*/}
             {/*        onPress={() => props.navigation.push('Test1')}*/}
             {/*    />*/}
-            {/*    <SpeedDial.Action*/}
-            {/*        title="委托"*/}
-            {/*        onPress={() => {*/}
-            {/*            props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST);*/}
-            {/*        }}*/}
-            {/*    />*/}
+                <SpeedDial.Action
+                    title="委托"
+                    onPress={() => {
+                        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST);
+                    }}
+                />
 
             {/*    <SpeedDial.Action*/}
             {/*        title="分享"*/}

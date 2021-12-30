@@ -1,77 +1,26 @@
 import React,{ useCallback, useMemo, useRef } from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View} from "react-native";
-import {Header} from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {screenHeight, screenWidth} from "../../../../../config/contant";
+import { screenWidth} from "../../../config/contant";
 import AnimalCard from "./animalCard";
 import {useSetState} from "ahooks";
-import BottomSelect from "./bottomSelect";
-import { BottomSheet, Button, ListItem } from 'react-native-elements';
-import {INTELINK_SCREEN_NAME} from "../../../../../routes/screen-name";
-import IconFont from "../../../../../iconfont";
-import EndAnimalCard from "./endAnimalCard";
+import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
+import IconFont from "../../../iconfont";
 import EndRecord from "./endRecord";
-import {useLanguage} from "../../../../../language";
-import {EditInfoType} from "../../../../../enum";
-import AweSimpleNavigator from "../../../../../components/awe-simple-navigator";
+import AweSimpleNavigator from "../../../components/awe-simple-navigator";
 
-const EntrustDetailScreen: React.FC<any> = (props: any) => {
+const EntrustMyDetailScreen: React.FC<any> = (props: any) => {
     const [state, setState] = useSetState<any>({
-        visible: false,
-        isVisible: false,
-        selectVisible: false,
+
     });
-    const actionSheetRef = React.createRef<any>();
-    const selectSheetRef = React.createRef<any>();
-    // variables
 
-    // callbacks
-    const handleSheetChanges = (index: number) => {
-        if (index === 0) {
-            setState({
-                visible: false
-            })
-        }
-    };
-
-    const handleSelectSheetChanges = useCallback((index: number) => {
-        if (index === 0) {
-            setState({
-                selectVisible: false
-            })
-        }
-    }, []);
-
-    const onClose = () => {
-        actionSheetRef.current.snapToPosition(1);
-
-        setState({
-            visible: false
-        })
-
-    };
-
-    const onSelectClose = () => {
-        selectSheetRef.current.snapToPosition(1);
-
-        setState({
-            selectVisible: false
-        })
-
-    };
-
-    const endChange = () => {
-        actionSheetRef.current && actionSheetRef.current.snapToIndex(1);
-        setState({visible: true})
-    }
     return (
         <>
             <AweSimpleNavigator
                 centerTitle={'11111'}
                 goBack={props.navigation.goBack}
-                rightActionTitle={useLanguage.save}
                 rightActionEvent={() => {
-                    props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_RECORDING)
+                    props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_ACCEPTED)
                 }}
                 rightActionIcon={<Icon
                     name={'angle-left'}
@@ -93,11 +42,11 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
                 <TouchableHighlight
                     underlayColor={'none'}
                     onPress={() => {
-                        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_ACCEPTED)
+                        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_RECORDING)
                     }}>
                     <View style={styles.accept}>
                         <View>
-                            <Text style={styles.acceptText}>Accepted (3)</Text>
+                            <Text style={styles.acceptText}>Sync record</Text>
                         </View>
                         <View>
                             <IconFont name={'arrow-right'} size={15} color={'#979797'}/>
@@ -114,13 +63,6 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
                 <View style={styles.footBtnBox}>
                     <TouchableHighlight
                         underlayColor={'none'}
-                        onPress={endChange}>
-                        <View style={styles.deleteBtn}>
-                            <Text style={styles.deleteBtnText}>ENDED</Text>
-                        </View>
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                        underlayColor={'none'}
                         onPress={() => {
                             setState({isVisible: true})
                         }}>
@@ -130,19 +72,6 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
                     </TouchableHighlight>
                 </View>
             </SafeAreaView>
-            <BottomSelect
-                onClose={onClose}
-                onSelectClose={onSelectClose}
-                selectVisible={state.selectVisible}
-                visible={state.visible}
-                actionSheetRef={actionSheetRef}
-                handleSheetChanges={handleSheetChanges}
-                handleSelectSheetChanges={handleSelectSheetChanges}
-                selectChange={() => {
-                    selectSheetRef.current && selectSheetRef.current.snapToIndex(1);
-                    setState({selectVisible: true})
-                }}
-                selectSheetRef={selectSheetRef}/>
         </>
     );
 }
@@ -249,4 +178,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default EntrustDetailScreen;
+export default EntrustMyDetailScreen;

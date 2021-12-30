@@ -35,7 +35,7 @@ const UserNavigator: React.FC<UserNavigatorProps> = (
                     <TouchableHighlight style={styles.userInfo}>
                         <>
                             <Image
-                                source={props.userInfo?.avatar ? {uri: props.userInfo.avatar} : localImages.defaultAvatar}
+                                source={props.userInfo?.avatar ? {uri: props.userInfo.avatar.url_thumb} : localImages.defaultAvatar}
                                 style={styles.avatar}
                             />
 

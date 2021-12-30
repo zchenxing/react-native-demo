@@ -33,14 +33,15 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         underlayColor={'none'}>
                         <FastImage
                             style={styles.avatar}
-                            source={
-                                props.commentDetail.target_user_info?.avatar
-                                    ? {
-                                          uri: props.commentDetail
-                                              .target_user_info?.avatar,
-                                      }
-                                    : localImages.defaultAvatar
-                            }
+                            // source={
+                            //     props.commentDetail.target_user_info?.avatar
+                            //         ? {
+                            //               uri: props.commentDetail
+                            //                   .target_user_info?.avatar,
+                            //           }
+                            //         : localImages.defaultAvatar
+                            // }
+                            source={localImages.defaultAvatar}
                             resizeMode={FastImage.resizeMode.cover}
                         />
                     </TouchableHighlight>
@@ -82,7 +83,6 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                                     </Text>
                                 )}
                             {props.commentDetail.content}
-                            {/*{props.commentDetail.id}*/}
                         </Text>
                     </View>
                 </View>

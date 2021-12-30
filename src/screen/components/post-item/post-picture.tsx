@@ -2,16 +2,17 @@ import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import FastImage from 'react-native-fast-image'
 import {screenWidth} from '../../../config/contant';
+import { PostImageProps } from "../../../interface/work";
 
 interface PostPictureProps {
-    pictureUri: any[];
+    pictureUri: PostImageProps[];
     onPressPicture: (startIndex: number) => void;
 }
 
 const pictureWrapperWidth = screenWidth - 40;
 
 const PostPicture: React.FC<PostPictureProps> = (props: PostPictureProps) => {
-    const [pictureList, setPictureList] = React.useState<string[]>([]);
+    const [pictureList, setPictureList] = React.useState<PostImageProps[]>([]);
     const [size, setSize] = React.useState<{width: number; height: number}>({
         width: pictureWrapperWidth,
         height: pictureWrapperWidth / 1.7,
@@ -19,9 +20,7 @@ const PostPicture: React.FC<PostPictureProps> = (props: PostPictureProps) => {
 
     React.useEffect(() => {
         if (props.pictureUri.length) {
-            const list: string[] = [...props.pictureUri]
-                .slice(0, 4)
-                .map(pic => pic.uri);
+            const list: PostImageProps[] = [...props.pictureUri].slice(0, 4)
             list.slice(0, 4);
 
             setPictureList(list);
@@ -46,21 +45,22 @@ const PostPicture: React.FC<PostPictureProps> = (props: PostPictureProps) => {
 
 
     const onLoadError = (index: number) => {
-        const list = [...pictureList]
-        list.splice(
-            index,
-            1,
-            'https://img2.baidu.com/it/u=283216396,3208798936&fm=26&fmt=auto',
-        );
-        setPictureList(list)
+        // const list = [...pictureList]
+        // list.splice(
+        //     index,
+        //     1,
+        //     'https://img2.baidu.com/it/u=283216396,3208798936&fm=26&fmt=auto',
+        // );
+        // setPictureList(list)
+
     }
 
     return (
         <View style={styles.container}>
-            {pictureList.map((uri, index) => {
+            {pictureList.map((picture: PostImageProps, index) => {
                 return (
                     <TouchableHighlight
-                        key={uri}
+                        key={picture.id}
                         onPress={() => onPressPicture(index)}
                         underlayColor={'none'}>
                         <View
@@ -68,7 +68,11 @@ const PostPicture: React.FC<PostPictureProps> = (props: PostPictureProps) => {
                                 styles.imageView,
                                 {width: size.width, height: size.height},
                             ]}>
-                            <FastImage source={{uri}} style={styles.image} onError={() => onLoadError(index)}>
+                            <FastImage
+                                source={{uri: picture.url_normal}}
+                                style={styles.image}
+                                onError={() => onLoadError(index)}
+                            >
                                 <View
                                     style={[
                                         styles.moreView,

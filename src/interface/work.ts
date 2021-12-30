@@ -4,6 +4,12 @@ export type UserEventProps = {
     event_type: 1 | 2 | 3
 }
 
+export type PostImageProps = {
+    id: string
+    url_origin: string
+    url_normal: string
+    url_thumb: string
+}
 
 export interface UserInfoProps {
     id: string
@@ -14,7 +20,7 @@ export interface UserInfoProps {
     total_follow?: number
     total_fans?: number
     gender?: GenderProps
-    avatar?: string
+    avatar?: PostImageProps
     job?: string
     address?: string
     birthday?: string
@@ -49,6 +55,9 @@ export interface PostContentProps {
     total_like: number
     // 用户信息
     user_info: UserInfoProps,
+    // 图片
+    images?: PostImageProps[]
+
     biological_card?: AnimalCardProps
     // 用户事件，1-收藏主题，2-点赞主题，3-关注用户
     user_events?: UserEventProps[] | null

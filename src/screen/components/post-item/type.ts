@@ -1,4 +1,4 @@
-import { PostContentProps } from "../../../interface/work";
+import { PostImageProps, PostContentProps } from "../../../interface/work";
 
 export interface PostItemProps {
     postItem: PostContentProps
@@ -7,11 +7,11 @@ export interface PostItemProps {
     // 点击查看帖子详情
     onPressDetail: (postContent: PostContentProps) => void
     // 查看图片
-    onPressPicture: (pictureList: any[], startIndex: number) => void
+    onPressPicture: (pictureList: PostImageProps[], startIndex: number) => void
     // 点击收藏
     onPressCollection: () => void
     // 查看评论
     onPressComment: () => void
     // 查看用户
-    onPressPersonal: () => void
+    onPressPersonal?: () => void
 }

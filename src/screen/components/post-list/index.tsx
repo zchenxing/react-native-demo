@@ -5,7 +5,7 @@ import AwePicturePreview from '../../../components/awe-picture-preview';
 import PostCommentSheet from '../post-comments-sheet';
 import {useSetState} from 'ahooks';
 import {PostListProps} from './type';
-import {PostContentProps} from '../../../interface/work';
+import { PostImageProps, PostContentProps } from "../../../interface/work";
 import server from '../../../network';
 import apis from '../../../network/apis';
 import ScreenBase from '../screen-base';
@@ -155,8 +155,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      * @param pictures
      * @param startIndex
      */
-    const onPressPicture = (pictures: any[], startIndex: number) => {
-        const list = pictures.map(picture => picture.uri);
+    const onPressPicture = (pictures: PostImageProps[], startIndex: number) => {
+        const list = pictures.map(picture => picture.url_origin);
 
         setState({
             pictureVisible: true,

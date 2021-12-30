@@ -31,6 +31,8 @@ import IconFont from '../../../iconfont';
 import axios from "axios";
 import dayjs from "dayjs";
 import myToken from "../../../network/token";
+import { PostType } from "../../../enum";
+import { usePublishDataStore } from "../../../store/provider";
 
 const pictureWidth = (screenWidth - 20) / 3;
 
@@ -53,7 +55,8 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const inputRef = React.useRef<any>(null);
     const contentText = React.useRef<any>('');
     const backListener = React.useRef<any>(null);
-    const postType = props.route.params.postType
+
+    const {startPublish} = usePublishDataStore()
 
     const [state, setState] = useSetState<IState>({
         publishTag: { color: '#fff', icon: 'huati', name: useLanguage.choose_category_first },
@@ -134,7 +137,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 };
             });
 
-            console.log(selectedAssets);
+            // console.log(selectedAssets);
 
             setState({selectedAssets});
         } catch (e: any) {
@@ -181,46 +184,22 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const onPressSubmit = async () => {
 
-        console.log(state.selectedAssets);
+        console.log('提交发布');
 
-        let formData = new FormData()
-        state.selectedAssets.forEach((data) => {
-            const file = {
-                uri: data.uri,
-                type: 'multipart/form-data',
-                name: `${dayjs().valueOf()}-${data.fileName}`
-            }
-            formData.append('file', file)
-        })
+        const data = {
+            label: state.publishTag.name,
+            type: PostType.Normal,
+            content: Utils.removeSpaceAndEnter(state.postContent),
+        };
 
-        console.log({file: formData});
+        props.navigation.goBack();
 
-        server.post(apis.file.upload, formData).then(res => {
-            console.log(res.data);
-        }).catch(err => {
-            console.log(err);
-        })
+        startPublish(data, [...state.selectedAssets])
 
-
-        // try {
-        //     const data = {
-        //         label: state.publishTag.name,
-        //         type: postType,
-        //         content: Utils.removeSpaceAndEnter(state.postContent),
-        //     };
-        //
-        //     console.log('发布内容', data);
-        //
-        //     await server.post(apis.post.create, data);
-        //     Toast.show('发布成功');
-        //     // 刷新首页列表
-        //     DeviceEventEmitter.emit(EventEmitterName.RefreshHome);
-        //
-        //     props.navigation.goBack();
-        // } catch (err) {
-        //     console.log(err);
-        // }
+        // // 刷新首页列表
+        // DeviceEventEmitter.emit(EventEmitterName.RefreshHome);
     };
+
 
     return (
         <>

@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Keyboard, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import AweSimpleNavigator from "../../../components/awe-simple-navigator";
 import { useLanguage } from "../../../language";
 import { NavigateProps } from "../../../interface";
@@ -105,7 +105,7 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             </View>
 
 
-            <ScrollView style={styles.container} scrollEnabled={true}>
+            <ScrollView style={styles.container} scrollEnabled={true} >
                 <View style={{padding: 10}}>
                     <TextInput
                         ref={inputRef}

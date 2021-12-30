@@ -34,7 +34,10 @@ const PersonalPreviewScreen: React.FC<NavigateProps> = (
         localAvatarPath: '',
     });
 
-    React.useEffect(() => {}, []);
+    React.useEffect(() => {
+        // console.log('self info data', selfInfoData);
+    }, [])
+
 
     const openCamera = async () => {
         try {
@@ -75,9 +78,9 @@ const PersonalPreviewScreen: React.FC<NavigateProps> = (
             };
             formData.append('file', file);
 
-            const res = await server.post(apis.file.upload, formData);
+            const res = await server.post(apis.file.upload('user'), formData);
 
-            updateAvatar(response, res.data.url);
+            updateAvatar(response, res.data.id);
         } catch (err) {
 
             setState({
@@ -89,11 +92,17 @@ const PersonalPreviewScreen: React.FC<NavigateProps> = (
     /**
      * 更新头像
      * @param response
-     * @param url
+     * @param id
      */
-    const updateAvatar = async (response: any, url: string) => {
+    const updateAvatar = async (response: any, id: string) => {
         try {
-            await server.put(apis.user.myself, {avatar: url});
+
+            const data = {
+                ...selfInfoData,
+                avatar_image_id: id
+            }
+
+            await server.put(apis.user.myself, data);
             setState({
                 loading: false,
                 localAvatar: response,
@@ -132,8 +141,8 @@ const PersonalPreviewScreen: React.FC<NavigateProps> = (
                     <>
                         <Image
                             source={
-                                state.localAvatarPath
-                                    ? {uri: state.localAvatarPath}
+                                selfInfoData?.avatar?.url_normal
+                                    ? {uri: selfInfoData.avatar.url_normal}
                                     : localImages.defaultAvatar
                             }
                             style={styles.avatar}

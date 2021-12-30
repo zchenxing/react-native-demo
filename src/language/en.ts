@@ -57,8 +57,13 @@ export const languageEn = {
     adult: 'Adult',
     child: 'Juvenile',
 
-    x_minute_ago: (min: number) =>
-        `${min} ${min > 1 ? 'minutes' : 'minute'} ago`,
-    x_hour_ago: (hour: number) => `${hour} ${hour > 1 ? 'hours' : 'hour'} ago`,
-    x_day_ago: (day: number) => `${day} ${day > 1 ? 'days' : 'day'} ago`,
+    x_minute_ago: (min: number, isAge: boolean) => {
+        return `${min} ${min > 1 ? 'minutes' : 'minute'} ${isAge ? 'age' : ''}`
+    },
+    x_hour_ago: (hour: number, isAge: boolean) => {
+        return `${hour} ${hour > 1 ? 'hours' : 'hour'} ${isAge ? 'age' : ''}`
+    },
+    x_day_ago: (day: number, isAge: boolean) => {
+        return `${day} ${day > 1 ? 'days' : 'day'} ${isAge ? 'age' : ''}`
+    },
 };

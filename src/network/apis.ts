@@ -51,8 +51,8 @@ const apis = {
             return `/v1/comment/id/${comId}/reply/id/${repId}`
         },
         // 回复列表
-        replyList: (comId: string, param = '') => {
-            return `/v1/comment/id/${comId}/reply/page/${param}`
+        replyList: (comId: string, param?: number) => {
+            return `/v1/comment/id/${comId}/reply/page/${param || ''}`
         },
         // 删除评论
         deleteComment: (comId: string) => `/v1/comment/id/${comId}`,
@@ -63,8 +63,8 @@ const apis = {
     },
     // 文件API
     file: {
-        // 上传文件
-        upload: '/v1/file/',
+        // 上传文件,  tag:theme-帖子相关，user-用户相关
+        upload: (tag: 'theme' | 'user') =>  `/v1/file/${tag}`,
         // 删除文件
         delete: (fileId: string) => `/v1/file/id/${fileId}`,
         // 文件列表

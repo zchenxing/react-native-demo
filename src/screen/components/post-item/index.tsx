@@ -3,7 +3,6 @@ import {StyleSheet, TouchableHighlight} from 'react-native';
 import {PostItemProps} from './type';
 import PostHeader from './post-header';
 import PostArticle from './post-article';
-import {pictureList} from '../../../mock';
 import PostFooter from './post-footer';
 import PostPicture from './post-picture';
 import PostAnimalCard from './post-animal-card';
@@ -14,7 +13,9 @@ import AnimalCard from "../animal-card";
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
     const onPressPicture = (startIndex: number) => {
-        props.onPressPicture(pictureList, startIndex);
+        if (props.postItem.images) {
+            props.onPressPicture(props.postItem.images, startIndex);
+        }
     };
 
     return (
@@ -25,13 +26,21 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
             <>
                 <PostHeader
                     userNickname={props.postItem.user_info.nickname}
-                    userAvatar={props.postItem.user_info.avatar}
+                    userAvatar={props.postItem.user_info.avatar?.url_thumb}
                     label={props.postItem.label}
                     hiddenFollow={props.hiddenFollow}
-                    handleUser={props.onPressPersonal}
+                    handleUser={() => props.onPressPersonal && props.onPressPersonal()}
                 />
 
                 <PostArticle contentText={props.postItem.content} />
+
+                {
+                    props.postItem.images &&
+                    <PostPicture
+                        pictureUri={props.postItem.images}
+                        onPressPicture={onPressPicture}
+                    />
+                }
 
                 {/*{props.index % 2 !== 0 ? (*/}
                 {/*    <PostPicture*/}

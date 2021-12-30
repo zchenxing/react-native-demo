@@ -176,7 +176,7 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                             <WebView
                                 automaticallyAdjustContentInsets={false}
                                 source={{
-                                    uri: 'https://map.tianditu.gov.cn/',
+                                    uri: 'https://bird.coolhei.com/appmap/en/#/',
                                 }}
                             />
                         )}

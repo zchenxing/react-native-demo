@@ -294,15 +294,15 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                     underlayColor={'none'}
                     onPress={handleReplyToPost}>
                     <View style={styles.sheetFooter}>
-                        <Image
-                            style={styles.avatar}
-                            defaultSource={localImages.defaultAvatar}
-                            source={
-                                selfInfoData?.avatar
-                                    ? {uri: selfInfoData.avatar}
-                                    : localImages.defaultAvatar
-                            }
-                        />
+                        {/*<Image*/}
+                        {/*    style={styles.avatar}*/}
+                        {/*    defaultSource={localImages.defaultAvatar}*/}
+                        {/*    source={*/}
+                        {/*        selfInfoData?.avatar*/}
+                        {/*            ? {uri: selfInfoData.avatar.url_thumb}*/}
+                        {/*            : localImages.defaultAvatar*/}
+                        {/*    }*/}
+                        {/*/>*/}
                         <View style={styles.submitText}>
                             <Text
                                 numberOfLines={1}

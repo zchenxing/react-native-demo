@@ -39,11 +39,6 @@ const EntrustListScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const changeEntrustType = (type:string) => {
         setState({entrustType:type})
-        if (type === 'accepted'){
-            props.navigation.navigate('All')
-        }else {
-            props.navigation.navigate('Quest')
-        }
 
     }
 

@@ -2,11 +2,11 @@ import React from 'react';
 import {Alert, FlatList, RefreshControl, Text, TouchableHighlight, View} from "react-native";
 import { NavigateProps } from "../../../interface";
 import {useSetState} from "ahooks";
-import ListItem from "../listItem";
+import ListItem from "../list-item";
 import {screenWidth} from "../../../config/contant";
 import {EntrustType} from "../../../enum";
 
-const EntrustPending: React.FC<NavigateProps> = (props: NavigateProps) => {
+const EntrustOngoing: React.FC<NavigateProps> = (props: NavigateProps) => {
     const [state, setState] = useSetState<any>({
         refreshing: false,
     });
@@ -65,4 +65,4 @@ const EntrustPending: React.FC<NavigateProps> = (props: NavigateProps) => {
 
 
 
-export default EntrustPending;
+export default EntrustOngoing;

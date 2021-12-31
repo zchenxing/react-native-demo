@@ -3,7 +3,7 @@ import {ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, Touchable
 import Icon from "react-native-vector-icons/FontAwesome";
 import {Header} from "react-native-elements";
 import {screenWidth} from "../../../config/contant";
-import ListItem from "./listItem";
+import ListItem from "./list-item";
 import {useSetState} from "ahooks";
 import {useLanguage} from "../../../language";
 import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";

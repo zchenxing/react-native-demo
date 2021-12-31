@@ -11,14 +11,14 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { screenWidth} from "../../../config/contant";
-import AnimalCard from "./animalCard";
+import AnimalCard from "./animal-card";
 import {useSetState} from "ahooks";
 import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
 import IconFont from "../../../iconfont";
-import EndRecord from "./endRecord";
+import EndRecord from "./end-record";
 import AweSimpleNavigator from "../../../components/awe-simple-navigator";
-import ListItem from "../accepted/listItem";
-import BottomSelect from "./bottomSelect";
+import ListItem from "../accepted/list-item";
+import BottomSelect from "./bottom-select";
 
 const EntrustMyDetailScreen: React.FC<any> = (props: any) => {
     const [state, setState] = useSetState<any>({

@@ -2,10 +2,12 @@ import React from 'react';
 import {Alert, FlatList, RefreshControl, Text, TouchableHighlight, View} from "react-native";
 import { NavigateProps } from "../../../interface";
 import {useSetState} from "ahooks";
-import ListItem from "../listItem";
+import ListItem from "../list-item";
 import {screenWidth} from "../../../config/contant";
+import {EntrustType} from "../../../enum";
+import AcceptListItem from "../accept-list-item";
 
-const EntrustAll: React.FC<NavigateProps> = (props: NavigateProps) => {
+const AcceptEntrustEnded: React.FC<NavigateProps> = (props: NavigateProps) => {
     const [state, setState] = useSetState<any>({
         refreshing: false,
     });
@@ -35,7 +37,7 @@ const EntrustAll: React.FC<NavigateProps> = (props: NavigateProps) => {
     ];
 
     const renderItem = ({ item }: any) => (
-        <ListItem title={item.title} navigation={props.navigation}/>
+        <AcceptListItem title={item.title} navigation={props.navigation}/>
     );
     /**
      * 下拉刷新数据
@@ -64,4 +66,4 @@ const EntrustAll: React.FC<NavigateProps> = (props: NavigateProps) => {
 
 
 
-export default EntrustAll;
+export default AcceptEntrustEnded;

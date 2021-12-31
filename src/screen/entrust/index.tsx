@@ -18,14 +18,14 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import {useSetState} from "ahooks";
 import {EventEmitterName, screenWidth} from "../../config/contant";
 import Test4 from "../test/test4";
-import EntrustAll from "./myEntrust/all";
-import EntrustPending from "./myEntrust/pending";
-import EntrustOngoing from "./myEntrust/Ongoing";
-import EntrustEnded from "./myEntrust/ended";
+import EntrustAll from "./my-entrust/all";
+import EntrustPending from "./my-entrust/pending";
+import EntrustOngoing from "./my-entrust/Ongoing";
+import EntrustEnded from "./my-entrust/ended";
 import {localImages} from "../../assets/images";
 import FastImage from "react-native-fast-image";
-import AcceptEntrustQuest from "./acceptedEntrust/quest";
-import AcceptEntrustEnded from "./acceptedEntrust/ended";
+import AcceptEntrustQuest from "./accepted-entrust/quest";
+import AcceptEntrustEnded from "./accepted-entrust/ended";
 const Tab = createMaterialTopTabNavigator();
 
 

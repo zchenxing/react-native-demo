@@ -90,7 +90,13 @@ const apis = {
         location: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/location`,
         // 查看生物的轨迹
         track: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/track`,
-    }
+    },
+    entrust:{
+        info:(id: string) => `${ecotopiaHost}/v1/entrust/id/${id}`,
+        biologicalInfo:(id: string) => `${ecotopiaHost}/v1/entrust/id/${id}/biological`,
+        biologicalImage:(id: string,imageId:string) => `${ecotopiaHost}/v1/entrust/id/${id}/biological/image/${imageId}`,
+    },
+
 }
 
 export default apis

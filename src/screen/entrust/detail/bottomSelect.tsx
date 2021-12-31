@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect} from 'react';
 import {StyleSheet, TouchableHighlight, View, Text, Keyboard, TextInput, Alert} from "react-native";
-import {screenHeight} from "../../../../../config/contant";
+import {screenHeight} from "../../../config/contant";
 import BottomSheet from "@gorhom/bottom-sheet";
-import AweKeyboard from "../../../../../components/awe-keyboard";
+import AweKeyboard from "../../../components/awe-keyboard";
 import {useSetState} from "ahooks";
 import {Image} from "react-native-elements";
-import {avatarUrl} from "../../../../../mock";
-import {useLanguage} from "../../../../../language";
-import {themeColor} from "../../../../../assets/styles";
+import {avatarUrl} from "../../../mock";
+import {useLanguage} from "../../../language";
+import {themeColor} from "../../../assets/styles";
 import {ReasonSelectItem} from "./config";
 
 const BottomSelect = (props) => {
@@ -86,7 +86,7 @@ const BottomSelect = (props) => {
         <BottomSheet
             ref={props.actionSheetRef}
                 index={-1}
-            snapPoints={[1, screenHeight * 0.3 + state.keyboardHeight * 1.2 + state.scrollOffsetY  ]}
+            snapPoints={[1, 260 + state.keyboardHeight * 1.2 + state.scrollOffsetY  ]}
             onChange={handleSheetChanges}
         >
             <View style={styles.sheetTop}>
@@ -153,7 +153,7 @@ const BottomSelect = (props) => {
         <BottomSheet
             ref={props.selectSheetRef}
             index={-1}
-            snapPoints={[1, screenHeight * 0.3]}
+            snapPoints={[1, 225]}
             onChange={props.handleSelectSheetChanges}
         >
             {

@@ -41,6 +41,8 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
         });
     };
 
+    console.log(props.animalInfo)
+
     return (
         <View style={styles.container}>
             <View

@@ -1,15 +1,17 @@
 import React from 'react';
-import {Alert, StyleSheet, Text, TouchableHighlight, View} from "react-native";
-import {INTELINK_SCREEN_NAME} from "../../../../routes/screen-name";
+import {Alert, Image, StyleSheet, Text, TouchableHighlight, View} from "react-native";
+import {INTELINK_SCREEN_NAME} from "../../routes/screen-name";
+import {EntrustType} from "../../enum";
+import {localImages} from "../../assets/images";
 
 const ListItem: React.FC<any> = (props: any) => {
     return (
         <TouchableHighlight
             underlayColor={'none'}
-            onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_DETAIL)}}
+            onPress={() => {props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_MY_ENTRUST_DETAIL)}}
         >
             {/*<View style={styles.list}>*/}
-            {/*    <View style={styles.avatars}></View>*/}
+            {/*    /!*<View style={styles.avatars}></View>*!/*/}
             {/*    <View style={styles.content}>*/}
             {/*        <View style={styles.contentLeft}>*/}
             {/*            <View><Text style={styles.deviceName}>Mini-2G-Lite</Text></View>*/}
@@ -26,9 +28,15 @@ const ListItem: React.FC<any> = (props: any) => {
             {/*            </View>*/}
             {/*        </View>*/}
             {/*    </View>*/}
+            {/*    <View style={styles.animalBox}>*/}
+            {/*        <View style={styles.avatars}></View>*/}
+            {/*        <View>*/}
+            {/*            <Text style={styles.speciesName}>Species name</Text>*/}
+            {/*            <Text style={styles.birdName}>Bird name</Text>*/}
+            {/*        </View>*/}
+            {/*    </View>*/}
             {/*</View>*/}
             {/*<View style={styles.list}>*/}
-            {/*    <View style={styles.avatars}></View>*/}
             {/*    <View style={styles.content}>*/}
             {/*        <View style={styles.contentLeft}>*/}
             {/*            <View><Text style={styles.deviceName}>Mini-2G-Lite</Text></View>*/}
@@ -46,19 +54,27 @@ const ListItem: React.FC<any> = (props: any) => {
             {/*            </View>*/}
             {/*        </View>*/}
             {/*    </View>*/}
+            {/*    <View style={styles.animalBox}>*/}
+            {/*        <View style={styles.avatars}></View>*/}
+            {/*        <View>*/}
+            {/*            <Text style={styles.speciesName}>Species name</Text>*/}
+            {/*            <Text style={styles.birdName}>Bird name</Text>*/}
+            {/*        </View>*/}
+            {/*    </View>*/}
             {/*</View>*/}
             <View>
                 <View style={styles.list}>
-                    <View style={styles.avatars}></View>
                     <View style={styles.content}>
                         <View style={styles.contentLeft}>
                             <View><Text style={styles.deviceName}>Mini-2G-Lite</Text></View>
                             <View><Text style={styles.uuid}>UUID: ecde2809d9e5</Text></View>
                         </View>
                         <View style={styles.contentRight}>
-                            <View style={styles.endEdImg}>
-
-                            </View>
+                            <Image
+                                style={styles.endEdImg}
+                                resizeMode={'cover'}
+                                source={localImages.endEdImg}
+                            />
                             <View style={styles.endTimeBox}>
                                 <Text style={styles.hour}>17:42</Text>
                                 <Text style={styles.date}>2021/03/03</Text>
@@ -66,6 +82,15 @@ const ListItem: React.FC<any> = (props: any) => {
                         </View>
                     </View>
                 </View>
+                    <View style={styles.animalInfoBox}>
+                        <View style={styles.animal}>
+                            <View style={styles.avatars}></View>
+                            <View>
+                                <Text style={styles.speciesName}>Species name</Text>
+                                <Text style={styles.birdName}>Bird name</Text>
+                            </View>
+                        </View>
+                    </View>
                 <View style={styles.reasonBox}>
                     <View style={styles.reason}>
                         <Text style={styles.reasonTitle}>End reason:</Text>
@@ -87,13 +112,37 @@ const styles = StyleSheet.create({
         backgroundColor:'white',
         marginTop:5,
         flex:1,
-        flexDirection: 'row',
+        // flexDirection: 'row',
+    },
+    animalBox:{
+        height:43,
+        padding:5,
+        borderWidth:0.5,
+        borderColor:'#E0E0E0',
+        flexDirection:"row",
+        alignItems:"center"
+    },
+    animalInfoBox:{
+        paddingLeft:14,
+        paddingRight:14,
+        backgroundColor:'#fff',
+        paddingBottom:5,
+    },
+    speciesName:{
+        color:'#999999',
+        fontSize:12
+    },
+    birdName:{
+        color:'#999999',
+        fontSize:12,
+        marginTop:3
     },
     avatars:{
-        width:44,
-        height:44,
-        borderRadius:50,
-        backgroundColor:'green'
+        width:33,
+        height:33,
+        borderRadius:4,
+        backgroundColor:'green',
+        marginRight:5
     },
     content:{
         // backgroundColor:'red',
@@ -150,9 +199,8 @@ const styles = StyleSheet.create({
         marginRight:5
     },
     endEdImg:{
-        width:30,
-        height:30,
-        backgroundColor:'green',
+        width:64,
+        height:38,
         position:"absolute",
         right:0,
         top:-15
@@ -180,6 +228,18 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderColor:'#ECECEC',
         borderRadius:3
+    },
+    animal:{
+        paddingTop:5,
+        paddingBottom:5,
+        paddingLeft:10,
+        paddingRight:10,
+        backgroundColor:'white',
+        borderWidth:1,
+        borderColor:'#ECECEC',
+        borderRadius:3,
+        flexDirection:"row",
+        alignItems:"center",
     },
     reasonTitle:{
         color:'#999999',

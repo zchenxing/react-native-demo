@@ -36,6 +36,17 @@ export const UserEventType = {
     Follow: 3
 }
 
+export const EntrustType = {
+    // all
+    All: 'all',
+    // pending
+    Pending: 'pending',
+    // ongoing
+    Ongoing: 'ongoing',
+    // ended
+    Ended: 'ended',
+}
+
 
 
 // 帖子类型

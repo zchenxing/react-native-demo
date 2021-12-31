@@ -2,10 +2,12 @@ import React from 'react';
 import {ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableHighlight, View} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {Header} from "react-native-elements";
-import {screenWidth} from "../../../../../config/contant";
+import {screenWidth} from "../../../config/contant";
 import ListItem from "./listItem";
 import {useSetState} from "ahooks";
-import {useLanguage} from "../../../../../language";
+import {useLanguage} from "../../../language";
+import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
+import AweSimpleNavigator from "../../../components/awe-simple-navigator";
 
 const EntrustRecordScreen = (props: any) => {
 
@@ -115,27 +117,10 @@ const EntrustRecordScreen = (props: any) => {
     };
 
     return <>
-        <Header
-            backgroundColor='#fff'
-            leftComponent={
-                <TouchableHighlight
-                    underlayColor={'none'}
-                    onPress={props.navigation.goBack}>
-                    <View style={{width: 100, paddingLeft: 10}}>
-                        <Icon
-                            name={'angle-left'}
-                            style={{fontSize: 30, color: '#aaa'}}
-                        />
-                    </View>
-                </TouchableHighlight>
-            }
-            centerComponent={
-                <View>
-                    <Text style={styles.pageTitle}>Sync record</Text>
-                </View>
-            }
-        >
-        </Header>
+        <AweSimpleNavigator
+            centerTitle={'Sync record'}
+            goBack={props.navigation.goBack}
+        />
         <View style={styles.dataCountBox}>
             <Text>223,223,999 data</Text>
             <Text>Contains 7879 but not uploaded</Text>

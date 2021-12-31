@@ -24,7 +24,7 @@ import {ReplyType} from '../components/post-comments-sheet/type';
 import AweLoadMore from '../../components/awe-load-more';
 import {observer} from 'mobx-react';
 import PastCard from './post-card';
-import WorkHelp from "../../help/work";
+import WorkHelp from '../../help/work';
 import { UserEventType } from "../../enum";
 
 interface IState {
@@ -71,7 +71,10 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         const detail: PostContentProps = postStoreData[fromListId][rowIndex]
 
         setState({
-            isCollection: WorkHelp.userEventExist(detail.user_events, UserEventType.Collection).isExist,
+            isCollection: WorkHelp.userEventExist(
+                detail.user_events,
+                UserEventType.Collection,
+            ).isExist,
             postDetail: detail,
         });
 

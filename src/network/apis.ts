@@ -1,4 +1,4 @@
-import { isIOS } from "../config/contant";
+import {isIOS} from '../config/contant';
 
 const ecotopiaHost = `${
     isIOS ? 'https' : 'http'
@@ -16,14 +16,14 @@ const apis = {
         follow: (userId: string) => `/v1/user/id/${userId}/follow/`,
         // 已发布帖子列表
         posts: (userId: string, param = '') => {
-            return `/v1/user/id/${userId}/theme/page/${param}`
+            return `/v1/user/id/${userId}/theme/page/${param}`;
         },
         followed: (userId: string, params = '') => {
-            return `/v1/user/id/${userId}/follow/page/${params}`
+            return `/v1/user/id/${userId}/follow/page/${params}`;
         },
         fans: (userId: string, params = '') => {
-            return `/v1/user/id/${userId}/followed/page/${params}`
-        }
+            return `/v1/user/id/${userId}/followed/page/${params}`;
+        },
     },
     // 帖子API
     post: {
@@ -35,68 +35,82 @@ const apis = {
         list: (param = '') => `/v1/theme/page/${param}`,
         // 搜索帖子
         search: (name: string, param = '') => {
-            return `/v1/theme/search/${name}/page/${param}`
+            return `/v1/theme/search/${name}/page/${param}`;
         },
         // 收藏操作
         collect: (postId: string) => `/v1/theme/id/${postId}/collect`,
         comment: {
             // 评论列表
             list: (postId: string, param = '') => {
-                return `/v1/theme/id/${postId}/comment/page/${param}`
+                return `/v1/theme/id/${postId}/comment/page/${param}`;
             },
             // 发表评论
             push: (postId: string) => `/v1/theme/id/${postId}/comment`,
         },
-
     },
     // 评论API
     comment: {
         // 回复评论
         replyToComment: (comId: string) => `/v1/comment/id/${comId}/reply`,
         // 回复评论下面的回复
-        replyToReply: (comId: string | undefined, repId: string | undefined) => {
-            return `/v1/comment/id/${comId}/reply/id/${repId}`
+        replyToReply: (
+            comId: string | undefined,
+            repId: string | undefined,
+        ) => {
+            return `/v1/comment/id/${comId}/reply/id/${repId}`;
         },
         // 回复列表
         replyList: (comId: string, param?: number) => {
-            return `/v1/comment/id/${comId}/reply/page/${param || ''}`
+            return `/v1/comment/id/${comId}/reply/page/${param || ''}`;
         },
         // 删除评论
         deleteComment: (comId: string) => `/v1/comment/id/${comId}`,
         // 删除回复
         deleteReply: (comId: string, repId: string) => {
-            return `/v1/comment/id/${comId}/reply/id/${repId}`
-        }
+            return `/v1/comment/id/${comId}/reply/id/${repId}`;
+        },
     },
     // 文件API
     file: {
         // 上传文件,  tag:theme-帖子相关，user-用户相关
-        upload: (tag: 'theme' | 'user') =>  `/v1/file/${tag}`,
+        upload: (tag: 'theme' | 'user') => `/v1/file/${tag}`,
         // 删除文件
         delete: (fileId: string) => `/v1/file/id/${fileId}`,
         // 文件列表
-        list: (param = '') => `/v1/file/page/${param}`
+        list: (param = '') => `/v1/file/page/${param}`,
     },
     ecotopia: {
-        // 查看分享
-        share: (id: string) => `${ecotopiaHost}/v1/share/id/${id}`,
-        // 查看生物信息
-        info: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/biological`,
-        // 查看生物照片
-        image: (id: string, imgId: string) => {
-            return `${ecotopiaHost}/v1/share/id/${id}/biological/image/${imgId}`
+        share: {
+            // 查看分享
+            base: (id: string) => `${ecotopiaHost}/v1/share/id/${id}`,
+            // 查看生物信息
+            info: (id: string) =>
+                `${ecotopiaHost}/v1/share/id/${id}/biological`,
+            // 查看生物照片
+            image: (id: string, imgId: string) => {
+                return `${ecotopiaHost}/v1/share/id/${id}/biological/image/${imgId}`;
+            },
+            // 查看生物的最新位置
+            location: (id: string) =>
+                `${ecotopiaHost}/v1/share/id/${id}/location`,
+            // 查看生物的轨迹
+            track: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/track`,
         },
-        // 查看生物的最新位置
-        location: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/location`,
-        // 查看生物的轨迹
-        track: (id: string) => `${ecotopiaHost}/v1/share/id/${id}/track`,
+        quest: {
+            base: (id: string) => `${ecotopiaHost}/v1/entrust/id/${id}`,
+            info: (id: string) => `${ecotopiaHost}/v1/entrust/id/${id}/biological`,
+            image: (id: string, imageId: string) => {
+                return `${ecotopiaHost}/v1/entrust/id/${id}/biological/image/${imageId}`
+            }
+        }
     },
-    entrust:{
-        info:(id: string) => `${ecotopiaHost}/v1/entrust/id/${id}`,
-        biologicalInfo:(id: string) => `${ecotopiaHost}/v1/entrust/id/${id}/biological`,
-        biologicalImage:(id: string,imageId:string) => `${ecotopiaHost}/v1/entrust/id/${id}/biological/image/${imageId}`,
+    entrust: {
+        info: (id: string) => `${ecotopiaHost}/v1/entrust/id/${id}`,
+        biologicalInfo: (id: string) =>
+            `${ecotopiaHost}/v1/entrust/id/${id}/biological`,
+        biologicalImage: (id: string, imageId: string) =>
+            `${ecotopiaHost}/v1/entrust/id/${id}/biological/image/${imageId}`,
     },
+};
 
-}
-
-export default apis
+export default apis;

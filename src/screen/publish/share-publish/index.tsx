@@ -59,7 +59,7 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      */
     const getCheckShare = async () => {
         try {
-            const res = await axios.get(apis.ecotopia.share(shareId));
+            const res = await axios.get(apis.ecotopia.share.base(shareId));
             const shareData: ShareProps = res.data;
             // 设置生物物种
             const tag = shareSpeciesTags[shareData.animal_category];
@@ -78,13 +78,13 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      */
     const getAnimalInfo = async () => {
         try {
-            const res = await axios.get(apis.ecotopia.info(shareId));
+            const res = await axios.get(apis.ecotopia.share.info(shareId));
 
             const animalData: ShareAnimalProps = {
                 ...res.data,
                 // 生成图片URL
                 imageUrls: res.data.images.map((url: string) => {
-                    return apis.ecotopia.image(shareId, url);
+                    return apis.ecotopia.share.image(shareId, url);
                 }),
             }
 

@@ -18,6 +18,7 @@ import EntrustAcceptedScreen from "../screen/entrust/accepted";
 import EntrustSharingScreen from "../screen/publish/quest-publish/sharing";
 import SharePublishScreen from "../screen/publish/share-publish";
 import EntrustMyDetailScreen from "../screen/entrust/detail/myEntrustDetail";
+import QuestPublishScreen from "../screen/publish/quest-publish";
 
 type routeProps = {
     name: string
@@ -107,8 +108,8 @@ export const intelinkRoute: routeProps[] = [
         component: EntrustAcceptedScreen
     },
     {
-        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_SHARING,
-        component: EntrustSharingScreen
+        name: INTELINK_SCREEN_NAME.SCREEN_PUBLISH_ENTRUST,
+        component: QuestPublishScreen
     }
 ];
 

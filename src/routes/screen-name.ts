@@ -44,7 +44,7 @@ export const INTELINK_SCREEN_NAME = {
     // 接受委托的人
     SCREEN_ENTRUST_ACCEPTED: 'EntrustAcceptedScreen',
     // 分享委托
-    SCREEN_ENTRUST_SHARING: 'EntrustSharingScreen',
+    SCREEN_PUBLISH_ENTRUST: 'EntrustSharingScreen',
     // 预览个人信息
     SCREEN_PREVIEW_PERSONAL_INFO: 'PersonalPreviewScreen',
 

@@ -33,10 +33,23 @@ export enum ShareDataCategoryType {
 
 
 export type ShareProps = {
+    // 是否停止
     stoped: boolean
+    // 过期时间
+    expiry_date?: string
     animal_category: string
     biological_name: string
+    biological_id?: string
     data_category: ShareDataCategoryType
+    // 委托特有
+    uuid?: string
+    product_model?: string
+    device_id?: string
+    geo_round?: {
+        distance: number
+        lng: number
+        lat: number
+    }
 }
 
 export enum AnimalAge {

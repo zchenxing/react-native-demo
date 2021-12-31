@@ -79,7 +79,17 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 />
 
                 <SpeedDial.Action
-                    title="分享"
+                    title="发布委托"
+                    onPress={() => {
+                        setOpen(false)
+                        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PUBLISH_ENTRUST, {
+                            shareId: '61cd0facaca33b601ec76ea1'
+                        });
+                    }}
+                />
+
+                <SpeedDial.Action
+                    title="发布分享"
                     onPress={() => {
                         setOpen(false)
                         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PUBLISH_SHARE, {

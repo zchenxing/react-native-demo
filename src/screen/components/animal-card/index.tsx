@@ -41,8 +41,6 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
         });
     };
 
-    console.log(props.animalInfo)
-
     return (
         <View style={styles.container}>
             <View
@@ -183,9 +181,11 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                         // 委托就要显示设备信息
                         props.animalType === AnimalCardType.QuestType && (
                             <View style={styles.deviceBase}>
-                                <Text style={styles.deviceType}>LEGO</Text>
+                                <Text style={styles.deviceType}>
+                                    {props.shareData?.product_model || ''}
+                                </Text>
                                 <Text style={styles.deviceUUId}>
-                                    UUID: 12380192830912
+                                    UUID: {props.shareData?.uuid || ''}
                                 </Text>
                             </View>
                         )
@@ -202,10 +202,12 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                         )}
                     </View>
 
-                    {props.animalType === AnimalCardType.QuestType && (
+                    {props.shareData?.expiry_date && (
                         <View style={styles.expiryBase}>
                             <Text style={styles.expiryText}>
-                                {Utils.getExpireTime('2022-12-22 22:33:22')}
+                                {useLanguage.expiry_in}{Utils.getExpireTime(
+                                    props.shareData.expiry_date,
+                                )}
                             </Text>
                         </View>
                     )}

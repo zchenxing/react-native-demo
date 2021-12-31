@@ -1,20 +1,20 @@
-import React from "react";
-import { Image, StyleSheet, Text, TouchableHighlight, View } from "react-native";
-import IconFont from "../../../iconfont";
-import FastImage from "react-native-fast-image";
-import { useLanguage } from "../../../language";
-import LinearGradient from "react-native-linear-gradient";
-import { themeColor } from "../../../assets/styles";
-import { screenWidth } from "../../../config/contant";
-import { AnimalAge, AnimalCardProps, AnimalCardType } from "./type";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { useSetState } from "ahooks";
-import { WebView } from "react-native-webview";
-import { localImages } from "../../../assets/images";
-import AnimalCardShareMore from "./more-info";
-import AnimalMorePicture from "./more-picture";
-import Utils from "../../../help";
-import { shareSpeciesTags } from "../../../config/type";
+import React from 'react';
+import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
+import IconFont from '../../../iconfont';
+import FastImage from 'react-native-fast-image';
+import {useLanguage} from '../../../language';
+import LinearGradient from 'react-native-linear-gradient';
+import {themeColor} from '../../../assets/styles';
+import {screenWidth} from '../../../config/contant';
+import {AnimalAge, AnimalCardProps, AnimalCardType} from './type';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {useSetState} from 'ahooks';
+import {WebView} from 'react-native-webview';
+import {localImages} from '../../../assets/images';
+import AnimalCardShareMore from './more-info';
+import AnimalMorePicture from './more-picture';
+import Utils from '../../../help';
+import {shareSpeciesTags} from '../../../config/type';
 
 interface IState {
     showMoreInfo: boolean;
@@ -39,12 +39,20 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
         setState({
             showMoreInfo: !state.showMoreInfo,
         });
-        // props.onPressMore(positionY.current, !state.showMoreInfo)
     };
 
     return (
         <View style={styles.container}>
-            <View style={styles.card}>
+            <View
+                style={[
+                    styles.card,
+                    props.showLocation
+                        ? {
+                              borderBottomRightRadius: 10,
+                              borderBottomLeftRadius: 10,
+                          }
+                        : {},
+                ]}>
                 <View>
                     <Image
                         source={require('../../../assets/images/card_header.png')}
@@ -58,8 +66,7 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                         {props.animalInfo?.biological_base.name}
                     </Text>
 
-                    {
-                        props.speciesType &&
+                    {props.speciesType && (
                         <View style={styles.labelBase}>
                             <IconFont
                                 name={shareSpeciesTags[props.speciesType].icon}
@@ -70,8 +77,7 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                                 {shareSpeciesTags[props.speciesType].name}
                             </Text>
                         </View>
-                    }
-
+                    )}
                 </View>
 
                 <FastImage
@@ -135,7 +141,9 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                     {props.animalType === AnimalCardType.ShareType ? (
                         state.showMoreInfo &&
                         props.animalInfo && (
-                            <AnimalCardShareMore animalInfo={props.animalInfo} />
+                            <AnimalCardShareMore
+                                animalInfo={props.animalInfo}
+                            />
                         )
                     ) : (
                         <AnimalMorePicture
@@ -143,8 +151,7 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                         />
                     )}
 
-                    {
-                        props.animalType === AnimalCardType.ShareType &&
+                    {props.animalType === AnimalCardType.ShareType && (
                         <TouchableHighlight
                             onPress={onPressMore}
                             underlayColor={'none'}>
@@ -168,17 +175,19 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                                 </View>
                             </View>
                         </TouchableHighlight>
-                    }
+                    )}
 
                     {
                         // 委托就要显示设备信息
-                        props.animalType === AnimalCardType.QuestType &&
-                        <View style={styles.deviceBase}>
-                            <Text style={styles.deviceType}>LEGO</Text>
-                            <Text style={styles.deviceUUId}>UUID: 12380192830912</Text>
-                        </View>
+                        props.animalType === AnimalCardType.QuestType && (
+                            <View style={styles.deviceBase}>
+                                <Text style={styles.deviceType}>LEGO</Text>
+                                <Text style={styles.deviceUUId}>
+                                    UUID: 12380192830912
+                                </Text>
+                            </View>
+                        )
                     }
-
 
                     <View style={styles.mapBase}>
                         {!state.mapLoading && (
@@ -191,16 +200,13 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                         )}
                     </View>
 
-
-                    {
-                        props.animalType === AnimalCardType.QuestType &&
-                            <View style={styles.expiryBase}>
-                                <Text style={styles.expiryText}>
-                                    {Utils.getExpireTime('2022-12-22 22:33:22')}
-                                </Text>
-                            </View>
-                    }
-
+                    {props.animalType === AnimalCardType.QuestType && (
+                        <View style={styles.expiryBase}>
+                            <Text style={styles.expiryText}>
+                                {Utils.getExpireTime('2022-12-22 22:33:22')}
+                            </Text>
+                        </View>
+                    )}
                 </>
             )}
         </View>
@@ -321,16 +327,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        borderRadius: 10
+        borderRadius: 10,
     },
     deviceType: {
         color: themeColor,
         fontSize: 18,
-        fontWeight: '600'
+        fontWeight: '600',
     },
     deviceUUId: {
         fontSize: 12,
-        color: '#999'
+        color: '#999',
     },
     mapBase: {
         marginTop: 10,
@@ -344,10 +350,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: '#ddd'
+        borderColor: '#ddd',
     },
     expiryText: {
         color: '#333',
-        fontSize: 12
-    }
+        fontSize: 12,
+    },
 });

@@ -18,10 +18,6 @@ const PostContent: React.FC<IProps> = (props: IProps) => {
     const [visible, {toggle}] = useBoolean(false);
     const [startIndex, setStartIndex] = React.useState(0);
 
-    React.useEffect(() => {
-        console.log('======', JSON.stringify(props.postDetail));
-    }, []);
-
     const onPressPicture = (index: number) => {
         setStartIndex(index);
         toggle();

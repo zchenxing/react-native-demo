@@ -68,6 +68,10 @@ const WorkHelp = {
         return Promise.resolve(result)
     },
 
+    /**
+     * 修改图片尺寸
+     * @param photo
+     */
     onResizePicture: async (photo: PhotoPictureProps) => {
 
         // 判断大于2M，不用1024，用1000，将压缩范围扩大

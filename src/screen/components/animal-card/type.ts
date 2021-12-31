@@ -1,12 +1,12 @@
 
 export interface AnimalCardProps {
-    // 物种类型：shareSpeciesTags
-    speciesType?: string
     animalType: AnimalCardType
     // 展示最近定位，列表用
     showLocation?: boolean
     // 显示更多信息，详情用
     showOtherInfo?: boolean
+    // 物种类型：shareSpeciesTags
+    speciesType?: string
     // 分享的信息
     shareData?: ShareProps | null
     // 分享数据

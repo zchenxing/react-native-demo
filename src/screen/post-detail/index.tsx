@@ -16,26 +16,23 @@ import CommentItem from '../components/post-comments-sheet/comment-item';
 import {themeColor} from '../../assets/styles';
 import AweKeyboard from '../../components/awe-keyboard';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import PostCard from './post-card';
 import UserNavigator from '../components/user-navigator';
-import {useLanguage} from '../../language';
 import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
-import server from '../../network';
-import apis from '../../network/apis';
 import {CommentProps, PostContentProps} from '../../interface/work';
 import {useCommentDataStore, usePostListDataStore} from '../../store/provider';
 import {ReplyType} from '../components/post-comments-sheet/type';
 import AweLoadMore from '../../components/awe-load-more';
 import {observer} from 'mobx-react';
-import AnimalCard from '../components/animal-card';
-import PastCard from "./post-card";
+import PastCard from './post-card';
+import WorkHelp from "../../help/work";
+import { UserEventType } from "../../enum";
 
 interface IState {
     postDetail: PostContentProps | null;
     commentTotal: number;
     followStatus: boolean;
     followLoading: boolean;
-    collection: boolean;
+    isCollection: boolean;
     keyboardVisible: boolean;
 }
 
@@ -65,13 +62,17 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         commentTotal: 0,
         followStatus: false,
         followLoading: false,
-        collection: false,
+        isCollection: false,
         keyboardVisible: false,
     });
 
     React.useEffect(() => {
+
+        const detail: PostContentProps = postStoreData[fromListId][rowIndex]
+
         setState({
-            postDetail: postStoreData[fromListId][rowIndex],
+            isCollection: WorkHelp.userEventExist(detail.user_events, UserEventType.Collection).isExist,
+            postDetail: detail,
         });
 
         getComments();
@@ -159,6 +160,9 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         });
     };
 
+    /**
+     * 点击发送消息
+     */
     const onPressSend = () => {
         if (currentReplyData) {
             replyToCommentOrReply();
@@ -192,6 +196,15 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             });
         } catch (err) {}
     };
+
+
+    /**
+     * 收藏 / 取消收藏
+     */
+    const onCollection = () => {
+        console.log(JSON.stringify(state.postDetail));
+    }
+
 
     return (
         <SafeAreaProvider>
@@ -230,12 +243,12 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                         />
                                     );
                                 } else if (row.item === 1) {
-                                    return (
-                                        state.postDetail &&
-                                        state.postDetail.biological_card ?
-                                            <PastCard postData={state.postDetail} /> :
-                                            <></>
-                                    )
+                                    return state.postDetail &&
+                                        state.postDetail.biological_card ? (
+                                        <PastCard postData={state.postDetail} />
+                                    ) : (
+                                        <></>
+                                    );
                                 } else if (row.item === 2) {
                                     return (
                                         <View
@@ -313,12 +326,8 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     <TouchableHighlight
                         style={styles.iconBase}
                         underlayColor={'none'}
-                        onPress={() =>
-                            setState({
-                                collection: !state.collection,
-                            })
-                        }>
-                        {state.collection ? (
+                        onPress={onCollection}>
+                        {state.isCollection ? (
                             <Icon
                                 name={'star'}
                                 style={{fontSize: 20, color: '#FFD575'}}

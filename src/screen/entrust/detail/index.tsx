@@ -1,12 +1,12 @@
 import React,{ useCallback } from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View} from "react-native";
 import {screenWidth} from "../../../config/contant";
-import AnimalCard from "./animalCard";
+import AnimalCard from "./animal-card";
 import {useSetState} from "ahooks";
-import BottomSelect from "./bottomSelect";
-import EndRecord from "./endRecord";
+import BottomSelect from "./bottom-select";
+import EndRecord from "./end-record";
 import AweSimpleNavigator from "../../../components/awe-simple-navigator";
-import ListItem from "../synchronousRecording/listItem";
+import ListItem from "../synchronous-recording/list-item";
 
 const EntrustDetailScreen: React.FC<any> = (props: any) => {
     const [state, setState] = useSetState<any>({

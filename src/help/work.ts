@@ -1,4 +1,6 @@
 import { UserEventProps } from "../interface/work";
+import { PhotoPictureProps } from "../interface";
+import ImageResizer from "react-native-image-resizer";
 
 const WorkHelp = {
     /**
@@ -49,6 +51,51 @@ const WorkHelp = {
         }
     },
 
+
+    /**
+     * 压缩图片，超过2M就进行压缩
+     * @param photos
+     */
+    compressPicture: async (photos: PhotoPictureProps[]) => {
+
+        const resizeList: any[] = []
+        photos.forEach(photo => {
+            resizeList.push(WorkHelp.onResizePicture(photo))
+        })
+
+        const result = await Promise.all(resizeList)
+
+        return Promise.resolve(result)
+    },
+
+    onResizePicture: async (photo: PhotoPictureProps) => {
+
+        // 判断大于2M，不用1024，用1000，将压缩范围扩大
+        if (photo.size > 2000000) {
+
+            const size = Math.floor((photo.size/1000000))
+            const rate = 3 / size
+
+            const newPhoto = await ImageResizer.createResizedImage(
+                photo.realPath,
+                photo.width * rate,
+                photo.height * rate,
+                photo.uri.indexOf('.png') === -1 ? 'JPEG' : 'PNG',
+                rate * 100
+                )
+
+            return Promise.resolve({
+                ...photo,
+                size: newPhoto.size,
+                width: newPhoto.width,
+                height: newPhoto.height,
+                uri: newPhoto.uri,
+            })
+        } else {
+            return Promise.resolve(photo)
+        }
+
+    }
 
 };
 

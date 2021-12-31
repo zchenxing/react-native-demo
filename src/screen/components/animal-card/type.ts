@@ -1,5 +1,7 @@
 
 export interface AnimalCardProps {
+    // 物种类型：shareSpeciesTags
+    speciesType?: string
     animalType: AnimalCardType
     // 展示最近定位，列表用
     showLocation?: boolean
@@ -20,11 +22,13 @@ export enum AnimalCardType {
 
 
 // 分享类型
-export enum ShareType {
+export enum ShareDataCategoryType {
     // 定位信息
     Location,
-    // 轨迹
-    Track = 10
+    // 2d轨迹
+    Track2D = 10,
+    // 3d轨迹
+    Track3D = 11,
 }
 
 
@@ -32,7 +36,7 @@ export type ShareProps = {
     stoped: boolean
     animal_category: string
     biological_name: string
-    data_category: ShareType
+    data_category: ShareDataCategoryType
 }
 
 export enum AnimalAge {
@@ -48,7 +52,7 @@ export type ShareAnimalProps = {
         gender: AnimalAge
         weight: number
     },
-    biological_release: {
+    biological_release?: {
         timestamp?: string
         location?: string
         longitude?: number

@@ -53,6 +53,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
     const latestOpenTimestamp = React.useRef<any>(null);
 
     const [keyboardVisible, setKeyboardVisible] = React.useState(false);
+    const [loading, setLoading] = React.useState(true)
 
     React.useEffect(() => {
         if (props.visible) {
@@ -88,6 +89,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
     const initData = async () => {
         try {
+            setLoading(true)
             const res = await getCommentData(
                 currentPostId.current,
                 props.listId,
@@ -95,6 +97,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
             postStoreData[props.listId][props.rowIndex].total_comment =
                 parseInt(res.headers['x-result-count'], 10);
 
+            setLoading(false)
             setPostStoreData(props.listId, postStoreData[props.listId]);
         } catch (err) {}
     };
@@ -239,7 +242,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                         </Text>
                     </View>
                 )}>
-                {props.visible && commentStoreData[props.listId] ? (
+                {props.visible && commentStoreData[props.listId] && !loading ? (
                     <BottomSheetVirtualizedList
                         ref={commentListRef}
                         style={styles.sheetContent}

@@ -17,6 +17,12 @@ const apis = {
         // 已发布帖子列表
         posts: (userId: string, param = '') => {
             return `/v1/user/id/${userId}/theme/page/${param}`
+        },
+        followed: (userId: string, params = '') => {
+            return `/v1/user/id/${userId}/follow/page/${params}`
+        },
+        fans: (userId: string, params = '') => {
+            return `/v1/user/id/${userId}/followed/page/${params}`
         }
     },
     // 帖子API
@@ -40,7 +46,8 @@ const apis = {
             },
             // 发表评论
             push: (postId: string) => `/v1/theme/id/${postId}/comment`,
-        }
+        },
+
     },
     // 评论API
     comment: {

@@ -12,7 +12,7 @@ import {
     DeviceEventEmitter,
 } from 'react-native';
 import {themeColor, themeLightColor} from '../../../assets/styles';
-import {NavigateProps, PictureProps} from '../../../interface';
+import {NavigateProps, PhotoPictureProps} from '../../../interface';
 import {EventEmitterName, isIOS, screenWidth} from '../../../config/contant';
 import {DragSortableView} from 'react-native-drag-sort';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
@@ -28,11 +28,13 @@ import apis from '../../../network/apis';
 import Toast from 'react-native-simple-toast';
 import Utils from '../../../help';
 import IconFont from '../../../iconfont';
-import axios from "axios";
-import dayjs from "dayjs";
-import myToken from "../../../network/token";
-import { PostType } from "../../../enum";
-import { usePublishDataStore } from "../../../store/provider";
+import axios from 'axios';
+import dayjs from 'dayjs';
+import myToken from '../../../network/token';
+import {PostType} from '../../../enum';
+import {usePublishDataStore} from '../../../store/provider';
+import ImageResizer from 'react-native-image-resizer';
+import WorkHelp from '../../../help/work';
 
 const pictureWidth = (screenWidth - 20) / 3;
 
@@ -56,10 +58,14 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const contentText = React.useRef<any>('');
     const backListener = React.useRef<any>(null);
 
-    const {startPublish} = usePublishDataStore()
+    const {onPublishData, resetPublishData} = usePublishDataStore();
 
     const [state, setState] = useSetState<IState>({
-        publishTag: { color: '#fff', icon: 'huati', name: useLanguage.choose_category_first },
+        publishTag: {
+            color: '#fff',
+            icon: 'huati',
+            name: useLanguage.choose_category_first,
+        },
         selectedAssets: [],
         startIndex: 0,
         preview: false,
@@ -68,17 +74,20 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     });
 
     React.useEffect(() => {
+
+        resetPublishData()
+
         setTimeout(() => {
             inputRef.current.focus();
         }, 500);
 
-        if (!isIOS) {
-            backListener.current = BackHandler.addEventListener(
-                'hardwareBackPress',
-                () => goBack(),
-            );
-        }
-
+        // if (!isIOS) {
+        //     backListener.current = BackHandler.addEventListener(
+        //         'hardwareBackPress',
+        //         () => goBack(),
+        //     );
+        // }
+        //
         const emitter = DeviceEventEmitter.addListener(
             EventEmitterName.ChooseCategory,
             setCategory,
@@ -86,9 +95,9 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
         return () => {
             emitter.remove();
-            if (!isIOS) {
-                backListener.current.remove();
-            }
+            // if (!isIOS) {
+            //     backListener.current.remove();
+            // }
         };
     }, []);
 
@@ -127,25 +136,27 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 allowedLivePhotos: false,
             });
 
-            const selectedAssets = response.map((item: PictureProps) => {
-                const uri = isIOS
-                    ? item.path.replace('file://', '')
-                    : `file://${item.realPath}`;
-                return {
-                    ...item,
-                    uri,
-                };
-            });
+            const selectedAssets: PhotoPictureProps[] = response.map(
+                (item: PhotoPictureProps) => {
+                    const uri = isIOS
+                        ? item.path.replace('file://', '')
+                        : `file://${item.realPath}`;
+                    return {
+                        ...item,
+                        uri,
+                    };
+                },
+            );
 
-            // console.log(selectedAssets);
-
-            setState({selectedAssets});
+            const newAssets = await WorkHelp.compressPicture(selectedAssets);
+            console.log('压缩后的图片', newAssets);
+            setState({selectedAssets: newAssets});
         } catch (e: any) {
             console.log('error：', e.code, e.message);
         }
     };
 
-    const onDeletePicture = (item: PictureProps) => {
+    const onDeletePicture = (item: PhotoPictureProps) => {
         const uris = state.selectedAssets.map(picture => picture.uri);
         const deleteIndex = uris.indexOf(item.uri);
 
@@ -159,22 +170,25 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      * @param isNavigationBack 是否用导航栏返回
      */
     const goBack = (isNavigationBack?: boolean) => {
-        if (contentText.current) {
-            Alert.alert('', useLanguage.save_post_to_draft, [
-                {
-                    text: useLanguage.dont_save,
-                    onPress: () => props.navigation.goBack(),
-                    style: 'cancel',
-                },
-                {text: useLanguage.save, onPress: savePostToDraft},
-            ]);
-            return true;
-        } else {
-            if (isNavigationBack) {
-                props.navigation.goBack();
-            }
-            return false;
-        }
+        // if (contentText.current) {
+        //     Alert.alert('', useLanguage.save_post_to_draft, [
+        //         {
+        //             text: useLanguage.dont_save,
+        //             onPress: () => props.navigation.goBack(),
+        //             style: 'cancel',
+        //         },
+        //         {text: useLanguage.save, onPress: savePostToDraft},
+        //     ]);
+        //     return true;
+        // } else {
+        //     if (isNavigationBack) {
+        //         props.navigation.goBack();
+        //     }
+        //     return false;
+        // }
+
+        props.navigation.goBack();
+        return false;
     };
 
     /**
@@ -183,23 +197,19 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const savePostToDraft = () => {};
 
     const onPressSubmit = async () => {
-
-        console.log('提交发布');
-
         const data = {
             label: state.publishTag.name,
             type: PostType.Normal,
-            content: Utils.removeSpaceAndEnter(state.postContent),
+            content: Utils.removeSpaceAndEnter(
+                state.postContent || useLanguage.share,
+            ),
         };
+
+        onPublishData(data, [...state.selectedAssets]);
 
         props.navigation.goBack();
 
-        startPublish(data, [...state.selectedAssets])
-
-        // // 刷新首页列表
-        // DeviceEventEmitter.emit(EventEmitterName.RefreshHome);
     };
-
 
     return (
         <>
@@ -215,7 +225,6 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 underlayColor={themeLightColor}
                 onPress={onPressChooseTag}>
                 <View style={styles.labelHeader}>
-
                     <IconFont
                         style={{marginRight: 10}}
                         size={18}
@@ -256,7 +265,9 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     <DragSortableView
                         isDragFreely={true}
                         dataSource={
-                            state.selectedAssets.length === 9 ? state.selectedAssets : [...state.selectedAssets, AddPicture]
+                            state.selectedAssets.length === 9
+                                ? state.selectedAssets
+                                : [...state.selectedAssets, AddPicture]
                         }
                         parentWidth={screenWidth - 20}
                         childrenHeight={pictureWidth}
@@ -266,7 +277,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                             result = result.filter(
                                 item => item.fileName !== __AddPictureName__,
                             );
-                            setState({selectedAssets: result})
+                            setState({selectedAssets: result});
                         }}
                         fixedItems={[state.selectedAssets.length]}
                         renderItem={item => RenderItem(item, onDeletePicture)}
@@ -285,8 +296,8 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 };
 
 const RenderItem = (
-    item: PictureProps,
-    onDeleteItem: (item: PictureProps) => void,
+    item: PhotoPictureProps,
+    onDeleteItem: (item: PhotoPictureProps) => void,
 ) => {
     return (
         <View style={styles.pictureItem}>

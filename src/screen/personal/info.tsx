@@ -24,6 +24,7 @@ import server from "../../network";
 import apis from "../../network/apis";
 import WorkHelp from "../../help/work";
 import { UserEventType } from "../../enum";
+import { useLanguage } from "../../language";
 
 const imageHeight = 90 + (isIOS ? 44 : StatusBar.currentHeight || 0);
 
@@ -51,17 +52,17 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
         totalInfo: [
             {
                 type: PersonalOtherEnum.Post,
-                title: 'Post',
+                title: useLanguage.post,
                 value: 0,
             },
             {
                 type: PersonalOtherEnum.Following,
-                title: 'Following',
+                title: useLanguage.following,
                 value: 0,
             },
             {
                 type: PersonalOtherEnum.Follower,
-                title: 'Follower',
+                title: useLanguage.followers,
                 value: 0,
             },
         ],
@@ -71,9 +72,9 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
         if (props.userInfo) {
 
             const totalInfo = [...state.totalInfo];
-            totalInfo[0].value = props.userInfo?.total_theme;
-            totalInfo[1].value = props.userInfo?.total_follow;
-            totalInfo[2].value = props.userInfo?.total_fans;
+            totalInfo[0].value = props.userInfo?.total_theme || 0;
+            totalInfo[1].value = props.userInfo?.total_follow || 0;
+            totalInfo[2].value = props.userInfo?.total_fans || 0;
             setState({
                 totalInfo,
                 following: !!props.userInfo.user_event

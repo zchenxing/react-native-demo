@@ -1,17 +1,25 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import { Image, StyleSheet, Text, View } from "react-native";
 import FastImage from 'react-native-fast-image';
 import {avatarUrl} from '../../../mock';
 import FollowButton from '../../components/follow-button';
 import {useSetState} from 'ahooks';
 import Toast from 'react-native-simple-toast';
+import { localImages } from "../../../assets/images";
+
+interface IProps {
+    nickname: string
+    avatar?: string
+    intro?: string
+}
+
 
 interface IState {
     following: boolean;
     followLoading: boolean;
 }
 
-const UserItem: React.FC = props => {
+const UserItem: React.FC<IProps> = (props: IProps) => {
     const [state, setState] = useSetState<IState>({
         following: false,
         followLoading: false,
@@ -38,10 +46,17 @@ const UserItem: React.FC = props => {
 
     return (
         <View style={styles.row}>
-            <FastImage source={{uri: avatarUrl}} style={styles.avatar} />
+            {
+                props.avatar ?
+                    <FastImage source={{uri: avatarUrl}} style={styles.avatar} />:
+                    <Image source={localImages.defaultAvatar} style={styles.avatar} />
+            }
+
 
             <View style={styles.userInfo}>
-                <Text style={styles.username}>User nickname</Text>
+                <Text style={styles.username}>
+                    {props.nickname}
+                </Text>
                 <Text numberOfLines={1}>
                     You have a large list that is slow to update - make sure
                     your renderItem function renders components that follow

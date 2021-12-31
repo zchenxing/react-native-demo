@@ -83,16 +83,6 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         await getCommentData(postId, fromListId);
     };
 
-    // /**
-    //  * 点击生物卡片查看更多
-    //  */
-    // const onPressAnimalCardMore = (offset: number, isPutAway: boolean) => {
-    //     flatListRef.current.scrollToOffset({
-    //         offset: offset + (isPutAway ? 340 : 0),
-    //         animated: true
-    //     })
-    // }
-
     const onChangeFollow = () => {
         setState({
             followLoading: true,
@@ -240,7 +230,12 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                         />
                                     );
                                 } else if (row.item === 1) {
-                                    return <PastCard animalId={'61caefb2aca33b1a370bf463'} />;
+                                    return (
+                                        state.postDetail &&
+                                        state.postDetail.biological_card ?
+                                            <PastCard postData={state.postDetail} /> :
+                                            <></>
+                                    )
                                 } else if (row.item === 2) {
                                     return (
                                         <View

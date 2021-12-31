@@ -2,8 +2,8 @@ import axios, { AxiosRequestConfig } from "axios";
 import myToken from './token';
 import { isIOS } from "../config/contant";
 
-const testBaseURL = `${isIOS ? 'https' : 'http'}://intelink.coolhei.com/api`
-// const testBaseURL = 'http://154.17.3.8:9003'
+// const testBaseURL = `${isIOS ? 'https' : 'http'}://intelink.coolhei.com/api`
+const testBaseURL = 'http://154.17.3.8:9003'
 
 /**
  http://intelink.coolhei.com/api

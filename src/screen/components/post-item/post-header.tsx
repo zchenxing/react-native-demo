@@ -3,8 +3,11 @@ import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import {Image} from 'react-native-elements';
 import {themeColor} from '../../../assets/styles';
 import { localImages } from "../../../assets/images";
+import { useLanguage } from "../../../language";
+import IconFont from "../../../iconfont";
 
 interface IProps {
+    isShare?: boolean
     // 显示标签
     label?: string
     // 用户头像
@@ -20,26 +23,39 @@ interface IProps {
 const PostHeader: React.FC<IProps> = (props: IProps) => {
 
     return (
-        <View style={postHeaderStyles.header}>
+        <View style={styles.header}>
             <TouchableHighlight
                 style={{flexDirection: 'row'}}
                 underlayColor={'none'}
                 onPress={props.handleUser}>
                 <>
                     <Image
-                        style={postHeaderStyles.avatar}
+                        style={styles.avatar}
                         defaultSource={ localImages.defaultAvatar}
                         source={props.userAvatar ? { uri: props.userAvatar }: localImages.defaultAvatar}
                     />
 
                     <View style={{justifyContent: 'space-between'}}>
-                        <Text style={postHeaderStyles.nickname}>
+                        <Text style={styles.nickname}>
                             {props.userNickname || '——'}
                         </Text>
                         <View style={{flexDirection: 'row'}}>
-                            <Text style={postHeaderStyles.tag}>
-                                {props.label}
-                            </Text>
+                            <View style={styles.tag}>
+                                <Text style={styles.tagText}>{props.label}</Text>
+                            </View>
+
+                            {
+                                props.isShare &&
+                                <View style={styles.tag}>
+                                    <IconFont
+                                        name={'fenxiang'}
+                                        color={themeColor}
+                                        size={10}
+                                        style={{marginTop: 3, marginRight: 3}}
+                                    />
+                                    <Text style={styles.tagText}>{useLanguage.share}</Text>
+                                </View>
+                            }
                         </View>
                     </View>
                 </>
@@ -49,7 +65,7 @@ const PostHeader: React.FC<IProps> = (props: IProps) => {
     );
 };
 
-const postHeaderStyles = StyleSheet.create({
+const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -62,17 +78,23 @@ const postHeaderStyles = StyleSheet.create({
     },
     nickname: {
         fontSize: 15,
-        fontWeight: '700',
+        fontWeight: '600',
         color: '#000',
     },
     tag: {
         borderWidth: 1,
         borderColor: themeColor,
         borderRadius: 3,
-        color: themeColor,
-        fontSize: 12,
+
         paddingLeft: 5,
         paddingRight: 5,
+        marginRight: 5,
+
+        flexDirection: 'row',
+    },
+    tagText: {
+        color: themeColor,
+        fontSize: 12,
     }
 });
 

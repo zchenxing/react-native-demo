@@ -6,38 +6,8 @@ import { themeColor } from "../../../assets/styles";
 import IconFont from '../../../iconfont';
 import { useLanguage } from "../../../language";
 import { EventEmitterName } from "../../../config/contant";
+import { PostSpeciesTags } from "../../../config/type";
 
-
-const PostTags: any = [
-    {
-        icon: 'niao',
-        color: '#5eb6c3',
-        name: 'Birds'
-    },
-    {
-        // 哺乳
-        icon: 'xiong',
-        color: '#c29c8a',
-        name: 'Mammals'
-    },
-    {
-        icon: 'yu',
-        color: '#466eed',
-        name: 'Fishes'
-    },
-    {
-        // 爬行动物
-        icon: 'pahang',
-        color: '#51a35c',
-        name: 'Reptiles'
-    },
-    {
-        // 两栖动物
-        icon: 'liangqi',
-        color: '#f66554',
-        name: 'Amphibian'
-    }
-]
 
 
 const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
@@ -57,7 +27,7 @@ const PublishTagScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             />
 
             <ScrollView style={styles.container}>
-                {PostTags.map((tag: any) => (
+                {PostSpeciesTags.map((tag: any) => (
                     <TouchableHighlight
                         key={tag.name}
                         style={styles.listItem}

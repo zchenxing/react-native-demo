@@ -14,6 +14,7 @@ import { localImages } from "../../../assets/images";
 import AnimalCardShareMore from "./more-info";
 import AnimalMorePicture from "./more-picture";
 import Utils from "../../../help";
+import { shareSpeciesTags } from "../../../config/type";
 
 interface IState {
     showMoreInfo: boolean;
@@ -56,25 +57,33 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                         {props.animalInfo?.biological_base.species || ''}
                     </Text>
                     <Text style={styles.nicknameName}>
-                        {props.shareData?.biological_name}
+                        {props.animalInfo?.biological_base.name}
                     </Text>
 
-                    <View style={styles.labelBase}>
-                        <IconFont name={'niao'} color={'#fff'} size={26} />
-                        <Text style={styles.labelText}>
-                            {props.shareData?.animal_category}
-                        </Text>
-                    </View>
+                    {
+                        props.speciesType &&
+                        <View style={styles.labelBase}>
+                            <IconFont
+                                name={shareSpeciesTags[props.speciesType].icon}
+                                color={'#fff'}
+                                size={26}
+                            />
+                            <Text style={styles.labelText}>
+                                {shareSpeciesTags[props.speciesType].name}
+                            </Text>
+                        </View>
+                    }
+
                 </View>
 
                 <FastImage
                     style={styles.animalPic}
+                    resizeMode={'cover'}
                     source={
                         props.animalInfo
                             ? {uri: props.animalInfo?.imageUrls[0]}
                             : localImages.defaultPicture
                     }
-                    resizeMode={'cover'}
                 />
 
                 <View style={styles.infoBase}>

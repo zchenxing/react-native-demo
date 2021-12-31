@@ -4,6 +4,9 @@ import server from '../network';
 import apis from '../network/apis';
 import {PhotoPictureProps} from '../interface';
 import dayjs from 'dayjs';
+import ReactNativeBlobUtil from 'react-native-blob-util';
+import { EventEmitterName, isIOS } from "../config/contant";
+import { DeviceEventEmitter } from "react-native";
 
 type PublishDataProps = {
     label: string;
@@ -50,9 +53,10 @@ export class PublishDataStore {
             name: `${dayjs().valueOf()}-${image.fileName}`,
         };
         try {
+            // file 转 formData
             const formData = new FormData();
             formData.append('file', file);
-
+            // 上传图片到文件服务器
             const res = await server.post(apis.file.upload('theme'), formData);
 
             this.uploadedImageIds.push(res.data.id);
@@ -89,7 +93,6 @@ export class PublishDataStore {
                 images.forEach(img => {
                     serverList.push(this.uploadImage(img));
                 });
-
             }
 
             // 发起批量请求
@@ -120,6 +123,8 @@ export class PublishDataStore {
             setTimeout(() => {
                 // 发布完成后重置数据
                 this.resetPublishData();
+                // 刷新首页列表
+                DeviceEventEmitter.emit(EventEmitterName.RefreshHome);
             }, 2000)
 
 
@@ -129,4 +134,109 @@ export class PublishDataStore {
             return Promise.reject(err);
         }
     };
+
+
+
+
+    // —————————————————————————— 分享 ——————————————————————————————
+
+    /**
+     * 上传生物分享的图片
+     */
+    private uploadShareImage = async (imageUrl: string) => {
+
+        try {
+
+            // 先下载图片到缓存
+            const blob = await ReactNativeBlobUtil.config({
+                fileCache: true,
+                appendExt: 'png',
+            }).fetch('GET', imageUrl);
+
+            // 获取图片名字
+            const fileName = blob.data.split('/').pop();
+            // 获取路径
+            const uri = !isIOS ? 'file://' + blob.path() : '' + blob.path();
+            // 组装file
+            const file = {
+                uri: uri,
+                type: 'multipart/form-data',
+                name: `${dayjs().valueOf()}-${fileName}`,
+            };
+            // file -> formData
+            const formData = new FormData();
+            formData.append('file', file);
+            // 上传图片
+            const res = await server.post(apis.file.upload('theme'), formData);
+            // 将返回的图片id放入【已完成图片id数组】中
+            this.uploadedImageIds.push(res.data.id);
+            // 设置发布进度
+            this.publishProgress = this.uploadedImageIds.length / this.publishImageAmount
+            this.setPublishProgress(this.publishProgress)
+
+            return Promise.resolve({url: imageUrl, id: res.data.id});
+
+        } catch (err) {
+            console.log('上传分享图片失败 = ',`${imageUrl} - ${err}`);
+            return Promise.reject(err);
+        }
+
+
+
+
+    }
+
+
+
+    /**
+     * 发布分享数据
+     */
+    public onPublishShare = async (data: any, imageUrls: string[]) => {
+
+        console.log(imageUrls);
+
+        this.setStartPublish(true)
+        this.publishImageAmount = imageUrls.length + 1
+
+        const uploadList: any[] = []
+        imageUrls.forEach((url) => {
+            uploadList.push(this.uploadShareImage(url))
+        })
+
+        const results = await Promise.all(uploadList);
+
+        try {
+            // 保证顺序按照上传顺序排列
+            const image_ids: string[] = []
+            imageUrls.forEach(url => {
+                results.forEach((result: any) => {
+                    if (url === result.url) {
+                        image_ids.push(result.id)
+                    }
+                })
+            })
+
+            data.biological_card.biological_image_ids = image_ids.reverse()
+
+            console.log('需要发布的数据信息 = ', data);
+
+            await server.post(apis.post.create, data);
+            // 完成上传，progress设置100%
+            this.setPublishProgress(1)
+
+            setTimeout(() => {
+                // 发布完成后重置数据
+                this.resetPublishData();
+                // 刷新首页列表
+                DeviceEventEmitter.emit(EventEmitterName.RefreshHome);
+            }, 2000)
+
+
+            return Promise.resolve();
+        } catch (err) {
+            console.log('Share error');
+            return Promise.reject(err);
+        }
+
+    }
 }

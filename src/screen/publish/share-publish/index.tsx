@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
-} from 'react-native';
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import AweSimpleNavigator from '../../../components/awe-simple-navigator';
 import {useLanguage} from '../../../language';
 import {NavigateProps} from '../../../interface';
@@ -20,8 +14,12 @@ import {
 } from '../../components/animal-card/type';
 import axios from 'axios';
 import apis from '../../../network/apis';
-import server from "../../../network";
-import dayjs from "dayjs";
+import server from '../../../network';
+import dayjs from 'dayjs';
+import { usePublishDataStore } from "../../../store/provider";
+import { PostType } from "../../../enum";
+import Utils from "../../../help";
+import { shareSpeciesTags } from "../../../config/type";
 
 interface IState {
     startIndex: number;
@@ -29,15 +27,19 @@ interface IState {
     inputHeight: number;
     postContent: string;
 
+    publishTag: any;
     shareData: ShareProps | null;
     animalData: ShareAnimalProps | null;
 }
 
 const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
-    const {animalId} = props.route.params;
+    const {shareId} = props.route.params;
     const inputRef = React.useRef<any>(null);
 
+    const {onPublishShare, resetPublishData} = usePublishDataStore()
+
     const [state, setState] = useSetState<IState>({
+        publishTag: null,
         startIndex: 0,
         preview: false,
         inputHeight: 170,
@@ -47,33 +49,47 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     });
 
     React.useEffect(() => {
+        resetPublishData()
         getCheckShare();
         getAnimalInfo();
     }, []);
 
+    /**
+     * 获取基础的分享数据
+     */
     const getCheckShare = async () => {
         try {
-            const res = await axios(apis.ecotopia.share(animalId));
+            const res = await axios.get(apis.ecotopia.share(shareId));
+            const shareData: ShareProps = res.data;
+            // 设置生物物种
+            const tag = shareSpeciesTags[shareData.animal_category];
+
             setState({
-                shareData: res.data,
+                publishTag: tag,
+                shareData,
             });
         } catch (err) {
             console.log(err);
         }
     };
 
+    /**
+     * 获取生物基础数据
+     */
     const getAnimalInfo = async () => {
         try {
-            const res = await axios(apis.ecotopia.info(animalId));
+            const res = await axios.get(apis.ecotopia.info(shareId));
+
+            const animalData: ShareAnimalProps = {
+                ...res.data,
+                // 生成图片URL
+                imageUrls: res.data.images.map((url: string) => {
+                    return apis.ecotopia.image(shareId, url);
+                }),
+            }
 
             setState({
-                animalData: {
-                    ...res.data,
-                    // 生成图片URL
-                    imageUrls: res.data.images.map((url: string) => {
-                        return apis.ecotopia.image(animalId, url);
-                    }),
-                },
+                animalData
             });
         } catch (err) {
             console.log(err);
@@ -82,34 +98,26 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const onPressSubmit = async () => {
 
-        // console.log(state.animalData);
 
-        // const res = await axios.get(state.animalData?.imageUrls[0] || '')
-        //
-        //
-        // const formData = new FormData()
-        // formData.append('file', res.data)
-        //
-        // try {
-        //     const result = await server.post(apis.file.upload('theme'), formData)
-        //     console.log(result);
-        // } catch (err) {
-        //     console.log(err);
-        // }
+        const data = {
+            label: state.publishTag.name,
+            type: PostType.BiologicalCard,
+            content: Utils.removeSpaceAndEnter(
+                state.postContent || useLanguage.share,
+            ),
+            biological_card: {
+                share_id: shareId,
+                data_category: state.shareData?.data_category,
+                biological_image_ids: [],
+                biological_base: state.animalData?.biological_base || null,
+                biological_release: state.animalData?.biological_release || null,
+                biological_detail: state.animalData?.biological_detail || null,
+            }
+        }
 
+        onPublishShare(data, state.animalData?.imageUrls || [])
 
-
-        // const formData = new FormData()
-        // formData.append('file', file)
-        //
-        //
-        // try {
-        //     const res = await server.post(apis.file.upload('theme'), formData)
-        //     console.log(res);
-        // } catch (err) {
-        //     console.log(err);
-        // }
-
+        props.navigation.goBack()
     };
 
     return (
@@ -123,13 +131,19 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             />
 
             <View style={styles.labelHeader}>
-                <IconFont
-                    style={{marginRight: 10}}
-                    size={18}
-                    name={'niao'}
-                    color={'#fff'}
-                />
-                <Text style={styles.labelText}>{'Birds'}</Text>
+                {state.publishTag && (
+                    <>
+                        <IconFont
+                            style={{marginRight: 10}}
+                            size={18}
+                            name={state.publishTag.icon}
+                            color={'#fff'}
+                        />
+                        <Text style={styles.labelText}>
+                            {state.publishTag.name}
+                        </Text>
+                    </>
+                )}
             </View>
 
             <ScrollView style={styles.container} scrollEnabled={true}>
@@ -165,6 +179,7 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     <AnimalCard
                         showOtherInfo={true}
                         animalType={AnimalCardType.ShareType}
+                        speciesType={state.shareData?.animal_category}
                         shareData={state.shareData}
                         animalInfo={state.animalData}
                     />
@@ -179,7 +194,7 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 const styles = StyleSheet.create({
     labelHeader: {
         height: 44,
-        backgroundColor: themeColor,
+        backgroundColor: '#ccc',
         flexDirection: 'row',
         alignItems: 'center',
         paddingLeft: 20,

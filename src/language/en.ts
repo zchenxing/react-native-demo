@@ -58,6 +58,12 @@ export const languageEn = {
     child: 'Juvenile',
     uploading: 'Uploading',
     complete: 'Complete',
+    share: 'Share',
+    post: 'Post',
+    following: 'Following',
+    followers: 'Followers',
+    no_following: '没有关注别人',
+    no_follower: '没有被人关注',
 
     x_minute_ago: (min: number, isAge: boolean) => {
         return `${min} ${min > 1 ? 'minutes' : 'minute'} ${isAge ? 'age' : ''}`

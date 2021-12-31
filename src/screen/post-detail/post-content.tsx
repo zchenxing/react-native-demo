@@ -7,8 +7,8 @@ import FastImage from 'react-native-fast-image';
 import {screenWidth} from '../../config/contant';
 import AwePicturePreview from '../../components/awe-picture-preview';
 import {useBoolean} from 'ahooks';
-import {PostContentProps} from '../../interface/work';
-import IconFont from "../../iconfont";
+import {PostContentProps, PostImageProps} from '../../interface/work';
+import IconFont from '../../iconfont';
 
 interface IProps {
     postDetail: PostContentProps | null;
@@ -17,6 +17,10 @@ interface IProps {
 const PostContent: React.FC<IProps> = (props: IProps) => {
     const [visible, {toggle}] = useBoolean(false);
     const [startIndex, setStartIndex] = React.useState(0);
+
+    React.useEffect(() => {
+        console.log('======', JSON.stringify(props.postDetail));
+    }, []);
 
     const onPressPicture = (index: number) => {
         setStartIndex(index);
@@ -28,7 +32,9 @@ const PostContent: React.FC<IProps> = (props: IProps) => {
             <View style={styles.header}>
                 <View style={{flexDirection: 'row'}}>
                     <View style={styles.tag}>
-                        <Text style={styles.tagText}>{props.postDetail?.label}</Text>
+                        <Text style={styles.tagText}>
+                            {props.postDetail?.label}
+                        </Text>
                     </View>
                     <View style={styles.tag}>
                         <IconFont
@@ -47,27 +53,35 @@ const PostContent: React.FC<IProps> = (props: IProps) => {
 
             <Text selectable={true}>{props.postDetail?.content}</Text>
 
-            {/*{pictureList.map((item, index) => (*/}
-            {/*    <TouchableHighlight*/}
-            {/*        key={index}*/}
-            {/*        onPress={() => onPressPicture(index)}*/}
-            {/*        style={{borderRadius: 10}}*/}
-            {/*        underlayColor={'#f2f2f2'}>*/}
-            {/*        <FastImage*/}
-            {/*            key={index}*/}
-            {/*            style={styles.image}*/}
-            {/*            source={{uri: item.uri}}*/}
-            {/*            resizeMode={FastImage.resizeMode.cover}*/}
-            {/*        />*/}
-            {/*    </TouchableHighlight>*/}
-            {/*))}*/}
+            {props.postDetail?.images && (
+                <>
+                    {props.postDetail.images.map(
+                        (item: PostImageProps, index: number) => (
+                            <TouchableHighlight
+                                key={item.id}
+                                onPress={() => onPressPicture(index)}
+                                style={{borderRadius: 10}}
+                                underlayColor={'#f2f2f2'}>
+                                <FastImage
+                                    key={index}
+                                    style={styles.image}
+                                    source={{uri: item.url_normal}}
+                                    resizeMode={FastImage.resizeMode.cover}
+                                />
+                            </TouchableHighlight>
+                        ),
+                    )}
 
-            <AwePicturePreview
-                visible={visible}
-                startIndex={startIndex}
-                imageUrls={pictureList.map(picture => picture.uri)}
-                onClick={toggle}
-            />
+                    <AwePicturePreview
+                        visible={visible}
+                        startIndex={startIndex}
+                        imageUrls={props.postDetail.images.map(
+                            picture => picture.url_origin,
+                        )}
+                        onClick={toggle}
+                    />
+                </>
+            )}
         </View>
     );
 };

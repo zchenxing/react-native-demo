@@ -58,7 +58,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const contentText = React.useRef<any>('');
     const backListener = React.useRef<any>(null);
 
-    const {onPublishData} = usePublishDataStore();
+    const {onPublishData, resetPublishData} = usePublishDataStore();
 
     const [state, setState] = useSetState<IState>({
         publishTag: {
@@ -74,6 +74,9 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     });
 
     React.useEffect(() => {
+
+        resetPublishData()
+
         setTimeout(() => {
             inputRef.current.focus();
         }, 500);
@@ -85,17 +88,17 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         //     );
         // }
         //
-        // const emitter = DeviceEventEmitter.addListener(
-        //     EventEmitterName.ChooseCategory,
-        //     setCategory,
-        // );
-        //
-        // return () => {
-        //     emitter.remove();
-        //     if (!isIOS) {
-        //         backListener.current.remove();
-        //     }
-        // };
+        const emitter = DeviceEventEmitter.addListener(
+            EventEmitterName.ChooseCategory,
+            setCategory,
+        );
+
+        return () => {
+            emitter.remove();
+            // if (!isIOS) {
+            //     backListener.current.remove();
+            // }
+        };
     }, []);
 
     const setCategory = (param: any) => {
@@ -148,7 +151,6 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             const newAssets = await WorkHelp.compressPicture(selectedAssets);
             console.log('压缩后的图片', newAssets);
             setState({selectedAssets: newAssets});
-
         } catch (e: any) {
             console.log('error：', e.code, e.message);
         }
@@ -186,7 +188,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         // }
 
         props.navigation.goBack();
-        return false
+        return false;
     };
 
     /**
@@ -198,15 +200,15 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         const data = {
             label: state.publishTag.name,
             type: PostType.Normal,
-            content: Utils.removeSpaceAndEnter(state.postContent),
+            content: Utils.removeSpaceAndEnter(
+                state.postContent || useLanguage.share,
+            ),
         };
+
+        onPublishData(data, [...state.selectedAssets]);
 
         props.navigation.goBack();
 
-        await onPublishData(data, [...state.selectedAssets]);
-
-        // 刷新首页列表
-        DeviceEventEmitter.emit(EventEmitterName.RefreshHome);
     };
 
     return (

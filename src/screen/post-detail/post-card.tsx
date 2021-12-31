@@ -5,70 +5,33 @@ import axios from "axios";
 import apis from "../../network/apis";
 import { AnimalCardType, ShareAnimalProps, ShareProps } from "../components/animal-card/type";
 import { useSetState } from "ahooks";
+import { PostContentProps } from "../../interface/work";
 
 interface IProps {
-    animalId: string;
+    postData: PostContentProps;
 }
 
-interface IState {
-    shareData: ShareProps | null
-    animalData: ShareAnimalProps | null
-}
 
 const PastCard: React.FC<IProps> = (props: IProps) => {
 
-    const [state, setState] = useSetState<IState>({
-        shareData: null,
-        animalData: null
-    })
+    const [biologicalCard, setBiologicalCard] =
+        React.useState<ShareAnimalProps | null>(null);
 
     React.useEffect(() => {
-        getCheckShare();
-        getAnimalInfo()
-    }, []);
+        const card: any = props.postData.biological_card;
+        const data: ShareAnimalProps = {
+            biological_base: card.biological_base,
+            biological_detail: card.biological_detail || null,
+            biological_release: card.biological_release || null,
+            imageUrls: card.biological_images.map(
+                (img: any) => img.url_normal,
+            ),
+            images: [],
+        };
 
-    const getCheckShare = async () => {
+        setBiologicalCard(data)
 
-        try {
-            const res = await axios(apis.ecotopia.share(props.animalId));
-            setState({
-                shareData: res.data
-            })
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
-
-    const getAnimalInfo = async () => {
-        try {
-            const res = await axios(apis.ecotopia.info(props.animalId))
-
-            getAnimalImages(res.data.images)
-            setState({
-                animalData: {
-                    ...res.data,
-                    imageUrls: res.data.images.map((url: string) => {
-                        return apis.ecotopia.image(props.animalId, url)
-                    })
-                }
-            })
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
-
-    const getAnimalImages = async (images: string[]) => {
-
-        try {
-
-        } catch (err) {
-
-        }
-
-    }
-
+    }, [])
 
     return (
         <View
@@ -77,12 +40,15 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
                 padding: 20,
                 backgroundColor: '#FFF',
             }}>
-            <AnimalCard
-                animalType={AnimalCardType.ShareType}
-                showOtherInfo={true}
-                shareData={state.shareData}
-                animalInfo={state.animalData}
-            />
+            {
+                biologicalCard &&
+                <AnimalCard
+                    animalType={AnimalCardType.ShareType}
+                    showOtherInfo={true}
+                    animalInfo={biologicalCard}
+                />
+            }
+
         </View>
     );
 };

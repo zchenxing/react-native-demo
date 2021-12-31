@@ -11,7 +11,7 @@ const ListItem: React.FC<any> = (props: any) => {
             <View style={styles.list}>
                 <View style={styles.content}>
                     <View>
-                        <View><Text style={styles.deviceName}>Mini-2G-Lite</Text></View>
+                        <View><Text style={styles.deviceName}>223,999 data</Text></View>
                         <View><Text style={styles.uuid}>17:42   2021/03/03</Text></View>
                     </View>
                     <View>
@@ -35,9 +35,12 @@ const styles = StyleSheet.create({
         paddingLeft:14,
         paddingRight:14,
         backgroundColor:'white',
-        marginTop:5,
+        marginBottom:5,
         flex:1,
         flexDirection: 'row',
+        marginLeft:16,
+        marginRight:16,
+        borderRadius:8
     },
     content:{
         // backgroundColor:'red',

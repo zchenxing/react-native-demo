@@ -1,19 +1,12 @@
-import React,{ useCallback, useMemo, useRef } from 'react';
+import React,{ useCallback } from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View} from "react-native";
-import {Header} from "react-native-elements";
-import Icon from "react-native-vector-icons/FontAwesome";
-import {screenHeight, screenWidth} from "../../../config/contant";
+import {screenWidth} from "../../../config/contant";
 import AnimalCard from "./animalCard";
 import {useSetState} from "ahooks";
 import BottomSelect from "./bottomSelect";
-import { BottomSheet, Button, ListItem } from 'react-native-elements';
-import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
-import IconFont from "../../../iconfont";
-import EndAnimalCard from "./endAnimalCard";
 import EndRecord from "./endRecord";
-import {useLanguage} from "../../../language";
-import {EditInfoType} from "../../../enum";
 import AweSimpleNavigator from "../../../components/awe-simple-navigator";
+import ListItem from "../synchronousRecording/listItem";
 
 const EntrustDetailScreen: React.FC<any> = (props: any) => {
     const [state, setState] = useSetState<any>({
@@ -64,19 +57,27 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
         actionSheetRef.current && actionSheetRef.current.snapToIndex(1);
         setState({visible: true})
     }
+
+    const dataRecord = [
+        {
+            id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+            title: 'First Item',
+        },
+        {
+            id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+            title: 'Second Item',
+        },
+        {
+            id: '58694a0f-3da1-471f-bd96-145571e29d72',
+            title: 'Third Item',
+        },
+    ]
+
     return (
         <>
             <AweSimpleNavigator
                 centerTitle={'11111'}
                 goBack={props.navigation.goBack}
-                rightActionEvent={() => {
-                    props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_ACCEPTED)
-                }}
-                rightActionIcon={<Icon
-                    name={'angle-left'}
-                    style={{fontSize: 30, color: '#aaa'}}
-                />}
-                rightActionEditable={true}
             />
             <ScrollView style={{flex: 1, backgroundColor: '#F0F2F5', paddingTop: 10, paddingBottom: 20}}>
                 <AnimalCard navigation={props.navigation}/>
@@ -89,20 +90,32 @@ const EntrustDetailScreen: React.FC<any> = (props: any) => {
                     </View>
                 </View>
                 <EndRecord navigation={props.navigation}/>
-                <TouchableHighlight
-                    underlayColor={'none'}
-                    onPress={() => {
-                        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_RECORDING)
-                    }}>
-                    <View style={styles.accept}>
-                        <View>
-                            <Text style={styles.acceptText}>Sync record</Text>
-                        </View>
-                        <View>
-                            <IconFont name={'arrow-right'} size={15} color={'#979797'}/>
-                        </View>
-                    </View>
-                </TouchableHighlight>
+                {/*<TouchableHighlight*/}
+                {/*    underlayColor={'none'}*/}
+                {/*    onPress={() => {*/}
+                {/*        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_RECORDING)*/}
+                {/*    }}>*/}
+                {/*    <View style={styles.accept}>*/}
+                {/*        <View>*/}
+                {/*            <Text style={styles.acceptText}>Sync record</Text>*/}
+                {/*        </View>*/}
+                {/*        <View>*/}
+                {/*            <IconFont name={'arrow-right'} size={15} color={'#979797'}/>*/}
+                {/*        </View>*/}
+                {/*    </View>*/}
+                {/*</TouchableHighlight>*/}
+
+                <View style={styles.dataCountBox}>
+                    <Text>3 people</Text>
+                    <Text>223,223,999 data</Text>
+                </View>
+                <View>
+                    {
+                        dataRecord.map((item: any) => {
+                            return <ListItem title={item.title} navigation={props.navigation}/>
+                        })
+                    }
+                </View>
 
                 <View style={{height: 15}}/>
             </ScrollView>
@@ -167,6 +180,20 @@ const styles = StyleSheet.create({
         marginLeft:15,
         marginRight:15,
         marginTop:5
+    },
+    dataCountBox:{
+        height:42,
+        backgroundColor:'#fff',
+        paddingLeft:16,
+        paddingRight:16,
+        flexDirection:"row",
+        alignItems:"center",
+        justifyContent:"space-between",
+        marginTop:4.5,
+        marginBottom:5,
+        marginLeft:16,
+        marginRight:16,
+        borderRadius:8
     },
     deleteBtn:{
         width:(screenWidth - 41.5)/2.3,

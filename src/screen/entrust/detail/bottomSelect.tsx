@@ -86,7 +86,7 @@ const BottomSelect = (props) => {
         <BottomSheet
             ref={props.actionSheetRef}
                 index={-1}
-            snapPoints={[1, screenHeight * 0.3 + state.keyboardHeight * 1.2 + state.scrollOffsetY  ]}
+            snapPoints={[1, 260 + state.keyboardHeight * 1.2 + state.scrollOffsetY  ]}
             onChange={handleSheetChanges}
         >
             <View style={styles.sheetTop}>
@@ -153,7 +153,7 @@ const BottomSelect = (props) => {
         <BottomSheet
             ref={props.selectSheetRef}
             index={-1}
-            snapPoints={[1, screenHeight * 0.3]}
+            snapPoints={[1, 225]}
             onChange={props.handleSelectSheetChanges}
         >
             {

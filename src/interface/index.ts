@@ -31,7 +31,7 @@ export interface NavigateProps {
 
 
 // 本地图片接口
-export interface PictureProps {
+export interface PhotoPictureProps {
     path: string;
     fileName: string;
     localIdentifier: string;
@@ -41,7 +41,7 @@ export interface PictureProps {
     type: string;
     size: number;
     bucketId?: number;
-    realPath?: string;
+    realPath: string;
     parentFolderName?: string;
     thumbnail?: string;
     creationDate?: string;

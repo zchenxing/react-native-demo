@@ -8,6 +8,8 @@ import { useCommentDataStore, useSelfDataStore } from "../../store/provider";
 import {observer} from 'mobx-react'
 import apis from '../../network/apis';
 import {SpeedDial} from 'react-native-elements'
+import { Text, View } from "react-native";
+import Publishing from "./publishing";
 
 
 
@@ -48,6 +50,8 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         <>
             <HomeNavigator onSearch={onPressSearch} onPublish={onPublish} />
 
+            <Publishing />
+
             <PostList
                 api={apis.post.list}
                 listId={INTELINK_SCREEN_NAME.SCREEN_HOME}
@@ -56,33 +60,33 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             />
 
 
-            {/*<SpeedDial*/}
-            {/*    isOpen={open}*/}
-            {/*    icon={{ name: 'edit', color: '#fff' }}*/}
-            {/*    openIcon={{ name: 'close', color: '#fff' }}*/}
-            {/*    onOpen={() => setOpen(!open)}*/}
-            {/*    onClose={() => setOpen(!open)}*/}
-            {/*>*/}
-            {/*    <SpeedDial.Action*/}
-            {/*        title={selfInfoData?.nickname}*/}
-            {/*        onPress={() => props.navigation.push('Test1')}*/}
-            {/*    />*/}
-            {/*    <SpeedDial.Action*/}
-            {/*        title="委托"*/}
-            {/*        onPress={() => {*/}
-            {/*            props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST);*/}
-            {/*        }}*/}
-            {/*    />*/}
+            <SpeedDial
+                isOpen={open}
+                icon={{ name: 'edit', color: '#fff' }}
+                openIcon={{ name: 'close', color: '#fff' }}
+                onOpen={() => setOpen(!open)}
+                onClose={() => setOpen(!open)}
+            >
+                <SpeedDial.Action
+                    title={selfInfoData?.nickname}
+                    onPress={() => props.navigation.push('Test1')}
+                />
+                <SpeedDial.Action
+                    title="委托"
+                    onPress={() => {
+                        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST);
+                    }}
+                />
 
-            {/*    <SpeedDial.Action*/}
-            {/*        title="分享"*/}
-            {/*        onPress={() => {*/}
-            {/*            props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PUBLISH_SHARE, {*/}
-            {/*                animalId: '61caefb2aca33b1a370bf463'*/}
-            {/*            });*/}
-            {/*        }}*/}
-            {/*    />*/}
-            {/*</SpeedDial>*/}
+                <SpeedDial.Action
+                    title="分享"
+                    onPress={() => {
+                        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_PUBLISH_SHARE, {
+                            animalId: '61caefb2aca33b1a370bf463'
+                        });
+                    }}
+                />
+            </SpeedDial>
         </>
     );
 };

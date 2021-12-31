@@ -8,6 +8,21 @@ import UserItem from './item';
 
 const FollowListScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
+    const { userId, followType } = props.route.params
+
+    React.useEffect(() => {
+
+        getFollowData()
+    }, [])
+
+
+    const getFollowData = async () => {
+        try {
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     return (
         <>

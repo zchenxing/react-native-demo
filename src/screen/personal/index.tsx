@@ -272,7 +272,10 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      * @param type
      */
     const onPressFollowList = (type: PersonalOtherEnum) => {
-        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_FOLLOW_LIST);
+        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_FOLLOW_LIST, {
+            userId: userId,
+            followType: type
+        });
     };
 
     const onPressEdit = () => {

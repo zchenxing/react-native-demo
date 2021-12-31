@@ -56,6 +56,8 @@ export const languageEn = {
 
     adult: 'Adult',
     child: 'Juvenile',
+    uploading: 'Uploading',
+    complete: 'Complete',
 
     x_minute_ago: (min: number, isAge: boolean) => {
         return `${min} ${min > 1 ? 'minutes' : 'minute'} ${isAge ? 'age' : ''}`

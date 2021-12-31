@@ -71,9 +71,9 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
         if (props.userInfo) {
 
             const totalInfo = [...state.totalInfo];
-            totalInfo[0].value = props.userInfo?.total_theme;
-            totalInfo[1].value = props.userInfo?.total_follow;
-            totalInfo[2].value = props.userInfo?.total_fans;
+            totalInfo[0].value = props.userInfo?.total_theme || 0;
+            totalInfo[1].value = props.userInfo?.total_follow || 0;
+            totalInfo[2].value = props.userInfo?.total_fans || 0;
             setState({
                 totalInfo,
                 following: !!props.userInfo.user_event

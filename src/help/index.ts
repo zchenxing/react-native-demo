@@ -119,8 +119,8 @@ const Utils = {
         } else {
             return hours <= 1 ? 1 : hours
         }
+    },
 
-    }
 }
 
 

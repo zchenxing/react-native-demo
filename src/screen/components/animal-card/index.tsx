@@ -288,6 +288,8 @@ const styles = StyleSheet.create({
         width: '33%',
         borderRightColor: themeColor,
         borderRightWidth: 1,
+        borderTopColor: themeColor,
+        borderTopWidth: 1
     },
     infoItemTitle: {
         fontSize: 13,

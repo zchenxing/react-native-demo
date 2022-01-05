@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     ActivityIndicator,
+    Alert,
     StyleSheet,
     Text,
     TouchableHighlight,
@@ -13,19 +14,56 @@ import {themeColor} from '../../../assets/styles';
 import {isIOS} from '../../../config/contant';
 import {useLanguage} from '../../../language';
 import {localImages} from '../../../assets/images';
+import CommentActionSheet from '../comment-action';
 
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,
 ) => {
+    const [visible, setVisible] = React.useState(false);
+
+
+    React.useEffect(() => {
+        // console.log('commentDetail ---:', props.commentDetail);
+    }, []);
+
+    const onLongPress = () => {
+        setVisible(true);
+    };
+
+    /**
+     * 回复评论
+     */
+    const onReply = () => {
+        props.onPressReply(ReplyType.Comment, props.commentDetail);
+    };
+
+    /**
+     * 删除评论
+     */
+    const onDeleteComment = () => {
+        Alert.alert(useLanguage.reminder, useLanguage.confirm_delete_comment, [
+            {
+                text: useLanguage.cancel,
+                onPress: () => {},
+                style: 'cancel',
+            },
+            {
+                text: useLanguage.delete,
+                onPress: () =>
+                    props.onPressDelete(
+                        ReplyType.Comment,
+                        props.commentDetail.id,
+                    ),
+            },
+        ]);
+    };
+
+
     return (
         <>
             <TouchableHighlight
-                onPress={() =>
-                    props.onPressReply(
-                        ReplyType.ReplyToComment,
-                        props.commentDetail,
-                    )
-                }
+                onPress={onReply}
+                onLongPress={() => onLongPress()}
                 underlayColor={'#fafafa'}>
                 <View style={styles.container}>
                     <TouchableHighlight
@@ -33,15 +71,14 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         underlayColor={'none'}>
                         <FastImage
                             style={styles.avatar}
-                            // source={
-                            //     props.commentDetail.target_user_info?.avatar
-                            //         ? {
-                            //               uri: props.commentDetail
-                            //                   .target_user_info?.avatar,
-                            //           }
-                            //         : localImages.defaultAvatar
-                            // }
-                            source={localImages.defaultAvatar}
+                            source={
+                                props.commentDetail.user_info?.avatar
+                                    ? {
+                                          uri: props.commentDetail.user_info
+                                              ?.avatar.url_thumb,
+                                      }
+                                    : localImages.defaultAvatar
+                            }
                             resizeMode={FastImage.resizeMode.cover}
                         />
                     </TouchableHighlight>
@@ -93,14 +130,22 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                 <View style={{paddingLeft: 40}}>
                     {props.commentDetail.replies.map(data => (
                         <CommentItem
-                            mainCommentUserId={props.mainCommentUserId}
                             key={data.id}
-                            commentDetail={data}
+                            mySelfId={props.mySelfId}
                             isAuthor={props.isAuthor}
+                            mainCommentUserId={props.mainCommentUserId}
+                            commentDetail={data}
                             onPressAvatar={props.onPressAvatar}
                             onPressReply={() =>
-                                props.onPressReply(ReplyType.ReplyToReply, data)
+                                props.onPressReply(ReplyType.Reply, data)
                             }
+                            onPressDelete={() => {
+                                props.onPressDelete(
+                                    ReplyType.Reply,
+                                    props.commentDetail.id,
+                                    data.id,
+                                );
+                            }}
                         />
                     ))}
 
@@ -109,16 +154,20 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         <TouchableHighlight
                             style={styles.moreReplies}
                             onPress={props.getMoreReplies}
-                            underlayColor={'none'}>
+                            underlayColor={'#f8f8f8'}>
                             {!props.moreLoading ? (
                                 <Text style={styles.moreRepliesText}>
                                     {useLanguage.view_more_replies}
                                 </Text>
                             ) : (
-                                <Text style={styles.moreRepliesText}>
-                                    <ActivityIndicator />
-                                    {useLanguage.load_more}
-                                </Text>
+                                <>
+                                    <ActivityIndicator
+                                        style={{marginRight: 10}}
+                                    />
+                                    <Text style={styles.moreRepliesText}>
+                                        {useLanguage.load_more}
+                                    </Text>
+                                </>
                             )}
                         </TouchableHighlight>
                     )}
@@ -128,6 +177,14 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
             )}
 
             {props.showSeparator && <View style={styles.separator} />}
+
+            <CommentActionSheet
+                visible={visible}
+                showDelete={props.mySelfId === props.commentDetail.user_id}
+                onReply={onReply}
+                onDelete={onDeleteComment}
+                onClose={() => setVisible(false)}
+            />
         </>
     );
 };
@@ -181,12 +238,13 @@ const styles = StyleSheet.create({
         marginLeft: 35,
     },
     moreReplies: {
-        width: 140,
-        marginLeft: 30,
+        width: 160,
+        paddingTop: 10,
         paddingBottom: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     moreRepliesText: {
-        paddingLeft: 10,
         color: themeColor,
         lineHeight: isIOS ? 22 : 17,
     },

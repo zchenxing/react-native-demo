@@ -15,6 +15,8 @@ import {KeyboardAccessoryView} from 'react-native-keyboard-accessory';
 import { themeColor } from "../../assets/styles";
 import {useNetInfo} from '@react-native-community/netinfo'
 import Utils from '../../help';
+import Toast from 'react-native-simple-toast';
+import { useMyThrottle } from "../../help/throttle";
 
 const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
 
@@ -23,11 +25,14 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
     const [textValue, setTextValue] = React.useState<string>('')
     const [placeholder, setPlaceholder] = React.useState<string>('')
 
+    const onPressSend = useMyThrottle(() => onSubmit(), 500)
+
+
     React.useEffect(() => {
         if (props.visible) {
 
             setTimeout(() => {
-                inputRef.current.focus();
+                inputRef.current && inputRef.current.focus();
             }, 70);
 
             setTimeout(() => {
@@ -58,16 +63,19 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
         setTextValue(text)
     }
 
-    const onPressSend = () => {
+
+    const onSubmit = () => {
         if (netInfo.type !== 'none') {
             props.onPressSend(Utils.removeSpaceAndEnter(textValue))
+        } else {
+            Toast.show(useLanguage.check_connection)
         }
     };
 
     const onClose = () => {
-        props.onClose();
-        setTextValue('')
-        Keyboard.dismiss();
+        if (props.visible) {
+            props.onClose();
+        }
     };
 
 

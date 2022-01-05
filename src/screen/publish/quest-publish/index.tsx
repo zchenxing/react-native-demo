@@ -25,6 +25,7 @@ import Utils from '../../../help';
 import {shareSpeciesTags} from '../../../config/type';
 import { GOOGLE_KEY, isIOS } from "../../../config/contant";
 import ReactNativeBlobUtil from 'react-native-blob-util';
+import ScreenBase from "../../components/screen-base";
 
 interface IState {
     startIndex: number;
@@ -198,51 +199,54 @@ const QuestPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 )}
             </View>
 
-            <ScrollView style={styles.container} scrollEnabled={true}>
-                <View style={{padding: 10}}>
+            <ScreenBase>
+                <ScrollView style={styles.container} scrollEnabled={true}>
+                    <View style={{padding: 10}}>
 
-                    <TextInput
-                        ref={inputRef}
-                        value={state.postContent}
-                        onChangeText={text => {
-                            setState({postContent: text});
-                        }}
-                        placeholder={'Share your content'}
-                        multiline={true}
-                        keyboardType="default"
-                        textAlignVertical={'top'}
-                        style={{height: state.inputHeight}}
-                        maxLength={300}
-                        onContentSizeChange={event => {
-                            setState({
-                                inputHeight: Math.max(
-                                    170,
-                                    event.nativeEvent.contentSize.height,
-                                ),
-                            });
-                        }}
-                    />
-                </View>
+                        <TextInput
+                            ref={inputRef}
+                            value={state.postContent}
+                            onChangeText={text => {
+                                setState({postContent: text});
+                            }}
+                            placeholder={'Share your content'}
+                            multiline={true}
+                            keyboardType="default"
+                            textAlignVertical={'top'}
+                            style={{height: state.inputHeight}}
+                            maxLength={300}
+                            onContentSizeChange={event => {
+                                setState({
+                                    inputHeight: Math.max(
+                                        170,
+                                        event.nativeEvent.contentSize.height,
+                                    ),
+                                });
+                            }}
+                        />
+                    </View>
 
-                <View
-                    style={{
-                        paddingTop: 10,
-                        padding: 20,
-                    }}>
-                    <AnimalCard
-                        showOtherInfo={true}
-                        animalType={AnimalCardType.QuestType}
-                        googleMapPic={state.googleMapPic}
-                        speciesType={state.shareData?.animal_category}
-                        shareData={state.shareData}
-                        animalInfo={state.animalData}
-                    />
-                </View>
+                    <View
+                        style={{
+                            paddingTop: 10,
+                            padding: 20,
+                        }}>
+                        <AnimalCard
+                            showOtherInfo={true}
+                            animalType={AnimalCardType.QuestType}
+                            googleMapPic={state.googleMapPic}
+                            speciesType={state.shareData?.animal_category}
+                            shareData={state.shareData}
+                            animalInfo={state.animalData}
+                        />
+                    </View>
 
 
+                    <View style={{height: 70}} />
+                </ScrollView>
 
-                <View style={{height: 100}} />
-            </ScrollView>
+            </ScreenBase>
+
         </>
     );
 };

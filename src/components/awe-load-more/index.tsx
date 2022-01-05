@@ -18,8 +18,8 @@ const AweLoadMore: React.FC<AweLoadMoreProps> = (props: AweLoadMoreProps) => {
                     underlayColor={'#fafafa'}
                     style={{padding: 22}}
                     onPress={props.handleNoMoreData}>
-                    <Text style={{textAlign: 'center'}}>
-                        {useLanguage.no_more_data}
+                    <Text style={{textAlign: 'center', color: '#ccc'}}>
+                        {props.title || useLanguage.no_more_data}
                     </Text>
                 </TouchableHighlight>
             )}

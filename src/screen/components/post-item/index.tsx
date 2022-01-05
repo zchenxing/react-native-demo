@@ -5,19 +5,19 @@ import PostHeader from './post-header';
 import PostArticle from './post-article';
 import PostFooter from './post-footer';
 import PostPicture from './post-picture';
-import {UserEventType} from '../../../enum';
+import { UserEventType } from "../../../enum";
 import WorkHelp from '../../../help/work';
 import AnimalCard from '../animal-card';
 import {AnimalCardType, ShareAnimalProps} from '../animal-card/type';
 import PostQuest from './post-quest';
 import { useSetState } from "ahooks";
 import { useSelfDataStore } from "../../../store/provider";
+import { useLanguage } from "../../../language";
 
 interface IState {
     biologicalCard: ShareAnimalProps | null
     questCard: any
 }
-
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
@@ -74,7 +74,7 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
             underlayColor={'#eee'}>
             <>
                 <PostHeader
-                    isShare={!!props.postItem.biological_card}
+                    postType={props.postItem.type}
                     isMySelf={props.postItem.user_id === selfInfoData?.id}
                     userNickname={props.postItem.user_info.nickname}
                     userAvatar={props.postItem.user_info.avatar?.url_thumb}

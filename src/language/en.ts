@@ -26,6 +26,7 @@ export const languageEn = {
     check_connection: 'Please check your connection',
     no_result_found: 'No related results were found',
     nothing_here: 'Nothing here',
+    reply: 'Reply',
 
 
     age: 'Age',
@@ -65,9 +66,17 @@ export const languageEn = {
     no_following: '没有关注别人',
     no_follower: '没有被人关注',
     expiry_in: 'Expiry in ',
-    delete_post: 'Delete',
+    delete: 'Delete',
     cancel: 'Cancel',
     confirm_delete_post: 'Confirm to delete the post',
+    confirm_delete_comment: 'Confirm to delete the comment',
+    confirm_delete_reply: 'Confirm to delete the reply',
+    quest: 'Quest',
+    quest_detail: 'Quest detail',
+    accept: 'Accept',
+    reminder: 'Reminder',
+
+    action_sheet_title: 'What do you want to do?',
 
     x_minute_ago: (min: number, isAge: boolean) => {
         return `${min} ${min > 1 ? 'minutes' : 'minute'} ${isAge ? 'age' : ''}`

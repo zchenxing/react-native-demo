@@ -1,20 +1,17 @@
 import React from 'react';
-import {Image, Text, StyleSheet, View, TouchableHighlight} from 'react-native';
+import {Image, Text, StyleSheet, View, TouchableHighlight, ScrollView} from 'react-native';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {screenWidth} from '../../../config/contant';
-import { NetworkStatus } from "../../../enum";
-import { useLanguage } from "../../../language";
-import { localImages } from "../../../assets/images";
-
-
-interface ScreenBaseProps {
-    children?: React.ReactNode;
-    onReload?: () => void
-    nothingPage?: {
-        picture: any;
-        title?: string;
-    };
-}
+import {NetworkStatus} from '../../../enum';
+import {useLanguage} from '../../../language';
+import {localImages} from '../../../assets/images';
+import {ScreenBaseProps} from './type';
+import {
+    Placeholder,
+    PlaceholderMedia,
+    PlaceholderLine,
+    Fade,
+} from 'rn-placeholder';
 
 const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
     const netInfo = useNetInfo();
@@ -29,28 +26,43 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
         } else {
             setNetworking(NetworkStatus.Working);
         }
-
     }, []);
 
     return (
         <View style={styles.container}>
             {networking === NetworkStatus.None ? (
-                <View style={styles.noNetwork}>
-                    <Image
-                        style={styles.noNetworkImg}
-                        resizeMode={'contain'}
-                        source={localImages.network}
-                    />
-                    <Text style={styles.noNetworkText}>
-                        {useLanguage.check_connection}
-                    </Text>
-                </View>
+                <TouchableHighlight
+                    underlayColor={'none'}
+                    onPress={() => props.onReload && props.onReload}>
+                    <View style={styles.noNetwork}>
+                        <Image
+                            style={styles.noNetworkImg}
+                            resizeMode={'contain'}
+                            source={localImages.network}
+                        />
+                        <Text style={styles.noNetworkText}>
+                            {useLanguage.check_connection}
+                        </Text>
+                    </View>
+                </TouchableHighlight>
+            ) : props.showPlaceholder ? (
+                <ScrollView style={{padding: 20}}>
+                    {[1, 2, 3].map(value => (
+                        <Placeholder Animation={Fade} key={value}>
+                            <PlaceholderMedia />
+                            <View style={{height: 10}} />
+                            <PlaceholderLine width={80} />
+                            <PlaceholderLine />
+                            <PlaceholderLine />
+                            <View style={{height: 40}} />
+                        </Placeholder>
+                    ))}
+                </ScrollView>
             ) : props.nothingPage ? (
                 <TouchableHighlight
                     style={styles.noNetwork}
                     underlayColor={'none'}
-                    onPress={() => props.onReload && props.onReload}
-                >
+                    onPress={() => props.onReload && props.onReload}>
                     <>
                         <Image
                             style={styles.noNetworkImg}
@@ -84,9 +96,7 @@ const styles = StyleSheet.create({
     },
     noNetworkImg: {
         height: screenWidth / 2.8,
-        transform: [
-            {translateY: -40}
-        ],
+        transform: [{translateY: -40}],
     },
     noNetworkText: {
         color: '#999',

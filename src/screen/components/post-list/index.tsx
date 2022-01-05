@@ -12,7 +12,6 @@ import ScreenBase from '../screen-base';
 import {EventEmitterName, PAGE_SIZE} from '../../../config/contant';
 import {useNetInfo} from '@react-native-community/netinfo';
 import AweKeyboard from '../../../components/awe-keyboard';
-import Toast from 'react-native-simple-toast';
 import {usePostListDataStore} from '../../../store/provider';
 import {observer} from 'mobx-react';
 import AweLoadMore from '../../../components/awe-load-more';
@@ -20,6 +19,7 @@ import {useLanguage} from '../../../language';
 import {localImages} from '../../../assets/images';
 import { ActionSheet, SheetItem } from "action-sheet-rn";
 import AweOverlayLoading from '../../../components/awe-overlay-loading';
+import { errorMessage } from "../../../network/error";
 
 interface IState {
     refreshing: boolean;
@@ -39,6 +39,7 @@ interface IState {
 
     moreActionVisible: boolean
     deleteLoading: boolean
+    showPlaceholder: boolean
 }
 
 const PostList: React.FC<PostListProps> = (props: PostListProps) => {
@@ -68,7 +69,8 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         commentVisible: false,
 
         moreActionVisible: false,
-        deleteLoading: false
+        deleteLoading: false,
+        showPlaceholder: true
     });
 
     React.useEffect(() => {
@@ -100,6 +102,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             );
 
             setState({
+                showPlaceholder: false,
                 refreshing: false,
                 hasMoreData: res.data.length && res.data.length === PAGE_SIZE,
             });
@@ -111,7 +114,12 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 });
             }
         } catch (err) {
-            console.log(err);
+            errorMessage.alert(err)
+            setState({
+                showPlaceholder: false,
+                refreshing: false,
+                hasMoreData: false
+            });
         }
     };
 
@@ -210,7 +218,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
     /**
      * 点击收藏 | 取消收藏
-     * @param row      具体某行的数据
+     * @param row  具体某行的数据
      */
     const onPressCollection = async (row: any) => {
         if (netInfo.type !== 'none') {
@@ -224,7 +232,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     };
 
     /**
-     * 发评论
+     * 当没有评论时，直接发评论
      */
     const onSendComment = async () => {
         try {
@@ -248,8 +256,9 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 });
             }
 
-            // Toast.show('消息发送成功');
-        } catch (err) {}
+        } catch (err) {
+            errorMessage.alert(err)
+        }
     };
 
     const onPressMoreAction = (row: any) => {
@@ -272,7 +281,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 style: 'cancel',
             },
             {
-                text: useLanguage.delete_post,
+                text: useLanguage.delete,
                 onPress: () => deletePost(),
             },
         ]);
@@ -295,6 +304,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     return (
         <ScreenBase
             onReload={onLoadData}
+            showPlaceholder={state.showPlaceholder}
             nothingPage={
                 postStoreData[props.listId] &&
                 !postStoreData[props.listId].length
@@ -372,7 +382,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                     <SheetItem
                         type='remove'
                         onPress={handleDeletePost}>
-                        {useLanguage.delete_post}
+                        {useLanguage.delete}
                     </SheetItem>
 
                     <SheetItem onPress={() => setState({moreActionVisible: false})}>

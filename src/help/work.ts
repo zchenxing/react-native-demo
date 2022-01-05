@@ -8,13 +8,13 @@ const WorkHelp = {
      * @param id
      * @param dataSource
      */
-    getDataSourceIndex: (id: string, dataSource: any[]) => {
+    getDataSourceIndex: (dataSource: any[], id: string) => {
         let resultIndex: number = -1;
 
-        for (const index in dataSource) {
-            if (dataSource[index].id === id) {
-                resultIndex = parseInt(index, 10);
-                break;
+        for (let i = 0; i < dataSource.length; i++) {
+            if (dataSource[i].id === id) {
+                resultIndex = i
+                break
             }
         }
 

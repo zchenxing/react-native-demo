@@ -1,4 +1,4 @@
-import { GenderProps } from "../enum";
+import { GenderProps, PostType } from "../enum";
 
 export type UserEventProps = {
     event_type: 1 | 2 | 3
@@ -45,6 +45,7 @@ export interface PostContentProps {
     id: string
     created_at: string
     user_id: string
+    type: PostType
     // 主题标签
     label: string
     // 主题内容
@@ -79,8 +80,14 @@ export interface CommentProps {
     content: string
     total_reply: number
     user_info: {
+        id: string
         nickname: string
-        avatar: string
+        avatar: {
+            id: string
+            url_origin: string
+            url_normal: string
+            url_thumb: string
+        }
     },
     replies?: CommentProps[] | null
     // --- 只有回复才有的 ---

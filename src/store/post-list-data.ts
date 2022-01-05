@@ -6,6 +6,7 @@ import apiConfig from '../network/config';
 import {UserEventType} from '../enum';
 import WorkHelp from '../help/work';
 import {INTELINK_SCREEN_NAME} from '../routes/screen-name';
+import { errorMessage } from "../network/error";
 
 type PageParam = {
     pageId?: string;
@@ -123,14 +124,19 @@ export class PostListDataStore {
 
             return Promise.resolve();
         } catch (err) {
+            console.log('Collect error: ', JSON.stringify(err));
+            errorMessage.alert(err)
             // 如果已经收藏，就取消，否则就添加
             if (index > -1) {
-                userEvents.splice(index, 1);
-            } else {
                 userEvents.push({
                     event_type: UserEventType.Collection,
                 });
+            } else {
+                userEvents.splice(index, 1);
             }
+            this.postStoreData[listId][rowIndex].user_events = userEvents;
+            this.setPostStoreData(listId, this.postStoreData[listId]);
+
             return Promise.reject();
         }
     };

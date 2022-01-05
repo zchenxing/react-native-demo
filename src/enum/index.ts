@@ -50,12 +50,12 @@ export const EntrustType = {
 
 
 // 帖子类型
-export const PostType = {
+export enum PostType {
     // 正常图文帖子
-    Normal: 'Normal',
+    Normal = 'Normal',
     // 生物卡片
-    BiologicalCard: 'BiologicalCard',
+    BiologicalCard = 'BiologicalCard',
     // 委托
-    Entrust: 'Entrust',
+    Entrust = 'Entrust',
 }
 

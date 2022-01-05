@@ -1,10 +1,12 @@
-import {action, observable} from 'mobx';
-import server from '../network';
-import {CommentProps} from '../interface/work';
-import apis from '../network/apis';
-import apiConfig from '../network/config';
-import {PAGE_SIZE} from '../config/contant';
-import Utils from '../help';
+import { action, observable } from "mobx";
+import server from "../network";
+import { CommentProps } from "../interface/work";
+import apis from "../network/apis";
+import apiConfig from "../network/config";
+import { PAGE_SIZE } from "../config/contant";
+import Utils from "../help";
+import { ReplyType } from "../screen/components/post-comments-sheet/type";
+import WorkHelp from "../help/work";
 
 type CurrentReplyProps = {
     mainCommentIndex: number;
@@ -16,7 +18,6 @@ type CurrentReplyProps = {
 };
 
 export class CommentDataStore {
-
     // 帖子id
     private currentPostId: string = '';
     // 记录评论最后一条数据的id
@@ -37,10 +38,10 @@ export class CommentDataStore {
         hasMoreData: false,
     };
 
-    @observable replyMoreLoad: {rowIndex: number, loading: boolean} = {
+    @observable replyMoreLoad: {rowIndex: number; loading: boolean} = {
         rowIndex: -1,
-        loading: false
-    }
+        loading: false,
+    };
 
     /**
      * 重置数据
@@ -53,9 +54,9 @@ export class CommentDataStore {
         this.repliesPage = {};
         this.currentPostId = '';
         this.latestCommentId = '';
-        this.currentReplyData = null
+        this.currentReplyData = null;
         if (listId) {
-            this.commentStoreData[listId] = []
+            this.commentStoreData[listId] = [];
         }
     };
 
@@ -65,8 +66,8 @@ export class CommentDataStore {
     ) => {
         this.commentStoreData = {
             ...this.commentStoreData,
-            [listId]: [...dataSource]
-        }
+            [listId]: [...dataSource],
+        };
     };
 
     @action.bound setContentText = (text: string) => {
@@ -134,11 +135,14 @@ export class CommentDataStore {
         try {
             const res = await server.post(
                 apis.post.comment.push(this.currentPostId),
-                {content: this.contentText},
+                {content: Utils.removeSpaceAndEnter(this.contentText)},
             );
 
             this.setContentText('');
-            this.setCommentStoreData(listId,[res.data, ...this.commentStoreData[listId] || []]);
+            this.setCommentStoreData(listId, [
+                res.data,
+                ...(this.commentStoreData[listId] || []),
+            ]);
 
             return Promise.resolve(res);
         } catch (err) {
@@ -164,25 +168,26 @@ export class CommentDataStore {
                       this.currentReplyData?.replyId,
                   );
 
-            const res = await server.post(api, {content: this.contentText});
+            const res = await server.post(api, {
+                content: Utils.removeSpaceAndEnter(this.contentText),
+            });
+
 
             // 向评论中插入回复
             const commentIndex = this.currentReplyData?.mainCommentIndex || 0;
             if (commentIndex > -1) {
-                const data = this.commentStoreData[listId][commentIndex]
+                const data = this.commentStoreData[listId][commentIndex];
+
                 const replies = data.replies;
                 if (replies) {
                     // 回复总数要+1
                     data.total_reply += 1;
-                    data.replies = [
-                        ...replies,
-                        res.data,
-                    ];
+                    data.replies = [...replies, res.data];
                 } else {
                     data.replies = [res.data];
                 }
 
-                this.commentStoreData[listId][commentIndex] = data
+                this.commentStoreData[listId][commentIndex] = data;
             }
 
             this.setCommentStoreData(listId, this.commentStoreData[listId]);
@@ -206,11 +211,10 @@ export class CommentDataStore {
         !this.repliesPage[comment.id] && (this.repliesPage[comment.id] = 1);
 
         try {
-
             this.replyMoreLoad = {
                 rowIndex,
-                loading: true
-            }
+                loading: true,
+            };
 
             const res = await server.get(
                 apis.comment.replyList(
@@ -234,15 +238,77 @@ export class CommentDataStore {
 
             this.replyMoreLoad = {
                 rowIndex,
-                loading: false
-            }
+                loading: false,
+            };
 
             this.setCommentStoreData(listId, this.commentStoreData[listId]);
 
-            return Promise.resolve()
+            return Promise.resolve();
         } catch (err) {
             console.log(err);
-            return Promise.reject(err)
+            return Promise.reject(err);
         }
     };
+
+
+    /**
+     * 删除评论或回复
+     * @param listId
+     * @param type
+     * @param commentId
+     * @param replyId
+     */
+    public onDeleteCommentReply = async (
+        listId: string,
+        type: ReplyType,
+        commentId: string,
+        replyId?: string,
+    ) => {
+        try {
+
+            // 删除评论
+            let api = type === ReplyType.Comment ?
+                apis.comment.deleteComment(commentId) :
+                apis.comment.deleteReply(commentId, replyId || '')
+
+            const commentData: CommentProps[] = this.commentStoreData[listId]
+            const commentIndex = WorkHelp.getDataSourceIndex(
+                commentData,
+                commentId,
+            );
+
+            if (commentIndex > -1) {
+                if (type === ReplyType.Comment) {
+
+                    await server.delete(api)
+                    commentData.splice(commentIndex, 1)
+
+                    this.commentStoreData[listId] = commentData
+                }
+                else if (type === ReplyType.Reply && replyId) {
+                    const replyData: CommentProps[] = this.commentStoreData[listId][commentIndex].replies || []
+                    const replyIndex = WorkHelp.getDataSourceIndex(
+                        replyData,
+                        replyId,
+                    );
+
+                    await server.delete(api)
+
+                    replyData.splice(replyIndex, 1)
+                    this.commentStoreData[listId][commentIndex].replies = replyData
+                }
+
+            }
+            this.setCommentStoreData(
+                listId,
+                this.commentStoreData[listId],
+            );
+            return Promise.resolve()
+
+        } catch (err) {
+            console.log('Delete comment error:', err);
+            return Promise.reject(err)
+        }
+    }
+
 }

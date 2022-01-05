@@ -1,7 +1,8 @@
 import React from 'react';
 import {
     FlatList,
-    Keyboard, SafeAreaView,
+    Keyboard,
+    SafeAreaView,
     StyleSheet,
     Text,
     TouchableHighlight,
@@ -10,7 +11,6 @@ import {
 import {NavigateProps} from '../../interface';
 import PostContent from './post-content';
 import ScreenBase from '../components/screen-base';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {useSetState} from 'ahooks';
 import CommentItem from '../components/post-comments-sheet/comment-item';
 import {themeColor} from '../../assets/styles';
@@ -27,7 +27,12 @@ import PastCard from './post-card';
 import WorkHelp from '../../help/work';
 import {UserEventType} from '../../enum';
 import {AnimalCardType} from '../components/animal-card/type';
-import IconFont from "../../assets/iconfont";
+import IconFont from '../../assets/iconfont';
+import LinearGradient from 'react-native-linear-gradient';
+import Draggable from 'react-native-draggable';
+import {screenHeight, screenWidth} from '../../config/contant';
+import {Card} from 'react-native-shadow-cards';
+import { useLanguage } from "../../language";
 
 interface IState {
     postDetail: PostContentProps | null;
@@ -36,6 +41,8 @@ interface IState {
     followLoading: boolean;
     isCollection: boolean;
     keyboardVisible: boolean;
+    scrollEnabled: boolean;
+    hasAccept: boolean
 }
 
 const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
@@ -43,7 +50,8 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const totalRow = React.useRef<any>(null);
     const {postId, rowIndex, fromListId} = props.route.params;
 
-    const {postStoreData, setPostStoreData, onCollectPost} = usePostListDataStore();
+    const {postStoreData, setPostStoreData, onCollectPost} =
+        usePostListDataStore();
     const {
         commentStoreData,
         contentText,
@@ -66,6 +74,8 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         followLoading: false,
         isCollection: false,
         keyboardVisible: false,
+        scrollEnabled: true,
+        hasAccept: false
     });
 
     React.useEffect(() => {
@@ -142,7 +152,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             mainCommentIndex: commentRow.index,
             commentId: commentRow.item.id,
             replyNickname: comment.user_info.nickname,
-            replyId: replyType === ReplyType.ReplyToReply ? comment.id : '',
+            replyId: replyType === ReplyType.Reply ? comment.id : '',
         });
 
         setState({
@@ -205,21 +215,17 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      * 收藏 / 取消收藏
      */
     const onCollection = async () => {
-
         try {
-
             setState({
-                isCollection: !state.isCollection
-            })
+                isCollection: !state.isCollection,
+            });
 
             await onCollectPost(postId, rowIndex, fromListId);
-
         } catch (err) {
             setState({
-                isCollection: !state.isCollection
-            })
+                isCollection: !state.isCollection,
+            });
         }
-
     };
 
     return (
@@ -236,6 +242,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 {state.postDetail && (
                     <View style={{flex: 1}}>
                         <FlatList
+                            scrollEnabled={state.scrollEnabled}
                             ref={flatListRef}
                             data={[
                                 0,
@@ -356,7 +363,9 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                             style={styles.comment}
                             underlayColor={'none'}
                             onPress={onPressEditComment}>
-                            <Text numberOfLines={1}>
+                            <Text
+                                numberOfLines={1}
+                                style={{color: contentText ? '#333' : '#aaa'}}>
                                 {contentText || 'Say something'}
                             </Text>
                         </TouchableHighlight>
@@ -384,9 +393,32 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                         </TouchableHighlight>
                     </View>
                 </SafeAreaView>
-
-
             </ScreenBase>
+
+            <Draggable
+                x={screenWidth - (state.hasAccept ? 140 : 110)}
+                y={screenHeight - 150}
+                minX={0}
+                minY={0}
+                maxX={screenWidth}
+                maxY={screenHeight}
+                onShortPressRelease={() => setState({hasAccept: !state.hasAccept})}
+                onPressIn={() => setState({scrollEnabled: false})}
+                onRelease={() => setState({scrollEnabled: true})}
+            >
+                <Card style={styles.shadow}>
+                    <LinearGradient
+                        colors={['#6FC1CE', '#a2dee6']}
+                        start={{x: 0, y: 0}}
+                        end={{x: 1, y: 0}}
+                        style={styles.questDetail}>
+                        <Text style={{color: '#fff'}}>
+                            {state.hasAccept ? useLanguage.quest_detail : useLanguage.accept}
+                        </Text>
+                    </LinearGradient>
+                </Card>
+
+            </Draggable>
 
             <AweKeyboard
                 visible={state.keyboardVisible}
@@ -431,7 +463,18 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingLeft: 15,
         paddingRight: 20,
-        // paddingBottom: 25,
+    },
+    questDetail: {
+        backgroundColor: themeColor,
+        height: 40,
+        paddingRight: 20,
+        paddingLeft: 20,
+        borderRadius: 40,
+        justifyContent: 'center',
+    },
+    shadow: {
+        borderRadius: 20,
+        width: 'auto',
     },
 });
 

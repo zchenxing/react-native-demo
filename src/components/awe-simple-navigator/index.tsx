@@ -4,10 +4,19 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Header} from 'react-native-elements';
 import {AweSimpleNavigatorProps} from './type';
 import {themeColor, themeLightColor} from '../../assets/styles';
+import { useMyThrottle } from "../../help/throttle";
 
 const AweSimpleNavigator: React.FC<AweSimpleNavigatorProps> = (
     props: AweSimpleNavigatorProps,
 ) => {
+
+
+    // 防止频繁调用
+    const rightAction = useMyThrottle(() => {
+        props.rightActionEvent && props.rightActionEvent();
+    }, 600)
+
+
     return (
         <Header
             backgroundColor="#fff"
@@ -37,7 +46,7 @@ const AweSimpleNavigator: React.FC<AweSimpleNavigatorProps> = (
                     <TouchableHighlight
                         disabled={!props.rightActionEditable}
                         underlayColor={'none'}
-                        onPress={props.rightActionEvent}>
+                        onPress={rightAction}>
                         <View>
                             {props.rightActionIcon ? (
                                 props.rightActionIcon

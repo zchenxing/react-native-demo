@@ -1,7 +1,8 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import Utils from '../../../help';
-import IconFont from "../../../assets/iconfont";
+import IconFont from '../../../assets/iconfont';
+import { useMyThrottle } from "../../../help/throttle";
 
 interface PostFooterProps {
     isCollection: boolean
@@ -14,10 +15,9 @@ interface PostFooterProps {
 
 const PostFooter: React.FC<PostFooterProps> = (props: PostFooterProps) => {
 
-    const onPressCollect = () => {
+    const onPressCollect = useMyThrottle(() => {
         props.onPressCollection()
-    };
-
+    }, 500);
 
     return (
         <View style={styles.container}>

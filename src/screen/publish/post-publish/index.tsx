@@ -27,6 +27,7 @@ import IconFont from '../../../assets/iconfont';
 import {PostType} from '../../../enum';
 import {usePublishDataStore} from '../../../store/provider';
 import WorkHelp from '../../../help/work';
+import Toast from "react-native-simple-toast";
 
 const pictureWidth = (screenWidth - 20) / 3;
 
@@ -38,6 +39,7 @@ const AddPicture = {
 
 interface IState {
     publishTag: any;
+    isSelectedTag: boolean
     selectedAssets: any[];
     startIndex: number;
     preview: boolean;
@@ -58,6 +60,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             icon: 'huati',
             name: useLanguage.choose_category_first,
         },
+        isSelectedTag: false,
         selectedAssets: [],
         startIndex: 0,
         preview: false,
@@ -73,13 +76,13 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             inputRef.current.focus();
         }, 500);
 
-        // if (!isIOS) {
-        //     backListener.current = BackHandler.addEventListener(
-        //         'hardwareBackPress',
-        //         () => goBack(),
-        //     );
-        // }
-        //
+        if (!isIOS) {
+            backListener.current = BackHandler.addEventListener(
+                'hardwareBackPress',
+                () => goBack(),
+            );
+        }
+
         const emitter = DeviceEventEmitter.addListener(
             EventEmitterName.ChooseCategory,
             setCategory,
@@ -87,14 +90,15 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
         return () => {
             emitter.remove();
-            // if (!isIOS) {
-            //     backListener.current.remove();
-            // }
+            if (!isIOS) {
+                backListener.current.remove();
+            }
         };
     }, []);
 
     const setCategory = (param: any) => {
         setState({
+            isSelectedTag: true,
             publishTag: param.tag,
         });
     };
@@ -141,7 +145,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             );
 
             const newAssets = await WorkHelp.compressPicture(selectedAssets);
-            console.log('压缩后的图片', newAssets);
+
             setState({selectedAssets: newAssets});
         } catch (e: any) {
             console.log('error：', e.code, e.message);
@@ -162,25 +166,24 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      * @param isNavigationBack 是否用导航栏返回
      */
     const goBack = (isNavigationBack?: boolean) => {
-        // if (contentText.current) {
-        //     Alert.alert('', useLanguage.save_post_to_draft, [
-        //         {
-        //             text: useLanguage.dont_save,
-        //             onPress: () => props.navigation.goBack(),
-        //             style: 'cancel',
-        //         },
-        //         {text: useLanguage.save, onPress: savePostToDraft},
-        //     ]);
-        //     return true;
-        // } else {
-        //     if (isNavigationBack) {
-        //         props.navigation.goBack();
-        //     }
-        //     return false;
-        // }
+        if (contentText.current) {
+            // Alert.alert('', useLanguage.save_post_to_draft, [
+            //     {
+            //         text: useLanguage.dont_save,
+            //         onPress: () => props.navigation.goBack(),
+            //         style: 'cancel',
+            //     },
+            //     {text: useLanguage.save, onPress: savePostToDraft},
+            // ]);
+            props.navigation.goBack()
+            return true;
+        } else {
+            if (isNavigationBack) {
+                props.navigation.goBack();
+            }
+            return false;
+        }
 
-        props.navigation.goBack();
-        return false;
     };
 
     /**
@@ -189,17 +192,26 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const savePostToDraft = () => {};
 
     const onPressSubmit = async () => {
-        const data = {
-            label: state.publishTag.name,
-            type: PostType.Normal,
-            content: Utils.removeSpaceAndEnter(
-                state.postContent || useLanguage.share,
-            ),
-        };
+        if (state.isSelectedTag) {
 
-        onPublishData(data, [...state.selectedAssets]);
+            const data = {
+                label: state.publishTag.name,
+                type: PostType.Normal,
+                content: Utils.removeSpaceAndEnter(
+                    state.postContent || useLanguage.share,
+                ),
+            };
 
-        props.navigation.goBack();
+            onPublishData(data, [...state.selectedAssets]);
+
+            props.navigation.goBack();
+        } else {
+            Toast.showWithGravity(
+                '请选择标签',
+                1,
+                Toast.CENTER,
+            );
+        }
 
     };
 
@@ -210,7 +222,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 goBack={() => goBack(true)}
                 rightActionTitle={'Post'}
                 rightActionEvent={onPressSubmit}
-                rightActionEditable={!!state.postContent}
+                rightActionEditable={!!state.postContent || !!state.selectedAssets.length}
             />
 
             <TouchableHighlight

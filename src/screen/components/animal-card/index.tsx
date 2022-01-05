@@ -1,6 +1,6 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
-import IconFont from '../../../iconfont';
+import IconFont from '../../../assets/iconfont';
 import FastImage from 'react-native-fast-image';
 import {useLanguage} from '../../../language';
 import LinearGradient from 'react-native-linear-gradient';
@@ -164,14 +164,12 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                                             ? useLanguage.show_less
                                             : useLanguage.show_more}
                                     </Text>
-                                    <Icon
-                                        name={
-                                            state.showMoreInfo
-                                                ? 'angle-double-up'
-                                                : 'angle-double-down'
-                                        }
-                                        style={styles.showMoreAngle}
-                                    />
+                                    <IconFont
+                                        name={state.showMoreInfo ? 'shouqi' : 'shouqi-copy'}
+                                        color={'#999'}
+                                        size={16}
+                                        style={styles.showMoreAngle}/>
+
                                 </View>
                             </View>
                         </TouchableHighlight>
@@ -191,26 +189,40 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                         )
                     }
 
-                    <View style={styles.mapBase}>
-                        {!state.mapLoading && (
-                            <WebView
-                                automaticallyAdjustContentInsets={false}
-                                source={{
-                                    uri: 'https://bird.coolhei.com/appmap/en/#/',
-                                }}
-                            />
-                        )}
-                    </View>
+                    {/*<View style={styles.mapBase}>*/}
+                    {/*    {!state.mapLoading && (*/}
+                    {/*        <WebView*/}
+                    {/*            automaticallyAdjustContentInsets={false}*/}
+                    {/*            source={{*/}
+                    {/*                uri: 'https://bird.coolhei.com/appmap/en/#/',*/}
+                    {/*            }}*/}
+                    {/*        />*/}
+                    {/*    )}*/}
+                    {/*</View>*/}
 
-                    {props.shareData?.expiry_date && (
-                        <View style={styles.expiryBase}>
-                            <Text style={styles.expiryText}>
-                                {useLanguage.expiry_in}{Utils.getExpireTime(
-                                    props.shareData.expiry_date,
-                                )}
-                            </Text>
-                        </View>
-                    )}
+                    {
+                        // 发布委托 -> Google地图截图
+                        props.googleMapPic ?
+                            <Image
+                                source={{uri: props.googleMapPic}}
+                                style={styles.mapBase}
+                            /> : <></>
+
+                    }
+
+                    {
+                        // 显示地理位置的有效期
+                        props.shareData?.expiry_date && (
+                            <View style={styles.expiryBase}>
+                                <Text style={styles.expiryText}>
+                                    {useLanguage.expiry_in}
+                                    {Utils.getExpireTime(
+                                        props.shareData.expiry_date,
+                                    )}
+                                </Text>
+                            </View>
+                        )
+                    }
                 </>
             )}
         </View>
@@ -316,9 +328,7 @@ const styles = StyleSheet.create({
         paddingRight: 10,
     },
     showMoreAngle: {
-        fontSize: 16,
         marginTop: 5,
-        color: '#999',
     },
 
     deviceBase: {
@@ -344,7 +354,7 @@ const styles = StyleSheet.create({
     },
     mapBase: {
         marginTop: 10,
-        height: 300,
+        height: screenWidth * 0.7,
         borderRadius: 10,
         overflow: 'hidden',
     },

@@ -9,7 +9,7 @@ import {
 import { Header } from 'react-native-elements';
 import { screenWidth } from "../../config/contant";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import IconFont from '../../iconfont';
+import IconFont from '../../assets/iconfont';
 
 interface HomeNavigatorProps {
     onSearch: () => void;

@@ -8,7 +8,6 @@ import {
     View,
 } from 'react-native';
 import {screenHeight, screenWidth} from '../../../config/contant';
-import {Image} from 'react-native-elements';
 import {useLanguage} from '../../../language';
 import AweKeyboard from '../../../components/awe-keyboard';
 import {PostCommentProps, ReplyType} from './type';

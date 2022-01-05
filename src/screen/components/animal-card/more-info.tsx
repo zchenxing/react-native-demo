@@ -181,7 +181,8 @@ const styles = StyleSheet.create({
         paddingLeft: 14,
         paddingRight: 14,
         backgroundColor: themeColor,
-        borderRadius: 20
+        borderRadius: 14,
+        overflow: 'hidden'
     },
     mainTitle: {
         color: '#fff',

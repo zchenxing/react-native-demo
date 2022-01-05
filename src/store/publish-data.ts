@@ -1,12 +1,12 @@
-import {action, observable} from 'mobx';
-import {UserInfoProps} from '../interface/work';
-import server from '../network';
-import apis from '../network/apis';
-import {PhotoPictureProps} from '../interface';
-import dayjs from 'dayjs';
-import ReactNativeBlobUtil from 'react-native-blob-util';
-import { EventEmitterName, isIOS } from "../config/contant";
+import { action, observable } from "mobx";
+import server from "../network";
+import apis from "../network/apis";
+import { PhotoPictureProps } from "../interface";
+import dayjs from "dayjs";
+import ReactNativeBlobUtil from "react-native-blob-util";
+import { EventEmitterName, GOOGLE_KEY, isIOS } from "../config/contant";
 import { DeviceEventEmitter } from "react-native";
+import { AnimalCardType } from "../screen/components/animal-card/type";
 
 type PublishDataProps = {
     label: string;
@@ -20,6 +20,8 @@ export class PublishDataStore {
     @observable publishProgress: number = 0;
     // 是否开始发布
     @observable isPublishing: boolean = false
+    // 上传是否发生错误
+    @observable happenedError: boolean = false
     // 发布图片的总数
     publishImageAmount: number = 0
 
@@ -40,6 +42,7 @@ export class PublishDataStore {
         this.publishProgress = 0;
         this.uploadedImageIds = [];
         this.isPublishing = false
+        this.happenedError = false
     };
 
     /**
@@ -131,6 +134,7 @@ export class PublishDataStore {
             return Promise.resolve();
         } catch (err) {
             console.log('Publish error');
+            this.happenedError = true
             return Promise.reject(err);
         }
     };
@@ -163,6 +167,7 @@ export class PublishDataStore {
                 type: 'multipart/form-data',
                 name: `${dayjs().valueOf()}-${fileName}`,
             };
+            console.log('组装的file', file);
             // file -> formData
             const formData = new FormData();
             formData.append('file', file);
@@ -180,23 +185,70 @@ export class PublishDataStore {
             console.log('上传分享图片失败 = ',`${imageUrl} - ${err}`);
             return Promise.reject(err);
         }
+    };
 
 
+    /**
+     * 获取Google图片
+     * @param uri
+     */
+    private getGooglePicture = async (uri: string) => {
 
+        try {
 
+            // 获取图片名字
+            const fileName = uri.split('/').pop();
+            // 组装file
+            const file = {
+                uri: uri,
+                type: 'multipart/form-data',
+                name: `${dayjs().valueOf()}-${fileName}`,
+            };
+
+            console.log('组装的file', file);
+
+            // file -> formData
+            const formData = new FormData();
+            formData.append('file', file);
+            // 上传图片
+            const res = await server.post(apis.file.upload('theme'), formData);
+
+            this.setPublishProgress(0.05)
+
+            return Promise.resolve(res.data.id)
+        } catch (err) {
+            console.log('Google map picture upload error:', err);
+            return Promise.reject(err);
+        }
     }
 
 
 
     /**
      * 发布分享数据
+     * @param data
+     * @param imageUrls
+     * @param shareType
      */
-    public onPublishShare = async (data: any, imageUrls: string[]) => {
-
-        console.log(imageUrls);
+    public onPublishShare = async (
+        data: any,
+        imageUrls: string[],
+        shareType: AnimalCardType,
+    ) => {
 
         this.setStartPublish(true)
-        this.publishImageAmount = imageUrls.length + 1
+
+        // 如果是委托，需要下载Google map地图
+        if (shareType === AnimalCardType.QuestType) {
+            this.publishImageAmount = imageUrls.length + 2
+
+            data.entrust.device_info.geo_round_image_id =
+                await this.getGooglePicture(data.googleMapPic)
+
+        } else {
+            this.publishImageAmount = imageUrls.length + 1
+        }
+
 
         const uploadList: any[] = []
         imageUrls.forEach((url) => {
@@ -216,9 +268,15 @@ export class PublishDataStore {
                 })
             })
 
-            data.biological_card.biological_image_ids = image_ids.reverse()
+            // 分享和委托的生物图片存放位置不同
+            if (shareType === AnimalCardType.ShareType) {
+                data.biological_card.biological_image_ids = image_ids.reverse()
+            } else {
+                data.entrust.biological_info.image_ids = image_ids.reverse()
+            }
 
-            console.log('需要发布的数据信息 = ', data);
+
+            console.log('需要发布的数据信息 = ', JSON.stringify(data));
 
             await server.post(apis.post.create, data);
             // 完成上传，progress设置100%
@@ -235,6 +293,7 @@ export class PublishDataStore {
             return Promise.resolve();
         } catch (err) {
             console.log('Share error');
+            this.happenedError = true
             return Promise.reject(err);
         }
 

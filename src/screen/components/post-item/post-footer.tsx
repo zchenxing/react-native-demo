@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import Utils from '../../../help';
-import IconFont from '../../../iconfont';
+import IconFont from "../../../assets/iconfont";
 
 interface PostFooterProps {
     isCollection: boolean

@@ -8,7 +8,7 @@ import {screenWidth} from '../../config/contant';
 import AwePicturePreview from '../../components/awe-picture-preview';
 import {useBoolean} from 'ahooks';
 import {PostContentProps, PostImageProps} from '../../interface/work';
-import IconFont from '../../iconfont';
+import IconFont from '../../assets/iconfont';
 
 interface IProps {
     postDetail: PostContentProps | null;

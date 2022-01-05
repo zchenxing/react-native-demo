@@ -1,12 +1,12 @@
 import React from 'react';
 import {
     FlatList,
-    Keyboard,
+    Keyboard, SafeAreaView,
     StyleSheet,
     Text,
     TouchableHighlight,
-    View,
-} from 'react-native';
+    View
+} from "react-native";
 import {NavigateProps} from '../../interface';
 import PostContent from './post-content';
 import ScreenBase from '../components/screen-base';
@@ -25,7 +25,9 @@ import AweLoadMore from '../../components/awe-load-more';
 import {observer} from 'mobx-react';
 import PastCard from './post-card';
 import WorkHelp from '../../help/work';
-import { UserEventType } from "../../enum";
+import {UserEventType} from '../../enum';
+import {AnimalCardType} from '../components/animal-card/type';
+import IconFont from "../../assets/iconfont";
 
 interface IState {
     postDetail: PostContentProps | null;
@@ -41,7 +43,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const totalRow = React.useRef<any>(null);
     const {postId, rowIndex, fromListId} = props.route.params;
 
-    const {postStoreData, setPostStoreData} = usePostListDataStore();
+    const {postStoreData, setPostStoreData, onCollectPost} = usePostListDataStore();
     const {
         commentStoreData,
         contentText,
@@ -67,8 +69,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     });
 
     React.useEffect(() => {
-
-        const detail: PostContentProps = postStoreData[fromListId][rowIndex]
+        const detail: PostContentProps = postStoreData[fromListId][rowIndex];
 
         setState({
             isCollection: WorkHelp.userEventExist(
@@ -200,14 +201,26 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         } catch (err) {}
     };
 
-
     /**
      * 收藏 / 取消收藏
      */
-    const onCollection = () => {
-        console.log(JSON.stringify(state.postDetail));
-    }
+    const onCollection = async () => {
 
+        try {
+
+            setState({
+                isCollection: !state.isCollection
+            })
+
+            await onCollectPost(postId, rowIndex, fromListId);
+
+        } catch (err) {
+            setState({
+                isCollection: !state.isCollection
+            })
+        }
+
+    };
 
     return (
         <SafeAreaProvider>
@@ -246,12 +259,33 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                         />
                                     );
                                 } else if (row.item === 1) {
-                                    return state.postDetail &&
-                                        state.postDetail.biological_card ? (
-                                        <PastCard postData={state.postDetail} />
-                                    ) : (
-                                        <></>
-                                    );
+                                    if (
+                                        state.postDetail &&
+                                        state.postDetail.biological_card
+                                    ) {
+                                        return (
+                                            <PastCard
+                                                postData={state.postDetail}
+                                                animalType={
+                                                    AnimalCardType.ShareType
+                                                }
+                                            />
+                                        );
+                                    } else if (
+                                        state.postDetail &&
+                                        state.postDetail.entrust
+                                    ) {
+                                        return (
+                                            <PastCard
+                                                postData={state.postDetail}
+                                                animalType={
+                                                    AnimalCardType.QuestType
+                                                }
+                                            />
+                                        );
+                                    } else {
+                                        return <></>;
+                                    }
                                 } else if (row.item === 2) {
                                     return (
                                         <View
@@ -316,37 +350,42 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     </View>
                 )}
 
-                <View style={styles.footer}>
-                    <TouchableHighlight
-                        style={styles.comment}
-                        underlayColor={'none'}
-                        onPress={onPressEditComment}>
-                        <Text numberOfLines={1}>
-                            {contentText || 'Say something'}
-                        </Text>
-                    </TouchableHighlight>
+                <SafeAreaView>
+                    <View style={styles.footer}>
+                        <TouchableHighlight
+                            style={styles.comment}
+                            underlayColor={'none'}
+                            onPress={onPressEditComment}>
+                            <Text numberOfLines={1}>
+                                {contentText || 'Say something'}
+                            </Text>
+                        </TouchableHighlight>
 
-                    <TouchableHighlight
-                        style={styles.iconBase}
-                        underlayColor={'none'}
-                        onPress={onCollection}>
-                        {state.isCollection ? (
-                            <Icon
-                                name={'star'}
-                                style={{fontSize: 20, color: '#FFD575'}}
-                            />
-                        ) : (
-                            <Icon name={'star-o'} style={{fontSize: 20}} />
-                        )}
-                    </TouchableHighlight>
+                        <TouchableHighlight
+                            style={styles.iconBase}
+                            underlayColor={'none'}
+                            onPress={onCollection}>
+                            {state.isCollection ? (
+                                <IconFont
+                                    name={'yishoucang'}
+                                    size={20}
+                                    color={'#FFD575'}
+                                />
+                            ) : (
+                                <IconFont name={'weishoucang'} size={20} />
+                            )}
+                        </TouchableHighlight>
 
-                    <TouchableHighlight
-                        style={styles.iconBase}
-                        underlayColor={'none'}
-                        onPress={() => console.log('444')}>
-                        <Icon name={'share-alt'} style={{fontSize: 20}} />
-                    </TouchableHighlight>
-                </View>
+                        <TouchableHighlight
+                            style={styles.iconBase}
+                            underlayColor={'none'}
+                            onPress={() => console.log('444')}>
+                            <IconFont name={'fenxiang'} size={18} />
+                        </TouchableHighlight>
+                    </View>
+                </SafeAreaView>
+
+
             </ScreenBase>
 
             <AweKeyboard
@@ -392,7 +431,7 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingLeft: 15,
         paddingRight: 20,
-        paddingBottom: 25,
+        // paddingBottom: 25,
     },
 });
 

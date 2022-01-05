@@ -1,6 +1,6 @@
-import { UserEventProps } from "../interface/work";
-import { PhotoPictureProps } from "../interface";
-import ImageResizer from "react-native-image-resizer";
+import {UserEventProps} from '../interface/work';
+import {PhotoPictureProps} from '../interface';
+import ImageResizer from 'react-native-image-resizer';
 
 const WorkHelp = {
     /**
@@ -21,7 +21,6 @@ const WorkHelp = {
         return resultIndex;
     },
 
-
     /**
      * 判断用户是否被关注
      * @param userEvents
@@ -31,41 +30,38 @@ const WorkHelp = {
         userEvents: UserEventProps[] | null | undefined,
         useType: number,
     ): {isExist: boolean; existIndex: number} => {
-
-        let isExist: boolean = false
-        let existIndex: number = -1
+        let isExist: boolean = false;
+        let existIndex: number = -1;
 
         // 判断是否关注
         if (userEvents) {
             userEvents.forEach((event, index) => {
                 if (event.event_type === useType) {
-                    isExist = true
-                    existIndex = index
+                    isExist = true;
+                    existIndex = index;
                 }
-            })
+            });
         }
 
         return {
             isExist,
-            existIndex
-        }
+            existIndex,
+        };
     },
-
 
     /**
      * 压缩图片，超过2M就进行压缩
      * @param photos
      */
     compressPicture: async (photos: PhotoPictureProps[]) => {
-
-        const resizeList: any[] = []
+        const resizeList: any[] = [];
         photos.forEach(photo => {
-            resizeList.push(WorkHelp.onResizePicture(photo))
-        })
+            resizeList.push(WorkHelp.onResizePicture(photo));
+        });
 
-        const result = await Promise.all(resizeList)
+        const result = await Promise.all(resizeList);
 
-        return Promise.resolve(result)
+        return Promise.resolve(result);
     },
 
     /**
@@ -73,20 +69,18 @@ const WorkHelp = {
      * @param photo
      */
     onResizePicture: async (photo: PhotoPictureProps) => {
-
         // 判断大于2M，不用1024，用1000，将压缩范围扩大
         if (photo.size > 2000000) {
-
-            const size = Math.floor((photo.size/1000000))
-            const rate = 3 / size
+            const size = Math.floor(photo.size / 1000000);
+            const rate = 3 / size;
 
             const newPhoto = await ImageResizer.createResizedImage(
                 photo.realPath,
                 photo.width * rate,
                 photo.height * rate,
                 photo.uri.indexOf('.png') === -1 ? 'JPEG' : 'PNG',
-                rate * 100
-                )
+                rate * 100,
+            );
 
             return Promise.resolve({
                 ...photo,
@@ -94,14 +88,14 @@ const WorkHelp = {
                 width: newPhoto.width,
                 height: newPhoto.height,
                 uri: newPhoto.uri,
-            })
+            });
         } else {
-            return Promise.resolve(photo)
+            return Promise.resolve(photo);
         }
+    },
 
-    }
+
 
 };
 
-
-export default WorkHelp
+export default WorkHelp;

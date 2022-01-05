@@ -1,3 +1,4 @@
+import React from "react";
 
 export interface AnimalCardProps {
     animalType: AnimalCardType
@@ -12,6 +13,8 @@ export interface AnimalCardProps {
     // 分享数据
     animalInfo?: ShareAnimalProps | null
 
+    // 显示谷歌地图截图
+    googleMapPic?: string
 }
 
 
@@ -41,6 +44,7 @@ export type ShareProps = {
     biological_name: string
     biological_id?: string
     data_category: ShareDataCategoryType
+    platform?: number
     // 委托特有
     uuid?: string
     product_model?: string

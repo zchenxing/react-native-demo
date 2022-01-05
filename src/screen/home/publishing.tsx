@@ -4,12 +4,12 @@ import { observer } from "mobx-react";
 import { usePublishDataStore } from "../../store/provider";
 import { LinearProgress } from 'react-native-elements';
 import { useLanguage } from "../../language";
-import IconFont from "../../iconfont";
+import IconFont from "../../assets/iconfont";
 import { themeColor } from "../../assets/styles";
 
 const Publishing: React.FC = (props) => {
 
-    const {publishProgress, isPublishing} = usePublishDataStore()
+    const {publishProgress, isPublishing, happenedError} = usePublishDataStore()
 
     return (
         isPublishing ?

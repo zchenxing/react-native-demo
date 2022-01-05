@@ -1,37 +1,68 @@
 import React from "react";
 import { View } from "react-native";
 import AnimalCard from "../components/animal-card";
-import axios from "axios";
-import apis from "../../network/apis";
-import { AnimalCardType, ShareAnimalProps, ShareProps } from "../components/animal-card/type";
-import { useSetState } from "ahooks";
+import { AnimalCardType, ShareAnimalProps } from "../components/animal-card/type";
 import { PostContentProps } from "../../interface/work";
+import { useSetState } from "ahooks";
+
+interface IState {
+    biologicalCard: ShareAnimalProps | null
+    deviceInfo: any
+    googleMapUrl: string
+}
 
 interface IProps {
+    animalType: AnimalCardType
     postData: PostContentProps;
 }
 
-
 const PastCard: React.FC<IProps> = (props: IProps) => {
 
-    const [biologicalCard, setBiologicalCard] =
-        React.useState<ShareAnimalProps | null>(null);
+    const [state, setState] = useSetState<IState>({
+        biologicalCard: null,
+        deviceInfo: null,
+        googleMapUrl: ''
+    })
 
     React.useEffect(() => {
-        const card: any = props.postData.biological_card;
-        const data: ShareAnimalProps = {
-            biological_base: card.biological_base,
-            biological_detail: card.biological_detail || null,
-            biological_release: card.biological_release || null,
-            imageUrls: card.biological_images.map(
-                (img: any) => img.url_normal,
-            ),
-            images: [],
-        };
 
-        setBiologicalCard(data)
+        if (props.animalType === AnimalCardType.ShareType) {
+            const card: any = props.postData.biological_card;
+            const data: ShareAnimalProps = {
+                biological_base: card.biological_base,
+                biological_detail: card.biological_detail || null,
+                biological_release: card.biological_release || null,
+                imageUrls: card.biological_images.map((img: any) => img.url_normal),
+                images: [],
+            };
 
-    }, [])
+            setState({
+                biologicalCard: data
+            })
+
+        } else {
+            const entrust: any = props.postData.entrust;
+            const animal: ShareAnimalProps = {
+                biological_base: entrust.biological_info.biological_base,
+                imageUrls: entrust.biological_info.images.map((img: any) => img.url_normal),
+                images: [],
+            };
+
+            const device = {
+                uuid: entrust.device_info.uuid,
+                product_model: entrust.device_info.product_model,
+            }
+
+            setState({
+                biologicalCard: animal,
+                deviceInfo: device,
+                googleMapUrl: entrust.device_info.geo_round_image.url_origin
+            })
+
+        }
+
+
+    }, []);
 
     return (
         <View
@@ -40,15 +71,15 @@ const PastCard: React.FC<IProps> = (props: IProps) => {
                 padding: 20,
                 backgroundColor: '#FFF',
             }}>
-            {
-                biologicalCard &&
+            {state.biologicalCard && (
                 <AnimalCard
-                    animalType={AnimalCardType.ShareType}
+                    animalType={props.animalType}
                     showOtherInfo={true}
-                    animalInfo={biologicalCard}
+                    animalInfo={state.biologicalCard}
+                    shareData={state.deviceInfo}
+                    googleMapPic={state.googleMapUrl}
                 />
-            }
-
+            )}
         </View>
     );
 };

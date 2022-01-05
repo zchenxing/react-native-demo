@@ -17,23 +17,15 @@ import {EventEmitterName, isIOS, screenWidth} from '../../../config/contant';
 import {DragSortableView} from 'react-native-drag-sort';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import AwePicturePreview from '../../../components/awe-picture-preview';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import {INTELINK_SCREEN_NAME} from '../../../routes/screen-name';
 import AweSimpleNavigator from '../../../components/awe-simple-navigator';
 import {observer} from 'mobx-react';
 import {useSetState} from 'ahooks';
 import {useLanguage} from '../../../language';
-import server from '../../../network';
-import apis from '../../../network/apis';
-import Toast from 'react-native-simple-toast';
 import Utils from '../../../help';
-import IconFont from '../../../iconfont';
-import axios from 'axios';
-import dayjs from 'dayjs';
-import myToken from '../../../network/token';
+import IconFont from '../../../assets/iconfont';
 import {PostType} from '../../../enum';
 import {usePublishDataStore} from '../../../store/provider';
-import ImageResizer from 'react-native-image-resizer';
 import WorkHelp from '../../../help/work';
 
 const pictureWidth = (screenWidth - 20) / 3;
@@ -315,7 +307,7 @@ const RenderItem = (
                     underlayColor={'none'}
                     onPress={() => onDeleteItem(item)}>
                     <View style={styles.deleteView}>
-                        <Icon name={'close'} style={{color: '#fff'}} />
+                        <IconFont name={'close'} color={'#fff'} size={14} />
                     </View>
                 </TouchableHighlight>
             )}
@@ -378,7 +370,7 @@ const styles = StyleSheet.create({
     deleteView: {
         backgroundColor: 'rgba(0, 0, 0, .4)',
         padding: 6,
-        borderRadius: 10,
+        borderRadius: 14,
     },
 });
 

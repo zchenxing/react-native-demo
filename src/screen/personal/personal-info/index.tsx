@@ -8,7 +8,6 @@ import MultipleImagePicker, {
 import {isIOS} from '../../../config/contant';
 import {useSetState} from 'ahooks';
 import {localImages} from '../../../assets/images';
-import IconFont from '../../../iconfont';
 import {useLanguage} from '../../../language';
 import {INTELINK_SCREEN_NAME} from '../../../routes/screen-name';
 import {EditInfoType} from '../../../enum';
@@ -17,6 +16,7 @@ import {observer} from 'mobx-react';
 import dayjs from 'dayjs';
 import server from '../../../network';
 import apis from '../../../network/apis';
+import IconFont from "../../../assets/iconfont";
 
 interface IState {
     loading: boolean

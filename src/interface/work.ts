@@ -59,6 +59,7 @@ export interface PostContentProps {
     images?: PostImageProps[]
 
     biological_card?: AnimalCardProps
+    entrust?: any
     // 用户事件，1-收藏主题，2-点赞主题，3-关注用户
     user_events?: UserEventProps[] | null
     // //

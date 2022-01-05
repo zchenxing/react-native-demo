@@ -3,7 +3,7 @@ import {NavigateProps} from '../../../interface';
 import AweSimpleNavigator from '../../../components/awe-simple-navigator';
 import { View, Text, StyleSheet, ScrollView, TouchableHighlight, DeviceEventEmitter } from "react-native";
 import { themeColor } from "../../../assets/styles";
-import IconFont from '../../../iconfont';
+import IconFont from '../../../assets/iconfont';
 import { useLanguage } from "../../../language";
 import { EventEmitterName } from "../../../config/contant";
 import { PostSpeciesTags } from "../../../config/type";

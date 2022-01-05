@@ -1,21 +1,14 @@
-import React from 'react';
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
-import AweSimpleNavigator from '../../../components/awe-simple-navigator';
-import {useLanguage} from '../../../language';
-import {NavigateProps} from '../../../interface';
-import IconFont from '../../../iconfont';
-import {themeColor} from '../../../assets/styles';
-import {useSetState} from 'ahooks';
-import AnimalCard from '../../components/animal-card';
-import {
-    AnimalCardType,
-    ShareAnimalProps,
-    ShareProps,
-} from '../../components/animal-card/type';
-import axios from 'axios';
-import apis from '../../../network/apis';
-import server from '../../../network';
-import dayjs from 'dayjs';
+import React from "react";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import AweSimpleNavigator from "../../../components/awe-simple-navigator";
+import { useLanguage } from "../../../language";
+import { NavigateProps } from "../../../interface";
+import IconFont from "../../../assets/iconfont";
+import { useSetState } from "ahooks";
+import AnimalCard from "../../components/animal-card";
+import { AnimalCardType, ShareAnimalProps, ShareProps } from "../../components/animal-card/type";
+import axios from "axios";
+import apis from "../../../network/apis";
 import { usePublishDataStore } from "../../../store/provider";
 import { PostType } from "../../../enum";
 import Utils from "../../../help";
@@ -98,7 +91,6 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const onPressSubmit = async () => {
 
-
         const data = {
             label: state.publishTag.name,
             type: PostType.BiologicalCard,
@@ -115,7 +107,11 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             }
         }
 
-        onPublishShare(data, state.animalData?.imageUrls || [])
+        onPublishShare(
+            data,
+            state.animalData?.imageUrls || [],
+            AnimalCardType.ShareType,
+        );
 
         props.navigation.goBack()
     };

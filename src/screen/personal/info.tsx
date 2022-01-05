@@ -17,7 +17,7 @@ import FollowButton from '../components/follow-button';
 import Toast from 'react-native-simple-toast';
 import {UserInfoProps} from '../../interface/work';
 import {localImages} from '../../assets/images';
-import IconFont from '../../iconfont';
+import IconFont from '../../assets/iconfont';
 import {themeColor} from '../../assets/styles';
 import {useSelfDataStore} from '../../store/provider';
 import server from "../../network";

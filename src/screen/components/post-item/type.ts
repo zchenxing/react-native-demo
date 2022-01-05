@@ -14,4 +14,6 @@ export interface PostItemProps {
     onPressComment: () => void
     // 查看用户
     onPressPersonal?: () => void
+    // 更多操作
+    onPressMoreAction?: () => void
 }

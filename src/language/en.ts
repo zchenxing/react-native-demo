@@ -65,6 +65,9 @@ export const languageEn = {
     no_following: '没有关注别人',
     no_follower: '没有被人关注',
     expiry_in: 'Expiry in ',
+    delete_post: 'Delete',
+    cancel: 'Cancel',
+    confirm_delete_post: 'Confirm to delete the post',
 
     x_minute_ago: (min: number, isAge: boolean) => {
         return `${min} ${min > 1 ? 'minutes' : 'minute'} ${isAge ? 'age' : ''}`

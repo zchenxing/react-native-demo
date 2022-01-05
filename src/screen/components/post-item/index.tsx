@@ -9,12 +9,28 @@ import {UserEventType} from '../../../enum';
 import WorkHelp from '../../../help/work';
 import AnimalCard from '../animal-card';
 import {AnimalCardType, ShareAnimalProps} from '../animal-card/type';
+import PostQuest from './post-quest';
+import { useSetState } from "ahooks";
+import { useSelfDataStore } from "../../../store/provider";
+
+interface IState {
+    biologicalCard: ShareAnimalProps | null
+    questCard: any
+}
+
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
-    const [biologicalCard, setBiologicalCard] =
-        React.useState<ShareAnimalProps | null>(null);
+
+    const {selfInfoData} = useSelfDataStore()
+
+    const [state, setState] = useSetState<IState>({
+        biologicalCard: null,
+        questCard: null
+    })
+
 
     React.useEffect(() => {
+        // 生物分享数据
         if (props.postItem.biological_card) {
             const card: any = props.postItem.biological_card;
             const data: ShareAnimalProps = {
@@ -26,7 +42,22 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                 ),
                 images: [],
             };
-            setBiologicalCard(data);
+            setState({
+                biologicalCard: data
+            })
+        }
+        // 委托数据
+        else if (props.postItem.entrust) {
+            const entrust: any = props.postItem.entrust;
+            const data: any = {
+                biologicalBase: entrust.biological_info.biological_base,
+                avatar: entrust.biological_info.images[0].url_thumb,
+                mapPicture: entrust.device_info.geo_round_image.url_origin
+            }
+
+            setState({
+                questCard: data
+            })
         }
     }, []);
 
@@ -44,13 +75,13 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
             <>
                 <PostHeader
                     isShare={!!props.postItem.biological_card}
+                    isMySelf={props.postItem.user_id === selfInfoData?.id}
                     userNickname={props.postItem.user_info.nickname}
                     userAvatar={props.postItem.user_info.avatar?.url_thumb}
                     label={props.postItem.label}
                     hiddenFollow={props.hiddenFollow}
-                    handleUser={() =>
-                        props.onPressPersonal && props.onPressPersonal()
-                    }
+                    handleUser={() => props.onPressPersonal && props.onPressPersonal()}
+                    handleMore={() => props.onPressMoreAction && props.onPressMoreAction()}
                 />
 
                 <PostArticle contentText={props.postItem.content} />
@@ -62,14 +93,20 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                     />
                 )}
 
-                {props.postItem.biological_card && biologicalCard && (
+                {props.postItem.biological_card && state.biologicalCard && (
                     <AnimalCard
                         speciesType={props.postItem.label}
                         animalType={AnimalCardType.ShareType}
                         showLocation={true}
-                        animalInfo={biologicalCard}
+                        animalInfo={state.biologicalCard}
                     />
                 )}
+
+
+                {
+                    props.postItem.entrust && state.questCard &&
+                    <PostQuest {...state.questCard} />
+                }
 
                 <PostFooter
                     isCollection={

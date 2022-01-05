@@ -1,11 +1,11 @@
 import React from 'react';
-import {FlatList, RefreshControl, DeviceEventEmitter} from 'react-native';
+import { FlatList, RefreshControl, DeviceEventEmitter, Alert } from "react-native";
 import PostItem from '../post-item';
 import AwePicturePreview from '../../../components/awe-picture-preview';
 import PostCommentSheet from '../post-comments-sheet';
 import {useSetState} from 'ahooks';
 import {PostListProps} from './type';
-import { PostImageProps, PostContentProps } from "../../../interface/work";
+import {PostImageProps, PostContentProps} from '../../../interface/work';
 import server from '../../../network';
 import apis from '../../../network/apis';
 import ScreenBase from '../screen-base';
@@ -16,8 +16,10 @@ import Toast from 'react-native-simple-toast';
 import {usePostListDataStore} from '../../../store/provider';
 import {observer} from 'mobx-react';
 import AweLoadMore from '../../../components/awe-load-more';
-import { useLanguage } from "../../../language";
-import { localImages } from "../../../assets/images";
+import {useLanguage} from '../../../language';
+import {localImages} from '../../../assets/images';
+import { ActionSheet, SheetItem } from "action-sheet-rn";
+import AweOverlayLoading from '../../../components/awe-overlay-loading';
 
 interface IState {
     refreshing: boolean;
@@ -34,12 +36,20 @@ interface IState {
     pictureStartIndex: number;
     pictureList: any[];
     commentVisible: boolean;
+
+    moreActionVisible: boolean
+    deleteLoading: boolean
 }
 
 const PostList: React.FC<PostListProps> = (props: PostListProps) => {
     const netInfo = useNetInfo();
-    const {postStoreData, getPostData, getMorePostData, onCollectPost} =
-        usePostListDataStore();
+    const {
+        postStoreData,
+        getPostData,
+        getMorePostData,
+        onCollectPost,
+        onDeletePost
+    } = usePostListDataStore();
     const listRef = React.useRef<any>(null);
 
     const [state, setState] = useSetState<IState>({
@@ -56,6 +66,9 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         pictureStartIndex: 0,
         pictureList: [],
         commentVisible: false,
+
+        moreActionVisible: false,
+        deleteLoading: false
     });
 
     React.useEffect(() => {
@@ -235,9 +248,49 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 });
             }
 
-            Toast.show('消息发送成功');
+            // Toast.show('消息发送成功');
         } catch (err) {}
     };
+
+    const onPressMoreAction = (row: any) => {
+        setState({
+            currentRowIndex: row.index,
+            moreActionVisible: true
+        })
+    };
+
+
+    const handleDeletePost = () => {
+        setState({
+            moreActionVisible: false
+        })
+
+        Alert.alert('', useLanguage.confirm_delete_post, [
+            {
+                text: useLanguage.cancel,
+                onPress: () => {},
+                style: 'cancel',
+            },
+            {
+                text: useLanguage.delete_post,
+                onPress: () => deletePost(),
+            },
+        ]);
+    }
+
+    const deletePost = async () => {
+        try {
+            setState({ deleteLoading: true })
+
+            await onDeletePost(props.listId, state.currentRowIndex)
+
+            setState({ deleteLoading: false })
+        } catch (err) {
+            setState({
+                deleteLoading: false
+            })
+        }
+    }
 
     return (
         <ScreenBase
@@ -283,6 +336,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                             onPressPersonal={() =>
                                 props.onPressPersonal(row.item.user_id)
                             }
+                            onPressMoreAction={() => onPressMoreAction(row)}
                         />
                     );
                 }}
@@ -310,6 +364,26 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 onClose={() => setState({firstKeyboardVisible: false})}
                 onPressSend={onSendComment}
             />
+
+            {
+                state.moreActionVisible &&
+                <ActionSheet title="What do you want to do?">
+
+                    <SheetItem
+                        type='remove'
+                        onPress={handleDeletePost}>
+                        {useLanguage.delete_post}
+                    </SheetItem>
+
+                    <SheetItem onPress={() => setState({moreActionVisible: false})}>
+                        {useLanguage.cancel}
+                    </SheetItem>
+                </ActionSheet>
+            }
+
+
+            <AweOverlayLoading visible={state.deleteLoading} />
+
         </ScreenBase>
     );
 };

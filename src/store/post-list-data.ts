@@ -134,4 +134,31 @@ export class PostListDataStore {
             return Promise.reject();
         }
     };
+
+
+    /**
+     * 删除帖子
+     * @param listId
+     * @param rowIndex
+     */
+    public onDeletePost = async (listId: string, rowIndex: number) => {
+
+
+        const id = this.postStoreData[listId][rowIndex].id
+
+        try {
+            await server.delete(apis.post.one(id))
+
+            this.postStoreData[listId].splice(rowIndex, 1)
+
+            this.setPostStoreData(listId, this.postStoreData[listId])
+
+            return Promise.resolve()
+        } catch (err) {
+            console.log('Delete post error: ', err);
+            return Promise.reject()
+        }
+
+
+    }
 }

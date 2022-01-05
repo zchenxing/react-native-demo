@@ -4,10 +4,13 @@ import {Image} from 'react-native-elements';
 import {themeColor} from '../../../assets/styles';
 import { localImages } from "../../../assets/images";
 import { useLanguage } from "../../../language";
-import IconFont from "../../../iconfont";
+import IconFont from "../../../assets/iconfont";
 
 interface IProps {
+    // 是否是分享信息
     isShare?: boolean
+    // 是否是自己
+    isMySelf?: boolean
     // 显示标签
     label?: string
     // 用户头像
@@ -18,6 +21,8 @@ interface IProps {
     hiddenFollow?: boolean
     // 点击用户跳转
     handleUser: () => void;
+    // 更多操作
+    handleMore: () => void
 }
 
 const PostHeader: React.FC<IProps> = (props: IProps) => {
@@ -60,6 +65,18 @@ const PostHeader: React.FC<IProps> = (props: IProps) => {
                     </View>
                 </>
             </TouchableHighlight>
+
+            {
+                props.isMySelf &&
+                <TouchableHighlight
+                    style={{paddingLeft: 10}}
+                    underlayColor={'none'}
+                    onPress={props.handleMore}
+                >
+                    <IconFont name={'more'} size={20} color={'#aaa'} />
+                </TouchableHighlight>
+            }
+
 
         </View>
     );

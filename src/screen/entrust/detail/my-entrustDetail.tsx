@@ -14,7 +14,7 @@ import { screenWidth} from "../../../config/contant";
 import AnimalCard from "./animal-card";
 import {useSetState} from "ahooks";
 import {INTELINK_SCREEN_NAME} from "../../../routes/screen-name";
-import IconFont from "../../../iconfont";
+import IconFont from "../../../assets/iconfont";
 import EndRecord from "./end-record";
 import AweSimpleNavigator from "../../../components/awe-simple-navigator";
 import ListItem from "../accepted/list-item";

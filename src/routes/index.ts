@@ -10,20 +10,16 @@ import FollowListScreen from '../screen/personal/follow-list';
 import Test1 from '../screen/test/test1';
 import Test2 from '../screen/test/test2';
 import PersonalPreviewScreen from '../screen/personal/personal-info';
-import EditPersonalInfoScreen from "../screen/personal/edit-info";
-import EntrustListScreen from "../screen/entrust/index";
-import EntrustDetailScreen from "../screen/entrust/detail";
-import EntrustRecordScreen from "../screen/entrust/synchronous-recording";
-import EntrustAcceptedScreen from "../screen/entrust/accepted";
-import SharePublishScreen from "../screen/publish/share-publish";
-import QuestPublishScreen from "../screen/publish/quest-publish";
-import EntrustMyDetailScreen from "../screen/entrust/detail/my-entrustDetail";
+import EditPersonalInfoScreen from '../screen/personal/edit-info';
+import SharePublishScreen from '../screen/publish/share-publish';
+import QuestPublishScreen from '../screen/publish/quest-publish';
+
 
 type routeProps = {
-    name: string
-    component: any
-    options?: any
-}
+    name: string;
+    component: any;
+    options?: any;
+};
 
 export const intelinkRoute: routeProps[] = [
     {
@@ -43,78 +39,53 @@ export const intelinkRoute: routeProps[] = [
         component: PostPublishScreen,
         options: {
             // 禁止返回手势
-            gestureEnabled: false
-        }
+            gestureEnabled: false,
+        },
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_PUBLISH_SHARE,
         component: SharePublishScreen,
         options: {
             // 禁止返回手势
-            gestureEnabled: false
-        }
+            gestureEnabled: false,
+        },
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_PUBLISH_TAG,
-        component: PublishTagScreen
+        component: PublishTagScreen,
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL,
-        component: PostDetailScreen
+        component: PostDetailScreen,
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_PERSONAL,
-        component: PersonalScreen
+        component: PersonalScreen,
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_FOLLOW_LIST,
-        component: FollowListScreen
+        component: FollowListScreen,
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_PREVIEW_PERSONAL_INFO,
-        component: PersonalPreviewScreen
+        component: PersonalPreviewScreen,
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_EDIT_PERSONAL_INFO,
-        component: EditPersonalInfoScreen
+        component: EditPersonalInfoScreen,
     },
     {
         name: 'Test1',
-        component: Test1
+        component: Test1,
     },
     {
         name: 'Test2',
-        component: Test2
-    },
-    {
-        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST,
-        component: EntrustListScreen
-    },
-    {
-        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_DETAIL,
-        component: EntrustDetailScreen
-    },
-    {
-        name: INTELINK_SCREEN_NAME.SCREEN_MY_ENTRUST_DETAIL,
-        component: EntrustMyDetailScreen
-    },
-    {
-        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_RECORDING,
-        component: EntrustRecordScreen
-    },
-    {
-        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_ACCEPTED,
-        component: EntrustAcceptedScreen
+        component: Test2,
     },
     {
         name: INTELINK_SCREEN_NAME.SCREEN_PUBLISH_ENTRUST,
-        component: QuestPublishScreen
-    }
+        component: QuestPublishScreen,
+    },
 ];
 
-export const EntrustRoute: routeProps[] = [
-    {
-        name: INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST,
-        component: EntrustListScreen
-    }
-]
+

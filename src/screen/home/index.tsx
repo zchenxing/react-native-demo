@@ -36,6 +36,7 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     };
 
     const onPressDetail = (postContent: PostContentProps, rowIndex: number) => {
+
         // 重置首页评论数据
         resetCommentData(INTELINK_SCREEN_NAME.SCREEN_HOME)
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL, {
@@ -70,12 +71,6 @@ const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 <SpeedDial.Action
                     title={selfInfoData?.nickname}
                     onPress={() => props.navigation.push('Test1')}
-                />
-                <SpeedDial.Action
-                    title="委托"
-                    onPress={() => {
-                        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_ENTRUST_LIST);
-                    }}
                 />
 
                 <SpeedDial.Action

@@ -2,15 +2,17 @@ import React from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import Utils from '../../help';
 import {themeColor} from '../../assets/styles';
-import {pictureList} from '../../mock';
 import FastImage from 'react-native-fast-image';
 import {screenWidth} from '../../config/contant';
 import AwePicturePreview from '../../components/awe-picture-preview';
 import {useBoolean} from 'ahooks';
 import {PostContentProps, PostImageProps} from '../../interface/work';
 import IconFont from '../../assets/iconfont';
+import { PostType } from "../../enum";
+import { postType } from "../../config/type";
 
 interface IProps {
+    postType: PostType,
     postDetail: PostContentProps | null;
 }
 
@@ -32,18 +34,24 @@ const PostContent: React.FC<IProps> = (props: IProps) => {
                             {props.postDetail?.label}
                         </Text>
                     </View>
-                    <View style={styles.tag}>
-                        <IconFont
-                            name={'fenxiang'}
-                            color={themeColor}
-                            size={10}
-                            style={{marginTop: 3, marginRight: 3}}
-                        />
-                        <Text style={styles.tagText}>Share</Text>
-                    </View>
+                    {(props.postType === PostType.BiologicalCard ||
+                        props.postType === PostType.Entrust) && (
+                        <View style={styles.tag}>
+                            <IconFont
+                                // @ts-ignore
+                                name={postType[props.postType].icon}
+                                color={themeColor}
+                                size={10}
+                                style={{marginTop: 3, marginRight: 3}}
+                            />
+                            <Text style={styles.tagText}>
+                                {postType[props.postType].title}
+                            </Text>
+                        </View>
+                    )}
                 </View>
                 <Text style={styles.postTime}>
-                    {Utils.getPostTime('2021-12-07 02:12:44')}
+                    {Utils.getPostTime(props.postDetail?.created_at)}
                 </Text>
             </View>
 
@@ -107,7 +115,7 @@ const styles = StyleSheet.create({
     },
     postTime: {
         fontSize: 11,
-        color: '#f8f8f8',
+        color: '#999'
     },
     image: {
         width: screenWidth - 35,

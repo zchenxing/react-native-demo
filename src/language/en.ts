@@ -1,3 +1,5 @@
+import Clipboard from "@react-native-clipboard/clipboard";
+
 export const languageEn = {
 
     animal_special: 'Special',
@@ -67,6 +69,7 @@ export const languageEn = {
     no_follower: '没有被人关注',
     expiry_in: 'Expiry in ',
     delete: 'Delete',
+    delete_post: 'Delete post',
     cancel: 'Cancel',
     confirm_delete_post: 'Confirm to delete the post',
     confirm_delete_comment: 'Confirm to delete the comment',
@@ -75,6 +78,8 @@ export const languageEn = {
     quest_detail: 'Quest detail',
     accept: 'Accept',
     reminder: 'Reminder',
+    copy: 'Copy',
+    copy_to_clipboard: 'Copied to the clipboard',
 
     action_sheet_title: 'What do you want to do?',
 

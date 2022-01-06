@@ -15,16 +15,22 @@ import {isIOS} from '../../../config/contant';
 import {useLanguage} from '../../../language';
 import {localImages} from '../../../assets/images';
 import CommentActionSheet from '../comment-action';
+import {useSelfDataStore} from '../../../store/provider';
+import Clipboard from '@react-native-clipboard/clipboard';
+import Toast from 'react-native-simple-toast';
+import {CommentProps} from '../../../interface/work';
 
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,
 ) => {
+    const {selfInfoData} = useSelfDataStore();
     const [visible, setVisible] = React.useState(false);
 
-
-    React.useEffect(() => {
-        // console.log('commentDetail ---:', props.commentDetail);
-    }, []);
+    // 保持数据更新
+    const commentDetail: CommentProps = {
+        ...props.commentDetail,
+        replies: props.commentDetail.replies || [],
+    };
 
     const onLongPress = () => {
         setVisible(true);
@@ -34,7 +40,15 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
      * 回复评论
      */
     const onReply = () => {
-        props.onPressReply(ReplyType.Comment, props.commentDetail);
+        props.onPressReply(ReplyType.Comment, commentDetail);
+    };
+
+    /**
+     * 粘贴到剪切板
+     */
+    const onCopy = () => {
+        Clipboard.setString(commentDetail.content);
+        Toast.showWithGravity(useLanguage.copy_to_clipboard, 100, Toast.CENTER);
     };
 
     /**
@@ -50,10 +64,7 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
             {
                 text: useLanguage.delete,
                 onPress: () =>
-                    props.onPressDelete(
-                        ReplyType.Comment,
-                        props.commentDetail.id,
-                    ),
+                    props.onPressDelete(ReplyType.Comment, commentDetail.id),
             },
         ]);
     };
@@ -72,10 +83,10 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         <FastImage
                             style={styles.avatar}
                             source={
-                                props.commentDetail.user_info?.avatar
+                                commentDetail.user_info?.avatar
                                     ? {
-                                          uri: props.commentDetail.user_info
-                                              ?.avatar.url_thumb,
+                                          uri: commentDetail.user_info?.avatar
+                                              .url_thumb,
                                       }
                                     : localImages.defaultAvatar
                             }
@@ -87,9 +98,10 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                         <View style={styles.postHeader}>
                             <View style={styles.nameBase}>
                                 <Text style={{color: '#999'}}>
-                                    {props.commentDetail.user_info.nickname}
+                                    {commentDetail.user_info.nickname}
                                 </Text>
-                                {props.isAuthor && (
+
+                                {props.postUserId === commentDetail.user_id && (
                                     <View style={styles.authorBase}>
                                         <Text style={styles.author}>
                                             {useLanguage.author}
@@ -98,41 +110,37 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                                 )}
                             </View>
                             <Text style={styles.postTime}>
-                                {Utils.getPostTime(
-                                    props.commentDetail.created_at,
-                                )}
+                                {Utils.getPostTime(commentDetail.created_at)}
                             </Text>
                         </View>
 
                         <Text>
-                            {props.commentDetail.target_user_info &&
-                                props.commentDetail.target_user_id !==
+                            {commentDetail.target_user_info &&
+                                commentDetail.target_user_id !==
                                     props.mainCommentUserId && (
                                     <Text>
                                         {useLanguage.reply_to}
                                         <Text style={{color: '#aaa'}}>
                                             {
-                                                props.commentDetail
-                                                    .target_user_info.nickname
+                                                commentDetail.target_user_info
+                                                    .nickname
                                             }
                                         </Text>
                                         {':  '}
                                     </Text>
                                 )}
-                            {props.commentDetail.content}
+                            {commentDetail.content}
                         </Text>
                     </View>
                 </View>
             </TouchableHighlight>
 
-            {props.commentDetail.replies &&
-            props.commentDetail.replies.length ? (
-                <View style={{paddingLeft: 40}}>
-                    {props.commentDetail.replies.map(data => (
+            <View style={{paddingLeft: 40}}>
+                {commentDetail.replies &&
+                    commentDetail.replies.map(data => (
                         <CommentItem
                             key={data.id}
-                            mySelfId={props.mySelfId}
-                            isAuthor={props.isAuthor}
+                            postUserId={props.postUserId}
                             mainCommentUserId={props.mainCommentUserId}
                             commentDetail={data}
                             onPressAvatar={props.onPressAvatar}
@@ -142,49 +150,52 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
                             onPressDelete={() => {
                                 props.onPressDelete(
                                     ReplyType.Reply,
-                                    props.commentDetail.id,
+                                    commentDetail.id,
                                     data.id,
                                 );
                             }}
                         />
                     ))}
 
-                    {props.commentDetail.total_reply >
-                        props.commentDetail.replies.length && (
-                        <TouchableHighlight
-                            style={styles.moreReplies}
-                            onPress={props.getMoreReplies}
-                            underlayColor={'#f8f8f8'}>
-                            {!props.moreLoading ? (
+                {commentDetail.total_reply &&
+                commentDetail.replies &&
+                commentDetail.replies.length < commentDetail.total_reply ? (
+                    <TouchableHighlight
+                        style={styles.moreReplies}
+                        onPress={props.getMoreReplies}
+                        underlayColor={'#f8f8f8'}>
+                        {!props.moreLoading ? (
+                            <Text style={styles.moreRepliesText}>
+                                {useLanguage.view_more_replies}
+                            </Text>
+                        ) : (
+                            <>
+                                <ActivityIndicator style={{marginRight: 10}} />
                                 <Text style={styles.moreRepliesText}>
-                                    {useLanguage.view_more_replies}
+                                    {useLanguage.load_more}
                                 </Text>
-                            ) : (
-                                <>
-                                    <ActivityIndicator
-                                        style={{marginRight: 10}}
-                                    />
-                                    <Text style={styles.moreRepliesText}>
-                                        {useLanguage.load_more}
-                                    </Text>
-                                </>
-                            )}
-                        </TouchableHighlight>
-                    )}
-                </View>
-            ) : (
-                <></>
-            )}
+                            </>
+                        )}
+                    </TouchableHighlight>
+                ) : (
+                    <></>
+                )}
+            </View>
 
             {props.showSeparator && <View style={styles.separator} />}
-
-            <CommentActionSheet
-                visible={visible}
-                showDelete={props.mySelfId === props.commentDetail.user_id}
-                onReply={onReply}
-                onDelete={onDeleteComment}
-                onClose={() => setVisible(false)}
-            />
+            {
+                // 避免重复创建实例
+                visible && (
+                    <CommentActionSheet
+                        visible={visible}
+                        showDelete={selfInfoData?.id === commentDetail.user_id}
+                        onCopy={onCopy}
+                        onReply={onReply}
+                        onDelete={onDeleteComment}
+                        onClose={() => setVisible(false)}
+                    />
+                )
+            }
         </>
     );
 };

@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
-    ActivityIndicator, Image,
+    ActivityIndicator,
+    Image,
     Keyboard,
     StyleSheet,
     Text,
     TouchableHighlight,
-    View
+    View,
 } from 'react-native';
 import {screenHeight, screenWidth} from '../../../config/contant';
 import {useLanguage} from '../../../language';
@@ -24,7 +25,7 @@ import {
 } from '../../../store/provider';
 import AweLoadMore from '../../../components/awe-load-more';
 import {localImages} from '../../../assets/images';
-import CommentActionSheet from "../comment-action";
+import Comments from "./comments";
 
 const PostCommentSheet: React.FC<PostCommentProps> = (
     props: PostCommentProps,
@@ -54,7 +55,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
     const latestOpenTimestamp = React.useRef<any>(null);
 
     const [keyboardVisible, setKeyboardVisible] = React.useState(false);
-    const [loading, setLoading] = React.useState(true)
+    const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
         if (props.visible) {
@@ -82,11 +83,9 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         }
     }, [props.visible]);
 
-
-
     const initData = async () => {
         try {
-            setLoading(true)
+            setLoading(true);
             const res = await getCommentData(
                 currentPostId.current,
                 props.listId,
@@ -94,7 +93,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
             postStoreData[props.listId][props.rowIndex].total_comment =
                 parseInt(res.headers['x-result-count'], 10);
 
-            setLoading(false)
+            setLoading(false);
             setPostStoreData(props.listId, postStoreData[props.listId]);
         } catch (err) {}
     };
@@ -105,27 +104,25 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
         }
     };
 
-
     /**
      * 回复消息 显示键盘
      * @param replyType
      * @param comment
      * @param commentRow
      */
-    const onPressReply = (
-        replyType: ReplyType,
-        comment: CommentProps,
-        commentRow: any,
-    ) => {
-        setContentText('');
-        setCurrentReplyData({
-            mainCommentIndex: commentRow.index,
-            commentId: commentRow.item.id,
-            replyNickname: comment.user_info.nickname,
-            replyId: replyType === ReplyType.Reply ? comment.id : '',
-        });
-        setKeyboardVisible(true);
-    };
+    const onPressReply = useCallback(
+        (replyType: ReplyType, comment: CommentProps, commentRow: any) => {
+            setContentText('');
+            setCurrentReplyData({
+                mainCommentIndex: commentRow.index,
+                commentId: commentRow.item.id,
+                replyNickname: comment.user_info.nickname,
+                replyId: replyType === ReplyType.Reply ? comment.id : '',
+            });
+            setKeyboardVisible(true);
+        },
+        [],
+    );
 
     /**
      * 回复帖子
@@ -160,14 +157,13 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
             setTimeout(() => {
                 setKeyboardVisible(false);
-            }, 200)
+            }, 200);
 
             // 滚动到第一行显示最新评论
             commentListRef.current.scrollToOffset({
                 offset: 0,
                 animated: true,
             });
-
         } catch (err) {
             console.log(err);
         }
@@ -182,7 +178,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
             Keyboard.dismiss();
             setTimeout(() => {
                 setKeyboardVisible(false);
-            }, 200)
+            }, 200);
         } catch (err) {}
     };
 
@@ -190,9 +186,11 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
      * 获取更多回复数据
      * @param row
      */
-    const getReplies = async (row: any) => {
+    const getReplies = useCallback(async (row: any) => {
         await getMoreReplies(row.index, row.item, props.listId);
-    };
+    }, [])
+
+
 
     /**
      * 删除评论
@@ -200,24 +198,31 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
      * @param commentId
      * @param replyId
      */
-    const onPressDelete = async (
-        type: ReplyType,
-        commentId: string,
-        replyId?: string,
-    ) => {
-        try {
+    const onPressDelete = useCallback(
+        async (type: ReplyType, commentId: string, replyId?: string) => {
+            try {
+                await onDeleteCommentReply(
+                    props.listId,
+                    type,
+                    commentId,
+                    replyId,
+                );
+                if (type === ReplyType.Comment) {
+                    // 评论数+1
+                    postStoreData[props.listId][
+                        props.rowIndex
+                    ].total_comment -= 1;
+                    // 重置评论数
+                    setPostStoreData(props.listId, postStoreData[props.listId]);
+                }
+            } catch (err) {}
+        },
+        [],
+    );
 
-            await onDeleteCommentReply(props.listId, type, commentId, replyId)
-            // 评论数+1
-            postStoreData[props.listId][props.rowIndex].total_comment -= 1;
-            // 重置评论数
-            setPostStoreData(props.listId, postStoreData[props.listId])
-
-        } catch (err) {
-
-        }
-    }
-
+    const onChangeText = useCallback((text) => {
+        setContentText(text)
+    }, [])
 
     /**
      * 关闭键盘
@@ -258,10 +263,10 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
             <BottomSheet
                 ref={actionSheetRef}
                 index={-1}
-                snapPoints={[.1, screenHeight * 0.8]}
-                onAnimate={(fromIndex) => {
+                snapPoints={[0.1, screenHeight * 0.8]}
+                onAnimate={fromIndex => {
                     if (fromIndex === 1) {
-                        onClose()
+                        onClose();
                     }
                 }}
                 handleComponent={() => (
@@ -275,6 +280,8 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                         </Text>
                     </View>
                 )}>
+
+
                 {props.visible && commentStoreData[props.listId] && !loading ? (
                     <BottomSheetVirtualizedList
                         ref={commentListRef}
@@ -294,34 +301,22 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                             />
                         }
                         renderItem={(row: any) => {
+
                             return (
-                                <CommentItem
-                                    commentIndex={row.index}
-                                    mainCommentUserId={row.item.user_id}
-                                    moreLoading={
-                                        row.index === replyMoreLoad.rowIndex &&
-                                        replyMoreLoad.loading
-                                    }
-                                    mySelfId={selfInfoData?.id}
-                                    isAuthor={
-                                        postStoreData[props.listId][
-                                            props.rowIndex
-                                        ].user_id === row.item.user_id
-                                    }
-                                    getMoreReplies={() => getReplies(row)}
-                                    commentDetail={row.item}
-                                    showSeparator={true}
-                                    onPressAvatar={() =>
-                                        props.onPressAvatar(row.item.user_id)
-                                    }
-                                    onPressReply={(type, comment) =>
-                                        onPressReply(type, comment, row)
-                                    }
-                                    onPressDelete={(type, commentId, replyId) => {
-                                        onPressDelete(type, commentId, replyId)
-                                    }}
+                                <Comments
+                                    row={JSON.stringify(row)}
+                                    listId={props.listId}
+                                    rowIndex={props.rowIndex}
+                                    postStoreData={postStoreData}
+                                    replyMoreLoad={replyMoreLoad}
+
+                                    getReplies={getReplies}
+                                    onPressAvatar={props.onPressAvatar}
+                                    onPressReply={onPressReply}
+                                    onPressDelete={onPressDelete}
                                 />
-                            );
+                            )
+
                         }}
                     />
                 ) : (
@@ -380,18 +375,9 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 visible={keyboardVisible}
                 contentText={contentText}
                 onClose={onCloseKeyboard}
-                onChangeText={setContentText}
+                onChangeText={onChangeText}
                 onPressSend={onPressSend}
             />
-
-
-            {/*<CommentActionSheet*/}
-            {/*    visible={visible}*/}
-            {/*    showDelete={props.mySelfId === props.commentDetail.user_id}*/}
-            {/*    onReply={onReply}*/}
-            {/*    onDelete={onDeleteComment}*/}
-            {/*    onClose={() => setVisible(false)}*/}
-            {/*/>*/}
         </>
     );
 };

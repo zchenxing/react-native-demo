@@ -60,8 +60,8 @@ const apis = {
             return `/v1/comment/id/${comId}/reply/id/${repId}`;
         },
         // 回复列表
-        replyList: (comId: string, param?: number) => {
-            return `/v1/comment/id/${comId}/reply/page/${param || ''}`;
+        replyList: (comId: string, param = '') => {
+            return `/v1/comment/id/${comId}/reply/page/${param}`;
         },
         // 删除评论
         deleteComment: (comId: string) => `/v1/comment/id/${comId}`,

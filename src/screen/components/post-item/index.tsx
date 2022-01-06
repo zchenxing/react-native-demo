@@ -12,7 +12,6 @@ import {AnimalCardType, ShareAnimalProps} from '../animal-card/type';
 import PostQuest from './post-quest';
 import { useSetState } from "ahooks";
 import { useSelfDataStore } from "../../../store/provider";
-import { useLanguage } from "../../../language";
 
 interface IState {
     biologicalCard: ShareAnimalProps | null
@@ -20,6 +19,8 @@ interface IState {
 }
 
 const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
+
+    const row: any = React.useRef(JSON.parse(props.row)).current
 
     const {selfInfoData} = useSelfDataStore()
 
@@ -67,10 +68,11 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
         }
     };
 
+
     return (
         <TouchableHighlight
             style={styles.itemContent}
-            onPress={() => props.onPressDetail(props.postItem)}
+            onPress={() => props.onPressDetail(props.postItem, row.index)}
             underlayColor={'#eee'}>
             <>
                 <PostHeader
@@ -80,8 +82,8 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                     userAvatar={props.postItem.user_info.avatar?.url_thumb}
                     label={props.postItem.label}
                     hiddenFollow={props.hiddenFollow}
-                    handleUser={() => props.onPressPersonal && props.onPressPersonal()}
-                    handleMore={() => props.onPressMoreAction && props.onPressMoreAction()}
+                    handleUser={() => props.onPressPersonal && props.onPressPersonal(row.item.user_id)}
+                    handleMore={() => props.onPressMoreAction && props.onPressMoreAction(row)}
                 />
 
                 <PostArticle contentText={props.postItem.content} />
@@ -117,8 +119,8 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                     }
                     createdAt={props.postItem.created_at}
                     commentTotal={props.postItem.total_comment}
-                    onPressCollection={props.onPressCollection}
-                    onPressComment={props.onPressComment}
+                    onPressCollection={() => props.onPressCollection(row)}
+                    onPressComment={() => props.onPressComment(row)}
                 />
             </>
         </TouchableHighlight>
@@ -135,4 +137,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PostItem;
+export default React.memo(PostItem);

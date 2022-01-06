@@ -17,10 +17,16 @@ const CommentActionSheet: React.FC<CommentActionProps> = (
         props.onClose()
     };
 
+    const handleCopy = () => {
+        props.onCopy()
+        props.onClose()
+    }
+
     return props.visible ? (
         <ActionSheet
             title={useLanguage.action_sheet_title}
         >
+            <SheetItem onPress={handleCopy}>{useLanguage.copy}</SheetItem>
             <SheetItem onPress={handleReply}>{useLanguage.reply}</SheetItem>
 
             {

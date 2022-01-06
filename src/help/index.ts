@@ -14,7 +14,9 @@ const Utils = {
      * 是否为今年             显示 MM-DD
      * 其余                  显示 YYYY-MM-DD
      */
-    getPostTime: (time: string) => {
+    getPostTime: (time: string | undefined) => {
+
+        if (!time) return ''
 
         const seconds = dayjs().diff(time, 'seconds')
 

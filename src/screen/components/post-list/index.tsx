@@ -176,7 +176,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      * @param pictures
      * @param startIndex
      */
-    const onPressPicture = (pictures: PostImageProps[], startIndex: number) => {
+    const onPressPicture = React.useCallback((pictures: PostImageProps[], startIndex: number) => {
         const list = pictures.map(picture => picture.url_origin);
 
         setState({
@@ -184,18 +184,18 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             pictureStartIndex: startIndex,
             pictureList: list,
         });
-    };
+    }, []);
 
     /**
      * 查看评论
      */
-    const onPressComment = (row: any) => {
+    const onPressComment = React.useCallback((row: any) => {
         // 如果有评论，就打开评论
         // 没有评论就截止回复
         if (row.item.total_comment) {
             setState({
-                currentPost: row.item,
                 commentVisible: true,
+                currentPost: row.item,
                 currentRowIndex: row.index,
             });
         } else {
@@ -214,13 +214,13 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 });
             }
         }
-    };
+    }, [])
 
     /**
      * 点击收藏 | 取消收藏
      * @param row  具体某行的数据
      */
-    const onPressCollection = async (row: any) => {
+    const onPressCollection = React.useCallback(async (row: any) => {
         if (netInfo.type !== 'none') {
             try {
                 await onCollectPost(row.item.id, row.index, props.listId);
@@ -229,7 +229,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 throw err;
             }
         }
-    };
+    }, [])
 
     /**
      * 当没有评论时，直接发评论
@@ -261,12 +261,12 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         }
     };
 
-    const onPressMoreAction = (row: any) => {
+    const onPressMoreAction = React.useCallback((row: any) => {
         setState({
             currentRowIndex: row.index,
             moreActionVisible: true
         })
-    };
+    }, [])
 
 
     const handleDeletePost = () => {
@@ -334,19 +334,17 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                     />
                 }
                 renderItem={(row: any) => {
+
                     return (
                         <PostItem
+                            row={JSON.stringify(row)}
                             postItem={postStoreData[props.listId][row.index]}
-                            onPressDetail={post =>
-                                props.onPressDetail(post, row.index)
-                            }
+                            onPressDetail={props.onPressDetail}
                             onPressPicture={onPressPicture}
-                            onPressComment={() => onPressComment(row)}
-                            onPressCollection={() => onPressCollection(row)}
-                            onPressPersonal={() =>
-                                props.onPressPersonal(row.item.user_id)
-                            }
-                            onPressMoreAction={() => onPressMoreAction(row)}
+                            onPressCollection={onPressCollection}
+                            onPressPersonal={props.onPressPersonal}
+                            onPressMoreAction={onPressMoreAction}
+                            onPressComment={onPressComment}
                         />
                     );
                 }}
@@ -378,11 +376,10 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
             {
                 state.moreActionVisible &&
                 <ActionSheet title="What do you want to do?">
-
                     <SheetItem
                         type='remove'
                         onPress={handleDeletePost}>
-                        {useLanguage.delete}
+                        {useLanguage.delete_post}
                     </SheetItem>
 
                     <SheetItem onPress={() => setState({moreActionVisible: false})}>

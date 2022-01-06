@@ -18,7 +18,6 @@ export interface PostCommentProps {
 }
 
 export interface PostCommentsItemProps {
-    mySelfId?: string
     // 评论下标
     commentIndex?: number
     // 加载更多评论的loading
@@ -27,12 +26,10 @@ export interface PostCommentsItemProps {
     getMoreReplies?: () => void
     // 评论id
     mainCommentUserId: string
-    // 判断是作者
-    isAuthor: boolean
+    // 发帖人
+    postUserId: string
     // 当前登录用户的id
     commentDetail: CommentProps
-    // 更多回复
-    subComment?: any[]
     // 是否显示分隔符
     showSeparator?: boolean
     // 点击回复某人

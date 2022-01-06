@@ -6,6 +6,7 @@ import {localImages} from '../../../assets/images';
 import {useLanguage} from '../../../language';
 import IconFont from '../../../assets/iconfont';
 import {PostType} from '../../../enum';
+import { postType } from "../../../config/type";
 
 interface IProps {
     // 帖子的类型
@@ -26,16 +27,7 @@ interface IProps {
     handleMore: () => void;
 }
 
-const postType = {
-    [PostType.BiologicalCard]: {
-        icon: 'fenxiang',
-        title: useLanguage.share,
-    },
-    [PostType.Entrust]: {
-        icon: 'renwubiaoqian',
-        title: useLanguage.quest,
-    },
-};
+
 
 const PostHeader: React.FC<IProps> = (props: IProps) => {
     return (
@@ -91,7 +83,7 @@ const PostHeader: React.FC<IProps> = (props: IProps) => {
                     style={{paddingLeft: 10}}
                     underlayColor={'none'}
                     onPress={props.handleMore}>
-                    <IconFont name={'gengduo'} size={20} color={'#aaa'} />
+                    <IconFont name={'more'} size={20} color={'#ccc'} />
                 </TouchableHighlight>
             )}
         </View>

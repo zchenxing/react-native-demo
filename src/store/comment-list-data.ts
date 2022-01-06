@@ -23,7 +23,7 @@ export class CommentDataStore {
     // 记录评论最后一条数据的id
     private latestCommentId: string = '';
     // 记录回复翻页
-    private repliesPage: {[id: string]: number} = {};
+    private repliesPage: {[id: string]: string} = {};
 
     // ————————————————————————————————————————————————————————————————————————
 
@@ -51,6 +51,7 @@ export class CommentDataStore {
             moreLoading: false,
             hasMoreData: false,
         };
+        this.contentText = ''
         this.repliesPage = {};
         this.currentPostId = '';
         this.latestCommentId = '';
@@ -178,11 +179,11 @@ export class CommentDataStore {
             if (commentIndex > -1) {
                 const data = this.commentStoreData[listId][commentIndex];
 
-                const replies = data.replies;
-                if (replies) {
-                    // 回复总数要+1
-                    data.total_reply += 1;
-                    data.replies = [...replies, res.data];
+                // 回复总数要+1
+                data.total_reply += 1;
+
+                if (data.total_reply > 1) {
+                    data.replies = [...data.replies || [], res.data];
                 } else {
                     data.replies = [res.data];
                 }
@@ -207,8 +208,6 @@ export class CommentDataStore {
         comment: CommentProps,
         listId: string,
     ) => {
-        // 如果评论的回复page不存在，那么将回复页数置为1
-        !this.repliesPage[comment.id] && (this.repliesPage[comment.id] = 1);
 
         try {
             this.replyMoreLoad = {
@@ -219,14 +218,15 @@ export class CommentDataStore {
             const res = await server.get(
                 apis.comment.replyList(
                     comment.id,
-                    this.repliesPage[comment.id],
+                    this.repliesPage[comment.id] || '',
                 ),
                 apiConfig.pageToken(),
             );
 
+
             // page自增，用于下次向下翻页
             if (res.data.length) {
-                this.repliesPage[comment.id] += 1;
+                this.repliesPage[comment.id] = res.data[res.data.length - 1].id;
             }
 
             const replies: CommentProps[] =

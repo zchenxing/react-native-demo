@@ -1,3 +1,5 @@
+import { PostType } from "../enum";
+import { useLanguage } from "../language";
 
 export const PostSpeciesTags = [
     {
@@ -58,3 +60,15 @@ export const shareSpeciesTags: any = {
         name: 'Mammals'
     },
 }
+
+
+export const postType = {
+    [PostType.BiologicalCard]: {
+        icon: 'fenxiang',
+        title: useLanguage.share,
+    },
+    [PostType.Entrust]: {
+        icon: 'renwubiaoqian',
+        title: useLanguage.quest,
+    },
+};

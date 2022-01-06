@@ -1,17 +1,7 @@
-import Entrust from "../screen/entrust";
-
-export const PAGE_NAME = {
-    HOME: 'Home',
-    SQUARE: 'Square',
-    PUBLISH: 'Publish',
-    TOPIC: 'Topic',
-    MY_NAVIGATION: 'MyNavigation',
-    STORE_DATA: 'StoreData',
-    MY_TAB: 'MyTab',
-    IMAGE_VIEWING: 'ImageViewing',
-};
-
-
+/**
+ * 配置各个页面的路由名
+ * 路由名以 SCREEN_xxx_xxx 命名
+ */
 export const INTELINK_SCREEN_NAME = {
     // 主页
     SCREEN_HOME: 'HomeScreen',
@@ -33,16 +23,7 @@ export const INTELINK_SCREEN_NAME = {
     SCREEN_FOLLOW_LIST: 'FollowListScreen',
     // 修改个人信息
     SCREEN_EDIT_PERSONAL_INFO: 'EditPersonalInfoScreen',
-    // 委托列表
-    SCREEN_ENTRUST_LIST: 'EntrustListScreen',
-    // 接受委托详情
-    SCREEN_ENTRUST_DETAIL: 'EntrustDetailScreen',
-    // 我的委托详情
-    SCREEN_MY_ENTRUST_DETAIL: 'EntrustMyDetailScreen',
-    // 同步记录
-    SCREEN_ENTRUST_RECORDING: 'EntrustRecordScreen',
-    // 接受委托的人
-    SCREEN_ENTRUST_ACCEPTED: 'EntrustAcceptedScreen',
+
     // 分享委托
     SCREEN_PUBLISH_ENTRUST: 'EntrustSharingScreen',
     // 预览个人信息

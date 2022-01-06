@@ -1,7 +1,14 @@
 import React from 'react';
-import { FlatList, StatusBar, View, Animated, StyleSheet, DeviceEventEmitter } from "react-native";
+import {
+    FlatList,
+    StatusBar,
+    View,
+    Animated,
+    StyleSheet,
+    DeviceEventEmitter,
+} from 'react-native';
 import PersonalInfo from './info';
-import { EventEmitterName, PAGE_SIZE, screenWidth } from "../../config/contant";
+import {EventEmitterName, PAGE_SIZE, screenWidth} from '../../config/contant';
 import UserNavigator from '../components/user-navigator';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -12,15 +19,25 @@ import {NavigateProps} from '../../interface';
 import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
 import server from '../../network';
 import apis from '../../network/apis';
-import { PostContentProps, PostImageProps, UserInfoProps } from "../../interface/work";
+import {
+    PostContentProps,
+    PostImageProps,
+    UserInfoProps,
+} from '../../interface/work';
 import {observer} from 'mobx-react';
 import {useSetState} from 'ahooks';
 import {usePostListDataStore} from '../../store/provider';
 import AweKeyboard from '../../components/awe-keyboard';
 import Toast from 'react-native-simple-toast';
 import {useNetInfo} from '@react-native-community/netinfo';
-import AweLoadMore from "../../components/awe-load-more";
-import AwePicturePreview from "../../components/awe-picture-preview";
+import AweLoadMore from '../../components/awe-load-more';
+import AwePicturePreview from '../../components/awe-picture-preview';
+import {
+    Fade,
+    Placeholder,
+    PlaceholderLine,
+    PlaceholderMedia,
+} from 'rn-placeholder';
 
 interface IState {
     refreshing: boolean;
@@ -86,17 +103,14 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             useNativeDriver: true,
         });
 
-
         const emitter = DeviceEventEmitter.addListener(
             EventEmitterName.EditInfo,
             getUserInfo,
         );
 
         return () => {
-            emitter.remove()
-        }
-
-
+            emitter.remove();
+        };
     }, []);
 
     const getUserInfo = async () => {
@@ -124,7 +138,6 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 refreshing: false,
                 hasMoreData: res.data.length && res.data.length === PAGE_SIZE,
             });
-
         } catch (err) {}
     };
 
@@ -155,7 +168,6 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         }
     };
 
-
     /**
      * 点击"没有更多数据"，手动加载更多数据
      */
@@ -175,15 +187,24 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         });
     };
 
-    const onPressDetail = (row: any) => {
-        props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL, {
-            postId: row.item.id,
-            fromListId: state.userInfo?.id,
-            rowIndex: row.index,
-        });
-    };
+    /**
+     * 查看帖子详情
+     */
+    const onPressDetail = React.useCallback(
+        (postItem: PostContentProps, row: any) => {
+            props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL, {
+                postId: postItem.id,
+                fromListId: state.userInfo?.id,
+                rowIndex: row.index,
+            });
+        },
+        [],
+    );
 
-    const onPressComment = (row: any) => {
+    /**
+     * 发送评论
+     */
+    const onPressComment = React.useCallback((row: any) => {
         // 如果有评论，就打开评论
         // 没有评论就截止回复
         if (row.item.total_comment) {
@@ -208,7 +229,7 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 });
             }
         }
-    };
+    }, []);
 
     /**
      * 发评论
@@ -241,7 +262,7 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      * 点击收藏
      * @param row
      */
-    const onPressCollection = async (row: any) => {
+    const onPressCollection = React.useCallback(async (row: any) => {
         if (netInfo.type !== 'none') {
             try {
                 await onCollectPost(row.item.id, row.index, listId);
@@ -249,23 +270,25 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 console.log(err);
             }
         }
-    };
-
+    }, []);
 
     /**
      * 浏览图片
      * @param pictures
      * @param startIndex
      */
-    const onPressPicture = (pictures: PostImageProps[], startIndex: number) => {
-        const list = pictures.map(picture => picture.url_origin);
+    const onPressPicture = React.useCallback(
+        (pictures: PostImageProps[], startIndex: number) => {
+            const list = pictures.map(picture => picture.url_origin);
 
-        setState({
-            pictureVisible: true,
-            pictureStartIndex: startIndex,
-            pictureList: list,
-        });
-    }
+            setState({
+                pictureVisible: true,
+                pictureStartIndex: startIndex,
+                pictureList: list,
+            });
+        },
+        [],
+    );
 
     /**
      * 跳转到关注列表
@@ -274,7 +297,7 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const onPressFollowList = (type: PersonalOtherEnum) => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_FOLLOW_LIST, {
             userId: userId,
-            followType: type
+            followType: type,
         });
     };
 
@@ -332,11 +355,26 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                     showsVerticalScrollIndicator={false}
                     onEndReached={() => onLoadMoreData(state.hasMoreData)}
                     ListFooterComponent={
-                        <AweLoadMore
-                            loading={state.moreLoading}
-                            hasMoreData={state.hasMoreData}
-                            handleNoMoreData={handleNoMoreData}
-                        />
+                        postStoreData[listId] ? (
+                            <AweLoadMore
+                                loading={state.moreLoading}
+                                hasMoreData={state.hasMoreData}
+                                handleNoMoreData={handleNoMoreData}
+                            />
+                        ) : (
+                            <View style={{padding: 20}}>
+                                {[1, 2].map(value => (
+                                    <Placeholder Animation={Fade} key={value}>
+                                        <PlaceholderMedia />
+                                        <View style={{height: 10}} />
+                                        <PlaceholderLine width={80} />
+                                        <PlaceholderLine />
+                                        <PlaceholderLine />
+                                        <View style={{height: 40}} />
+                                    </Placeholder>
+                                ))}
+                            </View>
+                        )
                     }
                     onScroll={Animated.event(
                         [
@@ -367,20 +405,18 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                             row.index = row.index - 1;
                             return (
                                 <PostItem
+                                    row={JSON.stringify(row)}
                                     postItem={postStoreData[listId][row.index]}
-                                    onPressDetail={() => onPressDetail(row)}
+                                    onPressDetail={onPressDetail}
                                     onPressPicture={onPressPicture}
-                                    onPressComment={() => onPressComment(row)}
-                                    onPressCollection={() =>
-                                        onPressCollection(row)
-                                    }
+                                    onPressComment={onPressComment}
+                                    onPressCollection={onPressCollection}
                                 />
                             );
                         }
                     }}
                 />
             </SafeAreaProvider>
-
 
             <AwePicturePreview
                 visible={state.pictureVisible}

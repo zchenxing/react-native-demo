@@ -14,17 +14,20 @@ import {useSetState} from 'ahooks';
 import Utils from '../../help';
 import {PersonalOtherEnum} from './type';
 import FollowButton from '../components/follow-button';
-import Toast from 'react-native-simple-toast';
 import {UserInfoProps} from '../../interface/work';
 import {localImages} from '../../assets/images';
 import IconFont from '../../assets/iconfont';
 import {themeColor} from '../../assets/styles';
 import {useSelfDataStore} from '../../store/provider';
-import server from "../../network";
-import apis from "../../network/apis";
-import WorkHelp from "../../help/work";
-import { UserEventType } from "../../enum";
-import { useLanguage } from "../../language";
+import server from '../../network';
+import apis from '../../network/apis';
+import {useLanguage} from '../../language';
+import {
+    Fade,
+    Placeholder,
+    PlaceholderLine,
+    PlaceholderMedia,
+} from 'rn-placeholder';
 
 const imageHeight = 90 + (isIOS ? 44 : StatusBar.currentHeight || 0);
 
@@ -38,7 +41,7 @@ interface IProps {
 
 interface IState {
     following: boolean;
-    followLoading: boolean
+    followLoading: boolean;
     totalInfo: any[];
 }
 
@@ -70,40 +73,39 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
 
     React.useEffect(() => {
         if (props.userInfo) {
-
             const totalInfo = [...state.totalInfo];
             totalInfo[0].value = props.userInfo?.total_theme || 0;
             totalInfo[1].value = props.userInfo?.total_follow || 0;
             totalInfo[2].value = props.userInfo?.total_fans || 0;
             setState({
                 totalInfo,
-                following: !!props.userInfo.user_event
+                following: !!props.userInfo.user_event,
             });
         }
     }, [props.userInfo]);
 
     const onPressFollow = async () => {
-
         setState({
-            followLoading: true
-        })
+            followLoading: true,
+        });
 
         try {
-            await server.post(apis.user.follow(props.userInfo?.id || ''), {})
+            await server.post(apis.user.follow(props.userInfo?.id || ''), {});
 
             const totalInfo = [...state.totalInfo];
-            totalInfo[2].value = totalInfo[2].value + (state.following ? -1 : 1);
+            totalInfo[2].value =
+                totalInfo[2].value + (state.following ? -1 : 1);
 
             setState({
                 totalInfo,
                 followLoading: false,
-                following: !state.following
-            })
+                following: !state.following,
+            });
         } catch (err) {
             console.log(err);
             setState({
-                followLoading: false
-            })
+                followLoading: false,
+            });
         }
     };
 
@@ -201,8 +203,7 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
                             ) : (
                                 <TouchableHighlight
                                     onPress={props.onPressEdit}
-                                    underlayColor={'none'}
-                                >
+                                    underlayColor={'none'}>
                                     <IconFont
                                         name={'bianjiziliao'}
                                         color={themeColor}
@@ -216,9 +217,21 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
             </View>
 
             <View style={styles.nameRow}>
-                <Text style={styles.username}>{props.userInfo?.nickname}</Text>
-
-                <Text style={styles.signature}>{props.userInfo?.intro}</Text>
+                {props.userInfo ? (
+                    <>
+                        <Text style={styles.username}>
+                            {props.userInfo?.nickname}
+                        </Text>
+                        <Text style={styles.signature}>
+                            {props.userInfo?.intro}
+                        </Text>
+                    </>
+                ) : (
+                    <Placeholder Animation={Fade}>
+                        <PlaceholderLine width={80} />
+                        <PlaceholderLine />
+                    </Placeholder>
+                )}
             </View>
 
             <View style={styles.others}>

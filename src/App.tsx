@@ -1,27 +1,29 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
+import {
+    CardStyleInterpolators,
+    createStackNavigator,
+} from '@react-navigation/stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {EntrustRoute, intelinkRoute} from "./routes";
-import { globalStyles } from "./assets/styles";
-import myToken from "./network/token";
-import { useSelfDataStore } from "./store/provider";
+import {intelinkRoute} from './routes';
+import {globalStyles} from './assets/styles';
+import myToken from './network/token';
+import {useSelfDataStore} from './store/provider';
 
 const Stack = createStackNavigator();
 
 const App = () => {
-
-    const { getSelfInfo } = useSelfDataStore()
+    const {getSelfInfo} = useSelfDataStore();
 
     React.useEffect(() => {
-        init()
-    }, [])
+        init();
+    }, []);
 
     const init = async () => {
-        await myToken.getToken()
-        getSelfInfo()
-    }
+        await myToken.getToken();
+        getSelfInfo();
+    };
 
     return (
         <SafeAreaProvider style={globalStyles.container}>
@@ -37,9 +39,9 @@ const App = () => {
                                 name={screen.name}
                                 component={screen.component}
                                 options={{
-                                    cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-                                    ...screen.options
-
+                                    cardStyleInterpolator:
+                                        CardStyleInterpolators.forHorizontalIOS,
+                                    ...screen.options,
                                 }}
                             />
                         );

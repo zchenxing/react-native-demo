@@ -69,6 +69,8 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
     };
 
 
+    console.log('Post item:', new Date().valueOf());
+
     return (
         <TouchableHighlight
             style={styles.itemContent}

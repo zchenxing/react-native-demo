@@ -1,76 +1,89 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableHighlight, View } from "react-native";
 import FastImage from 'react-native-fast-image';
-import {avatarUrl} from '../../../mock';
 import FollowButton from '../../components/follow-button';
 import {useSetState} from 'ahooks';
-import Toast from 'react-native-simple-toast';
-import { localImages } from "../../../assets/images";
+import {localImages} from '../../../assets/images';
+import server from '../../../network';
+import apis from '../../../network/apis';
+import { errorMessage } from "../../../network/error";
 
 interface IProps {
-    nickname: string
-    avatar?: string
-    intro?: string
+    userId: string
+    nickname: string;
+    isFollow: boolean;
+    isMySelf: boolean;
+    avatar?: string;
+    intro?: string;
+    onToggleFollow: (userId: string) => void
+    onPressUser: (userId: string) => void
 }
 
-
 interface IState {
-    following: boolean;
     followLoading: boolean;
 }
 
 const UserItem: React.FC<IProps> = (props: IProps) => {
     const [state, setState] = useSetState<IState>({
-        following: false,
         followLoading: false,
     });
 
-    const onChangeFollow = () => {
+    const onChangeFollow = async () => {
+
         setState({
             followLoading: true,
         });
 
-        setTimeout(() => {
+        try {
+            await server.post(apis.user.follow(props.userId))
+            props.onToggleFollow(props.userId)
             setState({
-                following: !state.following,
-                followLoading: false,
+                followLoading: false
             });
-
-            Toast.showWithGravity(
-                !state.following ? '已关注' : '已取消关注',
-                1,
-                Toast.TOP,
-            );
-        }, 444);
+        } catch (err) {
+            setState({
+                followLoading: false
+            });
+            errorMessage.alert(err)
+        }
     };
 
     return (
-        <View style={styles.row}>
-            {
-                props.avatar ?
-                    <FastImage source={{uri: avatarUrl}} style={styles.avatar} />:
-                    <Image source={localImages.defaultAvatar} style={styles.avatar} />
-            }
+        <TouchableHighlight
+            underlayColor={'#f8f8f8'}
+            onPress={() => props.onPressUser(props.userId)}>
+            <View style={styles.row}>
+                {props.avatar ? (
+                    <FastImage source={{uri: props.avatar}} style={styles.avatar} />
+                ) : (
+                    <Image
+                        style={styles.avatar}
+                        source={localImages.defaultAvatar}
+                    />
+                )}
 
+                <View style={styles.userInfo}>
+                    <Text style={styles.username}>{props.nickname}</Text>
+                    {props.intro ? (
+                        <Text numberOfLines={1} style={styles.intro}>
+                            {props.intro}
+                        </Text>
+                    ) : (
+                        <></>
+                    )}
+                </View>
 
-            <View style={styles.userInfo}>
-                <Text style={styles.username}>
-                    {props.nickname}
-                </Text>
-                <Text numberOfLines={1}>
-                    You have a large list that is slow to update - make sure
-                    your renderItem function renders components that follow
-                    React performance best practices like PureComponent
-                </Text>
+                {!props.isMySelf ? (
+                    <FollowButton
+                        isFollow={props.isFollow}
+                        followLoading={state.followLoading}
+                        onChangeFollow={onChangeFollow}
+                    />
+                ) : (
+                    <View style={{width: 50}} />
+                )}
             </View>
-
-
-            <FollowButton
-                isFollow={state.following}
-                followLoading={state.followLoading}
-                onChangeFollow={onChangeFollow}
-            />
-        </View>
+        </TouchableHighlight>
     );
 };
 
@@ -84,8 +97,8 @@ const styles = StyleSheet.create({
         borderBottomColor: '#eee',
     },
     avatar: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         borderRadius: 60,
         marginRight: 10,
     },
@@ -96,6 +109,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         color: '#333',
+    },
+    intro: {
+        color: '#aaa',
+        fontSize: 12,
     },
     follow: {
         width: 70,

@@ -16,7 +16,7 @@ import {observer} from 'mobx-react';
 import dayjs from 'dayjs';
 import server from '../../../network';
 import apis from '../../../network/apis';
-import IconFont from "../../../assets/iconfont";
+import IconFont from '../../../assets/iconfont';
 
 interface IState {
     loading: boolean
@@ -33,10 +33,6 @@ const PersonalPreviewScreen: React.FC<NavigateProps> = (
         localAvatar: null,
         localAvatarPath: '',
     });
-
-    React.useEffect(() => {
-        // console.log('self info data', selfInfoData);
-    }, [])
 
 
     const openCamera = async () => {
@@ -115,8 +111,6 @@ const PersonalPreviewScreen: React.FC<NavigateProps> = (
         }
     };
 
-    const onChooseAvatar = () => {};
-
     const onPressInfo = (editType: EditInfoType) => {
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_EDIT_PERSONAL_INFO, {
             editType,
@@ -137,7 +131,7 @@ const PersonalPreviewScreen: React.FC<NavigateProps> = (
             <View style={styles.avatarRow}>
                 <TouchableHighlight
                     underlayColor={'none'}
-                    onPress={onChooseAvatar}>
+                    onPress={openCamera}>
                     <>
                         <Image
                             source={
@@ -148,14 +142,9 @@ const PersonalPreviewScreen: React.FC<NavigateProps> = (
                             style={styles.avatar}
                         />
 
-                        <TouchableHighlight
-                            style={styles.avatarTouch}
-                            onPress={openCamera}
-                            underlayColor={'none'}>
-                            <View style={styles.avatarEdit}>
-                                <IconFont name={'bianjitouxiang'} size={22} />
-                            </View>
-                        </TouchableHighlight>
+                        <View style={styles.avatarEdit}>
+                            <IconFont name={'bianjitouxiang'} size={22} />
+                        </View>
 
 
                         {
@@ -219,14 +208,12 @@ const styles = StyleSheet.create({
         height: 90,
         borderRadius: 90,
     },
-    avatarTouch: {
-        position: 'absolute',
-        width: 40,
-        height: 40,
-        bottom: -8,
-        right: -8,
-    },
     avatarEdit: {
+
+        position: 'absolute',
+        bottom: 7,
+        right: 7,
+
         width: 24,
         height: 24,
         borderRadius: 30,
@@ -264,7 +251,7 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingLeft: 2,
         color: '#bbb',
-        height: 50,
+        minHeight: 30,
     },
 });
 

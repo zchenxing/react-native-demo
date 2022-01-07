@@ -6,7 +6,7 @@ export interface PostItemProps {
     // 隐藏关注按钮
     hiddenFollow?: boolean
     // 点击查看帖子详情
-    onPressDetail: (postContent: PostContentProps, row: any) => void
+    onPressDetail: (postContent: PostContentProps, rowIndex: number) => void
     // 查看图片
     onPressPicture: (pictureList: PostImageProps[], startIndex: number) => void
     // 点击收藏

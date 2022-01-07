@@ -10,6 +10,7 @@ import {PostContentProps, PostImageProps} from '../../interface/work';
 import IconFont from '../../assets/iconfont';
 import { PostType } from "../../enum";
 import { postType } from "../../config/type";
+import AweProgressiveImage from "../../components/awe-progressive-image";
 
 interface IProps {
     postType: PostType,
@@ -66,11 +67,12 @@ const PostContent: React.FC<IProps> = (props: IProps) => {
                                 onPress={() => onPressPicture(index)}
                                 style={{borderRadius: 10}}
                                 underlayColor={'#f2f2f2'}>
-                                <FastImage
-                                    key={index}
-                                    style={styles.image}
+                                <AweProgressiveImage
+                                    thumbnailSource={{uri: item.url_thumb}}
                                     source={{uri: item.url_normal}}
-                                    resizeMode={FastImage.resizeMode.cover}
+                                    width={screenWidth - 35}
+                                    height={screenWidth * 0.5}
+                                    containerStyle={styles.image}
                                 />
                             </TouchableHighlight>
                         ),
@@ -118,8 +120,7 @@ const styles = StyleSheet.create({
         color: '#999'
     },
     image: {
-        width: screenWidth - 35,
-        height: screenWidth * 0.5,
+
         marginTop: 10,
         borderRadius: 5,
     },

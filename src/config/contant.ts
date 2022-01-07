@@ -18,7 +18,8 @@ export const EventEmitterName = {
     RefreshHome: 'RefreshHome',
     // 发布 -> 选择类别
     ChooseCategory: 'ChooseCategory',
-    // 编辑信息后刷新数据
-    EditInfo: 'EditInfo'
+    // 刷新个人页面数据
+    RefreshMyInfo: 'RefreshMyInfo',
+
 }
 

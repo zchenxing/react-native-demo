@@ -2,17 +2,14 @@ import React from 'react';
 import {
     FlatList,
     Keyboard,
-    SafeAreaView,
     StyleSheet,
     Text,
-    TouchableHighlight,
     View,
 } from 'react-native';
 import {NavigateProps} from '../../interface';
 import PostContent from './post-content';
 import ScreenBase from '../components/screen-base';
 import {useSetState} from 'ahooks';
-import CommentItem from '../components/post-comments-sheet/comment-item';
 import {themeColor} from '../../assets/styles';
 import AweKeyboard from '../../components/awe-keyboard';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -26,7 +23,6 @@ import PastCard from './post-card';
 import WorkHelp from '../../help/work';
 import {PostType, UserEventType} from '../../enum';
 import {AnimalCardType} from '../components/animal-card/type';
-import IconFont from '../../assets/iconfont';
 import PostDetailFooter from './list-footer';
 import QuestDrag from './quest-drag';
 import CommentFooter from './comment-footer';
@@ -80,6 +76,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     });
 
     React.useEffect(() => {
+
         const detail: PostContentProps = postStoreData[fromListId][rowIndex];
 
         setState({

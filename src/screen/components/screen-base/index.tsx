@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Text, StyleSheet, View, TouchableHighlight, ScrollView} from 'react-native';
+import { Image, Text, StyleSheet, View, TouchableHighlight, ScrollView, ActivityIndicator } from "react-native";
 import {useNetInfo} from '@react-native-community/netinfo';
 import {screenWidth} from '../../../config/contant';
 import {NetworkStatus} from '../../../enum';
@@ -46,18 +46,11 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
                     </View>
                 </TouchableHighlight>
             ) : props.showPlaceholder ? (
-                <ScrollView style={{padding: 20}}>
-                    {[1, 2, 3].map(value => (
-                        <Placeholder Animation={Fade} key={value}>
-                            <PlaceholderMedia />
-                            <View style={{height: 10}} />
-                            <PlaceholderLine width={80} />
-                            <PlaceholderLine />
-                            <PlaceholderLine />
-                            <View style={{height: 40}} />
-                        </Placeholder>
-                    ))}
-                </ScrollView>
+
+                props.placeholderComponent ||
+                <View style={{flex: 1, justifyContent: 'center'}}>
+                    <ActivityIndicator />
+                </View>
             ) : props.nothingPage ? (
                 <TouchableHighlight
                     style={styles.noNetwork}

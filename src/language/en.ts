@@ -82,6 +82,11 @@ export const languageEn = {
     copy_to_clipboard: 'Copied to the clipboard',
 
     action_sheet_title: 'What do you want to do?',
+    confirm_to_unfollow: 'Confirm to unfollow',
+
+    x_comments: (total: number) => {
+        return `${total} ${total > 1 ? 'comments' : 'comment'}`
+    },
 
     x_minute_ago: (min: number, isAge: boolean) => {
         return `${min} ${min > 1 ? 'minutes' : 'minute'} ${isAge ? 'age' : ''}`

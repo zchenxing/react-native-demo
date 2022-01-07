@@ -1,43 +1,28 @@
-import React from 'react';
-import {
-    FlatList,
-    StatusBar,
-    View,
-    Animated,
-    StyleSheet,
-    DeviceEventEmitter,
-} from 'react-native';
-import PersonalInfo from './info';
-import {EventEmitterName, PAGE_SIZE, screenWidth} from '../../config/contant';
-import UserNavigator from '../components/user-navigator';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import PostItem from '../components/post-item';
-import PostCommentSheet from '../components/post-comments-sheet';
-import {PersonalOtherEnum} from './type';
-import {NavigateProps} from '../../interface';
-import {INTELINK_SCREEN_NAME} from '../../routes/screen-name';
-import server from '../../network';
-import apis from '../../network/apis';
-import {
-    PostContentProps,
-    PostImageProps,
-    UserInfoProps,
-} from '../../interface/work';
-import {observer} from 'mobx-react';
-import {useSetState} from 'ahooks';
-import {usePostListDataStore} from '../../store/provider';
-import AweKeyboard from '../../components/awe-keyboard';
-import Toast from 'react-native-simple-toast';
-import {useNetInfo} from '@react-native-community/netinfo';
-import AweLoadMore from '../../components/awe-load-more';
-import AwePicturePreview from '../../components/awe-picture-preview';
-import {
-    Fade,
-    Placeholder,
-    PlaceholderLine,
-    PlaceholderMedia,
-} from 'rn-placeholder';
+import React from "react";
+import { Animated, DeviceEventEmitter, FlatList, StatusBar, StyleSheet, View } from "react-native";
+import PersonalInfo from "./info";
+import { EventEmitterName, PAGE_SIZE, screenHeight, screenWidth } from "../../config/contant";
+import UserNavigator from "../components/user-navigator";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import Icon from "react-native-vector-icons/FontAwesome";
+import PostItem from "../components/post-item";
+import PostCommentSheet from "../components/post-comments-sheet";
+import { PersonalOtherEnum } from "./type";
+import { NavigateProps } from "../../interface";
+import { INTELINK_SCREEN_NAME } from "../../routes/screen-name";
+import server from "../../network";
+import apis from "../../network/apis";
+import { PostContentProps, PostImageProps, UserInfoProps } from "../../interface/work";
+import { observer } from "mobx-react";
+import { useSetState } from "ahooks";
+import { usePostListDataStore } from "../../store/provider";
+import AweKeyboard from "../../components/awe-keyboard";
+import Toast from "react-native-simple-toast";
+import { useNetInfo } from "@react-native-community/netinfo";
+import AweLoadMore from "../../components/awe-load-more";
+import AwePicturePreview from "../../components/awe-picture-preview";
+import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from "rn-placeholder";
+
 
 interface IState {
     refreshing: boolean;
@@ -57,6 +42,9 @@ interface IState {
     pictureStartIndex: number;
     pictureList: any[];
     commentVisible: boolean;
+
+
+    gggVislble: boolean
 }
 
 const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
@@ -87,6 +75,8 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         pictureStartIndex: 0,
         pictureList: [],
         commentVisible: false,
+
+        gggVislble: false
     });
 
     React.useEffect(() => {
@@ -104,7 +94,7 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         });
 
         const emitter = DeviceEventEmitter.addListener(
-            EventEmitterName.EditInfo,
+            EventEmitterName.RefreshMyInfo,
             getUserInfo,
         );
 
@@ -187,18 +177,19 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         });
     };
 
+
     /**
      * 查看帖子详情
      */
     const onPressDetail = React.useCallback(
-        (postItem: PostContentProps, row: any) => {
+        (postItem: PostContentProps, rowIndex: number) => {
             props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_POST_DETAIL, {
                 postId: postItem.id,
                 fromListId: state.userInfo?.id,
-                rowIndex: row.index,
+                rowIndex: rowIndex,
             });
         },
-        [],
+        [state],
     );
 
     /**
@@ -295,9 +286,11 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      * @param type
      */
     const onPressFollowList = (type: PersonalOtherEnum) => {
+
         props.navigation.push(INTELINK_SCREEN_NAME.SCREEN_FOLLOW_LIST, {
             userId: userId,
             followType: type,
+            total: type === PersonalOtherEnum.Following ? state.userInfo?.total_follow : state.userInfo?.total_fans
         });
     };
 
@@ -399,6 +392,9 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                     onScrollOffset={onScrollOffset}
                                     onPressFollowList={onPressFollowList}
                                     onPressEdit={onPressEdit}
+                                    onPreviewAvatar={() => {
+                                        setState({gggVislble: true})
+                                    }}
                                 />
                             );
                         } else {
@@ -440,6 +436,8 @@ const PersonalScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 onPressAvatar={onPressAvatar}
                 onClose={() => setState({commentVisible: false})}
             />
+
+
         </>
     );
 };
@@ -459,6 +457,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+
+    image: {
+        position: 'absolute',
+        width: screenWidth,
+        height: screenHeight
+    }
 });
 
 export default observer(PersonalScreen);

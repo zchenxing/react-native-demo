@@ -80,7 +80,7 @@ const AweKeyboard: React.FC<AweKeyboardProps> = (props: AweKeyboardProps) => {
 
 
     return (
-        <Modal transparent={true} visible={props.visible}>
+        <Modal transparent={true} visible={props.visible} animationType={'fade'}>
             <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, .2)'}}>
 
                 <TouchableHighlight onPress={onClose} underlayColor={'none'}>

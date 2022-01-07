@@ -20,6 +20,7 @@ import {localImages} from '../../../assets/images';
 import { ActionSheet, SheetItem } from "action-sheet-rn";
 import AweOverlayLoading from '../../../components/awe-overlay-loading';
 import { errorMessage } from "../../../network/error";
+import PostListPlaceholder from "./placeholder";
 
 interface IState {
     refreshing: boolean;
@@ -305,6 +306,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         <ScreenBase
             onReload={onLoadData}
             showPlaceholder={state.showPlaceholder}
+            placeholderComponent={<PostListPlaceholder />}
             nothingPage={
                 postStoreData[props.listId] &&
                 !postStoreData[props.listId].length

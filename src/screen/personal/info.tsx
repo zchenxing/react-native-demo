@@ -22,11 +22,11 @@ import {useSelfDataStore} from '../../store/provider';
 import server from '../../network';
 import apis from '../../network/apis';
 import {useLanguage} from '../../language';
+
 import {
     Fade,
     Placeholder,
     PlaceholderLine,
-    PlaceholderMedia,
 } from 'rn-placeholder';
 
 const imageHeight = 90 + (isIOS ? 44 : StatusBar.currentHeight || 0);
@@ -37,6 +37,7 @@ interface IProps {
     onScrollOffset: (offset: number) => void;
     onPressFollowList: (type: PersonalOtherEnum) => void;
     onPressEdit: () => void;
+    onPreviewAvatar: () => void
 }
 
 interface IState {
@@ -73,6 +74,7 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
 
     React.useEffect(() => {
         if (props.userInfo) {
+            console.log('配置用户信息');
             const totalInfo = [...state.totalInfo];
             totalInfo[0].value = props.userInfo?.total_theme || 0;
             totalInfo[1].value = props.userInfo?.total_follow || 0;
@@ -116,6 +118,8 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
             props.onPressFollowList(type);
         }
     };
+
+
 
     return (
         <View
@@ -171,15 +175,21 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
             </Animated.View>
 
             <View style={styles.info}>
-                <Image
-                    defaultSource={localImages.defaultAvatar}
-                    source={
-                        props.userInfo?.avatar
-                            ? {uri: props.userInfo.avatar.url_normal}
-                            : localImages.defaultAvatar
-                    }
-                    style={styles.avatar}
-                />
+                <TouchableHighlight
+                    underlayColor={'none'}
+                    onPress={props.onPreviewAvatar}
+                    style={styles.avatarBase}
+                >
+                   <Image
+                       defaultSource={localImages.defaultAvatar}
+                       source={
+                           props.userInfo?.avatar
+                               ? {uri: props.userInfo.avatar.url_normal}
+                               : localImages.defaultAvatar
+                       }
+                       style={styles.avatar}
+                   />
+               </TouchableHighlight>
 
                 <View style={styles.actions}>
                     {props.userInfo?.id && (
@@ -247,6 +257,7 @@ const PersonalInfo: React.FC<IProps> = (props: IProps) => {
                     </TouchableHighlight>
                 ))}
             </View>
+
         </View>
     );
 };
@@ -261,9 +272,11 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingLeft: 20,
     },
-    avatar: {
+    avatarBase: {
         position: 'absolute',
-        left: 20,
+        left: 20
+    },
+    avatar: {
         width: 86,
         height: 86,
         borderRadius: 86,

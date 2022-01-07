@@ -7,14 +7,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import {themeColor} from '../../../assets/styles';
 import {screenWidth} from '../../../config/contant';
 import {AnimalAge, AnimalCardProps, AnimalCardType} from './type';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {useSetState} from 'ahooks';
-import {WebView} from 'react-native-webview';
 import {localImages} from '../../../assets/images';
 import AnimalCardShareMore from './more-info';
 import AnimalMorePicture from './more-picture';
 import Utils from '../../../help';
 import {shareSpeciesTags} from '../../../config/type';
+import AweProgressiveImage from "../../../components/awe-progressive-image";
 
 interface IState {
     showMoreInfo: boolean;
@@ -89,6 +88,7 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                             : localImages.defaultPicture
                     }
                 />
+
 
                 <View style={styles.infoBase}>
                     {/* 生物信息 */}

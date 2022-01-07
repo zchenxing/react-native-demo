@@ -57,7 +57,7 @@ const EditPersonalInfoScreen: React.FC<NavigateProps> = (
 
             await server.put(apis.user.myself, data);
 
-            DeviceEventEmitter.emit(EventEmitterName.EditInfo)
+            DeviceEventEmitter.emit(EventEmitterName.RefreshMyInfo)
 
             setSelfInfoData({
                 ...selfInfoData,

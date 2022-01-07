@@ -8,6 +8,8 @@ import apis from '../../network/apis';
 import server from '../../network';
 import myToken from '../../network/token';
 import apiConfig from '../../network/config';
+import { ProgressiveImage } from "../../components/awe-progressive-image";
+import { birdCard } from "../../mock";
 
 const Test1: React.FC<NavigateProps> = (props: NavigateProps) => {
 
@@ -54,6 +56,7 @@ const Test1: React.FC<NavigateProps> = (props: NavigateProps) => {
 
             <Button title={'登录'} onPress={onLogin} />
             <Button title={'注册'} onPress={onRegister} />
+
 
         </View>
     );

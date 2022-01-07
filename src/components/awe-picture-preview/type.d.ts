@@ -1,3 +1,9 @@
+
+export interface PictureSourceProps {
+    origin: string
+    thumbnail: string
+}
+
 export interface AwePicturePreviewProps {
     visible: boolean
 
@@ -7,6 +13,8 @@ export interface AwePicturePreviewProps {
     transparent?: boolean
 
     imageUrls: string[]
+
+    source?: PictureSourceProps[]
 
     onClick: () => void
 }

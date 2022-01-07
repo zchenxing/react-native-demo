@@ -7,7 +7,7 @@ import FastImage, { FastImageProps, ResizeMode } from "react-native-fast-image";
 interface IProps {
     thumbnailSource?: FastImageProps['source'];
     source: FastImageProps['source'];
-    width: number
+    width?: number
     height: number
     containerStyle?: ViewStyle;
     resizeMode?: ResizeMode

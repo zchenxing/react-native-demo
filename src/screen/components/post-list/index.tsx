@@ -1,5 +1,10 @@
 import React from 'react';
-import { FlatList, RefreshControl, DeviceEventEmitter, Alert } from "react-native";
+import {
+    FlatList,
+    RefreshControl,
+    DeviceEventEmitter,
+    Alert,
+} from 'react-native';
 import PostItem from '../post-item';
 import AwePicturePreview from '../../../components/awe-picture-preview';
 import PostCommentSheet from '../post-comments-sheet';
@@ -17,10 +22,10 @@ import {observer} from 'mobx-react';
 import AweLoadMore from '../../../components/awe-load-more';
 import {useLanguage} from '../../../language';
 import {localImages} from '../../../assets/images';
-import { ActionSheet, SheetItem } from "action-sheet-rn";
+import {ActionSheet, SheetItem} from 'action-sheet-rn';
 import AweOverlayLoading from '../../../components/awe-overlay-loading';
-import { errorMessage } from "../../../network/error";
-import PostListPlaceholder from "./placeholder";
+import {errorMessage} from '../../../network/error';
+import PostListPlaceholder from './placeholder';
 
 interface IState {
     refreshing: boolean;
@@ -38,9 +43,9 @@ interface IState {
     pictureList: any[];
     commentVisible: boolean;
 
-    moreActionVisible: boolean
-    deleteLoading: boolean
-    showPlaceholder: boolean
+    moreActionVisible: boolean;
+    deleteLoading: boolean;
+    showPlaceholder: boolean;
 }
 
 const PostList: React.FC<PostListProps> = (props: PostListProps) => {
@@ -50,7 +55,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
         getPostData,
         getMorePostData,
         onCollectPost,
-        onDeletePost
+        onDeletePost,
     } = usePostListDataStore();
     const listRef = React.useRef<any>(null);
 
@@ -71,7 +76,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
         moreActionVisible: false,
         deleteLoading: false,
-        showPlaceholder: true
+        showPlaceholder: true,
     });
 
     React.useEffect(() => {
@@ -115,11 +120,11 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 });
             }
         } catch (err) {
-            errorMessage.alert(err)
+            errorMessage.alert(err);
             setState({
                 showPlaceholder: false,
                 refreshing: false,
-                hasMoreData: false
+                hasMoreData: false,
             });
         }
     };
@@ -156,7 +161,12 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                     hasMoreData:
                         res.data.length && res.data.length === PAGE_SIZE,
                 });
-            } catch (err) {}
+            } catch (err) {
+                setState({
+                    moreLoading: false,
+                    hasMoreData: true
+                })
+            }
         }
     };
 
@@ -177,15 +187,18 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      * @param pictures
      * @param startIndex
      */
-    const onPressPicture = React.useCallback((pictures: PostImageProps[], startIndex: number) => {
-        const list = pictures.map(picture => picture.url_origin);
+    const onPressPicture = React.useCallback(
+        (pictures: PostImageProps[], startIndex: number) => {
+            const list = pictures.map(picture => picture.url_origin);
 
-        setState({
-            pictureVisible: true,
-            pictureStartIndex: startIndex,
-            pictureList: list,
-        });
-    }, []);
+            setState({
+                pictureVisible: true,
+                pictureStartIndex: startIndex,
+                pictureList: list,
+            });
+        },
+        [],
+    );
 
     /**
      * 查看评论
@@ -215,7 +228,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 });
             }
         }
-    }, [])
+    }, []);
 
     /**
      * 点击收藏 | 取消收藏
@@ -230,7 +243,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 throw err;
             }
         }
-    }, [])
+    }, []);
 
     /**
      * 当没有评论时，直接发评论
@@ -256,24 +269,22 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                     firstKeyboardVisible: false,
                 });
             }
-
         } catch (err) {
-            errorMessage.alert(err)
+            errorMessage.alert(err);
         }
     };
 
     const onPressMoreAction = React.useCallback((row: any) => {
         setState({
             currentRowIndex: row.index,
-            moreActionVisible: true
-        })
-    }, [])
-
+            moreActionVisible: true,
+        });
+    }, []);
 
     const handleDeletePost = () => {
         setState({
-            moreActionVisible: false
-        })
+            moreActionVisible: false,
+        });
 
         Alert.alert('', useLanguage.confirm_delete_post, [
             {
@@ -286,21 +297,21 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 onPress: () => deletePost(),
             },
         ]);
-    }
+    };
 
     const deletePost = async () => {
         try {
-            setState({ deleteLoading: true })
+            setState({deleteLoading: true});
 
-            await onDeletePost(props.listId, state.currentRowIndex)
+            await onDeletePost(props.listId, state.currentRowIndex);
 
-            setState({ deleteLoading: false })
+            setState({deleteLoading: false});
         } catch (err) {
             setState({
-                deleteLoading: false
-            })
+                deleteLoading: false,
+            });
         }
-    }
+    };
 
     return (
         <ScreenBase
@@ -336,7 +347,6 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                     />
                 }
                 renderItem={(row: any) => {
-
                     return (
                         <PostItem
                             row={JSON.stringify(row)}
@@ -354,9 +364,9 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
 
             <AwePicturePreview
                 visible={state.pictureVisible}
-                onClick={() => setState({pictureVisible: false})}
                 imageUrls={state.pictureList}
                 startIndex={state.pictureStartIndex}
+                onClick={() => setState({pictureVisible: false})}
             />
 
             <PostCommentSheet
@@ -375,24 +385,20 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
                 onPressSend={onSendComment}
             />
 
-            {
-                state.moreActionVisible &&
+            {state.moreActionVisible && (
                 <ActionSheet title="What do you want to do?">
-                    <SheetItem
-                        type='remove'
-                        onPress={handleDeletePost}>
+                    <SheetItem type="remove" onPress={handleDeletePost}>
                         {useLanguage.delete_post}
                     </SheetItem>
 
-                    <SheetItem onPress={() => setState({moreActionVisible: false})}>
+                    <SheetItem
+                        onPress={() => setState({moreActionVisible: false})}>
                         {useLanguage.cancel}
                     </SheetItem>
                 </ActionSheet>
-            }
-
+            )}
 
             <AweOverlayLoading visible={state.deleteLoading} />
-
         </ScreenBase>
     );
 };

@@ -8,10 +8,11 @@ import apis from '../../network/apis';
 import server from '../../network';
 import myToken from '../../network/token';
 import apiConfig from '../../network/config';
-import { ProgressiveImage } from "../../components/awe-progressive-image";
-import { birdCard } from "../../mock";
+import { useSelfDataStore } from "../../store/provider";
 
 const Test1: React.FC<NavigateProps> = (props: NavigateProps) => {
+
+    const {getSelfInfo} = useSelfDataStore()
 
     const [username, setUsername] = React.useState<string>('')
     const [password, setPassword] = React.useState<string>('')
@@ -24,6 +25,8 @@ const Test1: React.FC<NavigateProps> = (props: NavigateProps) => {
                 username: username,
                 password: apiConfig.generatePassword(username, password)
             })
+
+            await getSelfInfo()
             myToken.setToken(res.headers['x-druid-authentication'])
             props.navigation.goBack()
 

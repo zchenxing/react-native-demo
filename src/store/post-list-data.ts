@@ -7,6 +7,7 @@ import {UserEventType} from '../enum';
 import WorkHelp from '../help/work';
 import {INTELINK_SCREEN_NAME} from '../routes/screen-name';
 import { errorMessage } from "../network/error";
+import Utils from "../help";
 
 type PageParam = {
     pageId?: string;
@@ -29,8 +30,7 @@ export class PostListDataStore {
         dataSource: PostContentProps[],
     ) => {
         this.postStoreData = {
-            ...this.postStoreData,
-            [listId]: [...dataSource],
+            ...this.postStoreData, [listId]: [...Utils.arrayObjectDeDuplication('id', dataSource)],
         };
     };
 

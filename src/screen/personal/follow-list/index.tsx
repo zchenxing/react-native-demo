@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeviceEventEmitter, FlatList, StatusBar, View } from "react-native";
+import { DeviceEventEmitter, FlatList, RefreshControl, StatusBar, Text, View } from "react-native";
 import ScreenBase from '../../components/screen-base';
 import AweSimpleNavigator from '../../../components/awe-simple-navigator';
 import {NavigateProps} from '../../../interface';
@@ -15,8 +15,9 @@ import {useSelfDataStore} from '../../../store/provider';
 import {Placeholder, PlaceholderLine, PlaceholderMedia} from 'rn-placeholder';
 import WorkHelp from '../../../help/work';
 import {UserEventType} from '../../../enum';
-import { EventEmitterName } from "../../../config/contant";
+import { EventEmitterName, PAGE_SIZE } from "../../../config/contant";
 import { INTELINK_SCREEN_NAME } from "../../../routes/screen-name";
+import AweLoadMore from "../../../components/awe-load-more";
 
 type UserProps = {
     id: string;
@@ -32,7 +33,10 @@ interface IState {
     removeUser: string[];
     dataSource: UserProps[];
     showPlaceholder: boolean;
-    lastId: string
+
+    refreshing: boolean
+    moreLoading: boolean;
+    hasMoreData: boolean;
 }
 
 const FollowListScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
@@ -45,33 +49,92 @@ const FollowListScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         removeUser: [],
         dataSource: [],
         showPlaceholder: true,
-        lastId: ''
+        refreshing: true,
+        moreLoading: false,
+        hasMoreData: false,
     });
 
     React.useEffect(() => {
-        getFollowData();
-    }, []);
 
-    const getFollowData = async () => {
+        if (state.refreshing) {
+            getFollowData();
+        }
+    }, [state.refreshing]);
+
+    const getFollowData = async (lastId = '') => {
         try {
             const api =
                 followType === PersonalOtherEnum.Following
-                    ? apis.user.followed(userId)
-                    : apis.user.fans(userId);
+                    ? apis.user.followed(userId, lastId)
+                    : apis.user.fans(userId, lastId);
             const res = await server.get(api);
 
             setState({
                 loading: false,
                 dataSource: res.data,
                 showPlaceholder: false,
+                refreshing: false
             });
+
+            return Promise.resolve(res)
         } catch (err) {
             setState({
                 showPlaceholder: false,
                 loading: false,
+                refreshing: false
             });
+            return Promise.reject(err)
         }
     };
+
+
+    const onRefreshData = () => {
+        setState({
+            refreshing: true
+        })
+    }
+
+
+
+    const onLoadMoreData = async (hasMoreData: boolean) => {
+
+        if (hasMoreData) {
+            setState({
+                moreLoading: true
+            })
+
+            try {
+
+                const lastId = state.dataSource[state.dataSource.length - 1].id
+                const res = await getFollowData(lastId)
+
+                const dataSource = [...state.dataSource, ...res.data]
+
+                setState({
+                    dataSource: dataSource,
+                    moreLoading: false,
+                    hasMoreData: res.data.length && res.data.length === PAGE_SIZE
+                })
+
+
+            } catch (err) {
+                setState({
+                    moreLoading: false,
+                    hasMoreData: true
+                })
+            }
+        }
+
+    }
+
+    const handleNoMoreData = () => {
+        setState({
+            moreLoading: true,
+            hasMoreData: true,
+        });
+
+        onLoadMoreData(true);
+    }
 
     /**
      * 关注用户 / 取消关注
@@ -115,6 +178,7 @@ const FollowListScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     }, [])
 
 
+
     return (
         <>
             <AweSimpleNavigator
@@ -123,10 +187,11 @@ const FollowListScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             />
 
             <ScreenBase
+                onReload={getFollowData}
                 showPlaceholder={state.showPlaceholder}
                 placeholderComponent={
                     <View style={{padding: 10}}>
-                        {Array.from(new Array(Math.min(total, 10)).keys()).map(
+                        {Array.from(new Array(Math.min(total || 0, 10)).keys()).map(
                             index => (
                                 <Placeholder
                                     Left={PlaceholderMedia}
@@ -149,14 +214,29 @@ const FollowListScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                       : useLanguage.no_follower,
                           }
                         : undefined
-                }>
+                }
+            >
                 <StatusBar translucent={true} />
                 <View style={{flex: 1}}>
                     <FlatList
                         data={state.dataSource}
+                        keyExtractor={item => item.id}
+                        onEndReached={() => onLoadMoreData(state.hasMoreData)}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={state.refreshing}
+                                onRefresh={onRefreshData}
+                            />
+                        }
+                        ListFooterComponent={
+                            <AweLoadMore
+                                loading={state.moreLoading}
+                                hasMoreData={state.hasMoreData}
+                                handleNoMoreData={handleNoMoreData}
+                            />
+                        }
                         renderItem={row => {
                             const item: UserProps = row.item;
-
                             return (
                                 <UserItem
                                     userId={item.id}

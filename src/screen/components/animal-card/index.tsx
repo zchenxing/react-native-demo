@@ -79,16 +79,14 @@ const AnimalCard: React.FC<AnimalCardProps> = (props: AnimalCardProps) => {
                     )}
                 </View>
 
-                <FastImage
-                    style={styles.animalPic}
-                    resizeMode={'cover'}
+                <AweProgressiveImage
                     source={
                         props.animalInfo
                             ? {uri: props.animalInfo?.imageUrls[0]}
                             : localImages.defaultPicture
                     }
+                    height={styles.animalPic.height}
                 />
-
 
                 <View style={styles.infoBase}>
                     {/* 生物信息 */}

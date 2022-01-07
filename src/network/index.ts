@@ -2,8 +2,8 @@ import axios, { AxiosRequestConfig } from "axios";
 import myToken from './token';
 import { isIOS } from "../config/contant";
 
-// const testBaseURL = `${isIOS ? 'https' : 'http'}://intelink.coolhei.com/api`
-const testBaseURL = 'http://154.17.3.8:9003'
+const testBaseURL = `${isIOS ? 'https' : 'http'}://intelink.coolhei.com/api`
+// const testBaseURL = 'http://154.17.3.8:9003'
 
 /**
  http://intelink.coolhei.com/api
@@ -25,6 +25,7 @@ const server = axios.create({
 const requestHeaders = ({ config }: any) => {
     // 1.时间戳
     config.headers.timestamp = new Date().getTime()
+    console.log('--',  myToken.token);
     config.headers['x-druid-authentication'] = myToken.token
 }
 
@@ -32,8 +33,11 @@ server.interceptors.request.use(
     (config: AxiosRequestConfig) => {
         requestHeaders({ config })
         console.log('url----', `${config.baseURL}${config.url}`);
-        // @ts-ignore
-        console.log('x-druid-authentication- ----', config.headers['x-druid-authentication']);
+        console.log(
+            'x-druid-authentication- ----',
+            // @ts-ignore
+            config.headers['x-druid-authentication'],
+        );
         return config
     },
     (error) => {

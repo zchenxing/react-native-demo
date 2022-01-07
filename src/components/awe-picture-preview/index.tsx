@@ -1,12 +1,10 @@
 import React from 'react';
-import { ActivityIndicator, Image, Modal, StatusBar, StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import { ActivityIndicator, Image, Modal, StatusBar, StyleSheet, View } from "react-native";
 import ImageViewer from 'react-native-image-zoom-viewer';
 import {AwePicturePreviewProps} from './type';
 import {localImages} from '../../assets/images';
-import Gallery from 'react-native-awesome-gallery';
 import {screenHeight, screenWidth} from '../../config/contant';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
+// import {Image} from 'react-native-elements'
 
 const AwePicturePreview: React.FC<AwePicturePreviewProps> = (
     props: AwePicturePreviewProps,
@@ -16,6 +14,8 @@ const AwePicturePreview: React.FC<AwePicturePreviewProps> = (
     React.useEffect(() => {
         if (props.visible) {
             const list = props.imageUrls.map(url => ({url}));
+
+
             setDataSource(list);
         } else {
             setDataSource([]);

@@ -14,9 +14,11 @@ class MyToken {
 
     async getToken() {
         try {
-            this._token = await druidStorage.getData(STORAGE_KEY)
+            const data = await druidStorage.getData(STORAGE_KEY)
+            this._token = data || ''
             return this._token
         } catch (err) {
+            console.log('为获取到token');
             return ''
         }
     }

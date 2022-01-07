@@ -12,7 +12,7 @@ export const languageEn = {
     dont_save: "Don't save",
     history: 'History',
     just_now: 'Now',
-    load_more: 'Load more',
+    load_more: 'Loading...',
     no_more_data: 'No more data',
     reply_to: 'Reply to ',
     save: 'Save',

@@ -6,12 +6,7 @@ import {NetworkStatus} from '../../../enum';
 import {useLanguage} from '../../../language';
 import {localImages} from '../../../assets/images';
 import {ScreenBaseProps} from './type';
-import {
-    Placeholder,
-    PlaceholderMedia,
-    PlaceholderLine,
-    Fade,
-} from 'rn-placeholder';
+import { useMyThrottle } from "../../../help/throttle";
 
 const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
     const netInfo = useNetInfo();
@@ -28,12 +23,18 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
         }
     }, []);
 
+
+    const onReload = useMyThrottle(() => {
+        props.onReload && props.onReload()
+    }, 1000)
+
+
     return (
         <View style={styles.container}>
             {networking === NetworkStatus.None ? (
                 <TouchableHighlight
                     underlayColor={'none'}
-                    onPress={() => props.onReload && props.onReload}>
+                    onPress={onReload}>
                     <View style={styles.noNetwork}>
                         <Image
                             style={styles.noNetworkImg}
@@ -55,7 +56,7 @@ const ScreenBase: React.FC<ScreenBaseProps> = (props: ScreenBaseProps) => {
                 <TouchableHighlight
                     style={styles.noNetwork}
                     underlayColor={'none'}
-                    onPress={() => props.onReload && props.onReload}>
+                    onPress={onReload}>
                     <>
                         <Image
                             style={styles.noNetworkImg}

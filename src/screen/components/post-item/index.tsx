@@ -69,7 +69,6 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
     };
 
 
-    console.log('Post item:', new Date().valueOf());
 
     return (
         <TouchableHighlight
@@ -99,9 +98,9 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
 
                 {props.postItem.biological_card && state.biologicalCard && (
                     <AnimalCard
+                        showLocation={true}
                         speciesType={props.postItem.label}
                         animalType={AnimalCardType.ShareType}
-                        showLocation={true}
                         animalInfo={state.biologicalCard}
                     />
                 )}

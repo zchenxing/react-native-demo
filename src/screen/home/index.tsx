@@ -8,10 +8,7 @@ import { useCommentDataStore, useSelfDataStore } from "../../store/provider";
 import {observer} from 'mobx-react'
 import apis from '../../network/apis';
 import {SpeedDial} from 'react-native-elements'
-import { Text, View } from "react-native";
-import Publishing from "./publishing";
-
-
+import Publishing from './publishing';
 
 const HomeScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 

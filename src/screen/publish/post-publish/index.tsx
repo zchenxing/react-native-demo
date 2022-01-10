@@ -146,7 +146,9 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
             const newAssets = await WorkHelp.compressPicture(selectedAssets);
 
-            setState({selectedAssets: newAssets});
+            console.log(newAssets);
+            
+            // setState({selectedAssets: newAssets});
         } catch (e: any) {
             console.log('error：', e.code, e.message);
         }

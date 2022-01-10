@@ -121,7 +121,12 @@ const PostItem: React.FC<PostItemProps> = (props: PostItemProps) => {
                     createdAt={props.postItem.created_at}
                     commentTotal={props.postItem.total_comment}
                     onPressCollection={() => props.onPressCollection(row)}
-                    onPressComment={() => props.onPressComment(row)}
+                    onPressComment={() => {
+                        props.onPressComment({
+                            ...row,
+                            item: props.postItem
+                        })
+                    }}
                 />
             </>
         </TouchableHighlight>

@@ -4,6 +4,7 @@ import FastImage from "react-native-fast-image";
 import { screenWidth } from "../../../config/contant";
 import { useSetState } from "ahooks";
 import AwePicturePreview from "../../../components/awe-picture-preview";
+import AweProgressiveImage from "../../../components/awe-progressive-image";
 
 interface IProps {
     imageUrls: string[]
@@ -42,9 +43,11 @@ const AnimalMorePicture: React.FC<IProps> = (props: IProps) => {
                             key={picture}
                             underlayColor={'none'}
                             onPress={() => onPressPicture(index)}>
-                            <FastImage
+                            <AweProgressiveImage
                                 source={{uri: picture}}
-                                style={styles.pictureItem}
+                                containerStyle={styles.pictureItem}
+                                width={(screenWidth - 30) / 3.2}
+                                height={(screenWidth - 30) / 3.2}
                             />
                         </TouchableHighlight>
                     ))}
@@ -82,9 +85,8 @@ const styles = StyleSheet.create({
         borderColor: '#f8f8f8',
         marginRight: 5,
         borderRadius: 6,
-        width: (screenWidth - 30) / 3.2,
-        height: (screenWidth - 30) / 3.2,
-        backgroundColor: '#f8f8f8'
+        backgroundColor: '#f8f8f8',
+        overflow: 'hidden'
     },
 })
 

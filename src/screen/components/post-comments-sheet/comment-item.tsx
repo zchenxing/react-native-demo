@@ -17,8 +17,8 @@ import {localImages} from '../../../assets/images';
 import CommentActionSheet from '../comment-action';
 import {useSelfDataStore} from '../../../store/provider';
 import Clipboard from '@react-native-clipboard/clipboard';
-import Toast from 'react-native-simple-toast';
 import {CommentProps} from '../../../interface/work';
+import Toast from 'react-native-simple-toast';
 
 const CommentItem: React.FC<PostCommentsItemProps> = (
     props: PostCommentsItemProps,
@@ -183,6 +183,8 @@ const CommentItem: React.FC<PostCommentsItemProps> = (
             </View>
 
             {props.showSeparator && <View style={styles.separator} />}
+
+
             {
                 // 避免重复创建实例
                 visible && (
@@ -209,6 +211,7 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 32,
+        backgroundColor: '#f8f8f8'
     },
     nameBase: {
         flexDirection: 'row',

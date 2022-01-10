@@ -27,7 +27,8 @@ import IconFont from '../../../assets/iconfont';
 import {PostType} from '../../../enum';
 import {usePublishDataStore} from '../../../store/provider';
 import WorkHelp from '../../../help/work';
-import Toast from "react-native-simple-toast";
+import Toast from 'react-native-simple-toast';
+import {PostSpeciesTags} from '../../../config/type';
 
 const pictureWidth = (screenWidth - 20) / 3;
 
@@ -39,7 +40,7 @@ const AddPicture = {
 
 interface IState {
     publishTag: any;
-    isSelectedTag: boolean
+    isSelectedTag: boolean;
     selectedAssets: any[];
     startIndex: number;
     preview: boolean;
@@ -52,7 +53,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const contentText = React.useRef<any>('');
     const backListener = React.useRef<any>(null);
 
-    const {onPublishData, resetPublishData} = usePublishDataStore();
+    const {onPublishData, resetPublishData, draftBox} = usePublishDataStore();
 
     const [state, setState] = useSetState<IState>({
         publishTag: {
@@ -69,12 +70,16 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     });
 
     React.useEffect(() => {
+        // 如果有草稿数据，那么先读取草稿箱数据
+        if (draftBox) {
+            setDraftData();
+        } else {
+            resetPublishData();
 
-        resetPublishData()
-
-        setTimeout(() => {
-            inputRef.current.focus();
-        }, 500);
+            setTimeout(() => {
+                inputRef.current.focus();
+            }, 500);
+        }
 
         if (!isIOS) {
             backListener.current = BackHandler.addEventListener(
@@ -96,7 +101,29 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         };
     }, []);
 
+    /**
+     * 配置草稿箱数据
+     */
+    const setDraftData = () => {
+        if (draftBox) {
+            let tag = {};
+            PostSpeciesTags.forEach(item => {
+                if (item.name === draftBox.data.label) {
+                    tag = item;
+                }
+            });
+            setState({
+                postContent: draftBox.data.content,
+                publishTag: tag,
+                isSelectedTag: true,
+                selectedAssets: draftBox.images,
+            });
+            resetPublishData()
+        }
+    };
+
     const setCategory = (param: any) => {
+        console.log(param);
         setState({
             isSelectedTag: true,
             publishTag: param.tag,
@@ -145,10 +172,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             );
 
             const newAssets = await WorkHelp.compressPicture(selectedAssets);
-
-            console.log(newAssets);
-            
-            // setState({selectedAssets: newAssets});
+            setState({selectedAssets: newAssets});
         } catch (e: any) {
             console.log('error：', e.code, e.message);
         }
@@ -177,7 +201,7 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             //     },
             //     {text: useLanguage.save, onPress: savePostToDraft},
             // ]);
-            props.navigation.goBack()
+            props.navigation.goBack();
             return true;
         } else {
             if (isNavigationBack) {
@@ -185,7 +209,6 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             }
             return false;
         }
-
     };
 
     /**
@@ -195,7 +218,6 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
     const onPressSubmit = async () => {
         if (state.isSelectedTag) {
-
             const data = {
                 label: state.publishTag.name,
                 type: PostType.Normal,
@@ -208,13 +230,8 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
 
             props.navigation.goBack();
         } else {
-            Toast.showWithGravity(
-                '请选择标签',
-                1,
-                Toast.CENTER,
-            );
+            Toast.showWithGravity('请选择标签', 1, Toast.CENTER);
         }
-
     };
 
     return (
@@ -224,7 +241,9 @@ const PostPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                 goBack={() => goBack(true)}
                 rightActionTitle={'Post'}
                 rightActionEvent={onPressSubmit}
-                rightActionEditable={!!state.postContent || !!state.selectedAssets.length}
+                rightActionEditable={
+                    !!state.postContent || !!state.selectedAssets.length
+                }
             />
 
             <TouchableHighlight

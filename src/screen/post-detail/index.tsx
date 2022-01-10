@@ -27,6 +27,8 @@ import PostDetailFooter from './list-footer';
 import QuestDrag from './quest-drag';
 import CommentFooter from './comment-footer';
 import PostDetailComment from './comments';
+import { useLanguage } from "../../language";
+import { errorMessage } from "../../network/error";
 
 interface IState {
     postDetail: PostContentProps | null;
@@ -112,6 +114,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     };
 
     const onPressEditComment = () => {
+        setCurrentReplyData(null)
         setState({
             keyboardVisible: true,
         });
@@ -146,6 +149,9 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      */
     const onPressReply = React.useCallback(
         (replyType: ReplyType, comment: CommentProps, commentRow: any) => {
+
+            console.log(commentRow.index);
+
             setContentText('');
             setCurrentReplyData({
                 mainCommentIndex: commentRow.index,
@@ -155,7 +161,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             });
 
             setState({
-                keyboardVisible: true,
+                keyboardVisible: true
             });
         },
         [],
@@ -167,8 +173,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const onCloseKeyboard = () => {
         // 如果是回复某条消息，那么关闭键盘
         if (currentReplyData) {
-            setContentText('');
-            setCurrentReplyData(null);
+            setContentText('')
         }
         setState({
             keyboardVisible: false,
@@ -179,6 +184,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
      * 点击发送消息
      */
     const onPressSend = () => {
+
         if (currentReplyData) {
             replyToCommentOrReply();
         } else {
@@ -192,11 +198,13 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const replyToPost = async () => {
         try {
             await sendCommentToPost(fromListId);
+
             postStoreData[fromListId][rowIndex].total_comment += 1;
             setPostStoreData(fromListId, postStoreData[fromListId]);
 
-            Keyboard.dismiss();
-        } catch (err) {}
+        } catch (err) {
+            errorMessage.alert(err)
+        }
     };
 
     /**
@@ -205,11 +213,10 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const replyToCommentOrReply = async () => {
         try {
             await sendReplyToComment(fromListId);
-            Keyboard.dismiss();
-            setState({
-                keyboardVisible: false,
-            });
-        } catch (err) {}
+
+        } catch (err) {
+            errorMessage.alert(err)
+        }
     };
 
     /**
@@ -323,9 +330,10 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
                                             style={styles.totalBase}
                                             ref={totalRow}>
                                             <Text style={styles.totalText}>
-                                                {state.postDetail
-                                                    ?.total_comment || 0}{' '}
-                                                comments
+                                                {useLanguage.x_comments(
+                                                    state.postDetail
+                                                        ?.total_comment || 0,
+                                                )}
                                             </Text>
                                         </View>
                                     );
@@ -364,6 +372,7 @@ const PostDetailScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
             )}
 
             <AweKeyboard
+                replyUser={currentReplyData}
                 visible={state.keyboardVisible}
                 contentText={contentText}
                 onChangeText={setContentText}

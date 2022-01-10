@@ -13,7 +13,6 @@ export class SelfInfoDataStore {
     }
 
     getSelfInfo = async () => {
-
         if (myToken.token) {
             try {
                 const res = await server.get(apis.user.myself)

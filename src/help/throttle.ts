@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const useMyThrottle = (fn: () => void, delay: number, dep = []) => {
+export const useMyThrottle = (fn: (...args: any) => void, delay: number, dep = []) => {
     const {current} = React.useRef<any>({ fn, timer: null });
 
     React.useEffect(() => {

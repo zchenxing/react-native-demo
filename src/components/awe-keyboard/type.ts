@@ -1,5 +1,6 @@
 export interface AweKeyboardProps {
     visible: boolean
+    loading?: boolean
     replyUser?: { replyNickname: string } | null
     contentText: string,
     onChangeText: (content: string) => void

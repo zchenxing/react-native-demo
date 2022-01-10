@@ -29,7 +29,7 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const {shareId} = props.route.params;
     const inputRef = React.useRef<any>(null);
 
-    const {onPublishShare, resetPublishData} = usePublishDataStore()
+    const {onPublishShare, resetPublishData, draftBox} = usePublishDataStore()
 
     const [state, setState] = useSetState<IState>({
         publishTag: null,
@@ -42,6 +42,11 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     });
 
     React.useEffect(() => {
+        if (draftBox && draftBox.postType === PostType.BiologicalCard) {
+            setState({
+                postContent: draftBox.data.content
+            })
+        }
         resetPublishData()
         getCheckShare();
         getAnimalInfo();
@@ -108,6 +113,7 @@ const SharePublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         }
 
         onPublishShare(
+            shareId,
             data,
             state.animalData?.imageUrls || [],
             AnimalCardType.ShareType,

@@ -12,7 +12,6 @@ import {screenHeight, screenWidth} from '../../../config/contant';
 import {useLanguage} from '../../../language';
 import AweKeyboard from '../../../components/awe-keyboard';
 import {PostCommentProps, ReplyType} from './type';
-import CommentItem from './comment-item';
 import {themeColor} from '../../../assets/styles';
 import BottomSheet, {BottomSheetVirtualizedList} from '@gorhom/bottom-sheet';
 import {CommentProps} from '../../../interface/work';
@@ -25,7 +24,8 @@ import {
 } from '../../../store/provider';
 import AweLoadMore from '../../../components/awe-load-more';
 import {localImages} from '../../../assets/images';
-import Comments from "./comments";
+import Comments from './comments';
+import { errorMessage } from "../../../network/error";
 
 const PostCommentSheet: React.FC<PostCommentProps> = (
     props: PostCommentProps,
@@ -58,6 +58,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
+
         if (props.visible) {
             // 重复打开帖子的评论不需要重新请求
             // 同一个帖子打开的间隔超过20秒
@@ -128,6 +129,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
      * 回复帖子
      */
     const handleReplyToPost = () => {
+        setCurrentReplyData(null);
         setKeyboardVisible(true);
     };
 
@@ -153,12 +155,6 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
             // 评论数+1
             postStoreData[props.listId][props.rowIndex].total_comment += 1;
 
-            Keyboard.dismiss();
-
-            setTimeout(() => {
-                setKeyboardVisible(false);
-            }, 200);
-
             // 滚动到第一行显示最新评论
             commentListRef.current.scrollToOffset({
                 offset: 0,
@@ -175,10 +171,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
     const replyToCommentOrReply = async () => {
         try {
             await sendReplyToComment(props.listId);
-            Keyboard.dismiss();
-            setTimeout(() => {
-                setKeyboardVisible(false);
-            }, 200);
+
         } catch (err) {}
     };
 
@@ -201,6 +194,7 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
     const onPressDelete = useCallback(
         async (type: ReplyType, commentId: string, replyId?: string) => {
             try {
+
                 await onDeleteCommentReply(
                     props.listId,
                     type,
@@ -208,16 +202,18 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                     replyId,
                 );
                 if (type === ReplyType.Comment) {
-                    // 评论数+1
+                    // 评论数-1
                     postStoreData[props.listId][
                         props.rowIndex
                     ].total_comment -= 1;
                     // 重置评论数
                     setPostStoreData(props.listId, postStoreData[props.listId]);
                 }
-            } catch (err) {}
+            } catch (err) {
+                errorMessage.alert(err)
+            }
         },
-        [],
+        [props],
     );
 
     const onChangeText = useCallback((text) => {
@@ -233,7 +229,6 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
 
         if (currentReplyData) {
             setContentText('');
-            setCurrentReplyData(null);
         }
     };
 
@@ -272,11 +267,11 @@ const PostCommentSheet: React.FC<PostCommentProps> = (
                 handleComponent={() => (
                     <View style={styles.sheetHeader}>
                         <Text style={{color: '#777'}}>
-                            {(postStoreData[props.listId] &&
-                                postStoreData[props.listId][props.rowIndex]
-                                    ?.total_comment) ||
-                                0}{' '}
-                            comments
+                            {useLanguage.x_comments(
+                                (postStoreData[props.listId] &&
+                                    postStoreData[props.listId][props.rowIndex]
+                                        ?.total_comment) || 0)}
+
                         </Text>
                     </View>
                 )}>

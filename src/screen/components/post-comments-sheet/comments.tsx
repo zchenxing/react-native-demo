@@ -4,7 +4,7 @@ import CommentItem from './comment-item';
 const Comments: React.FC<any> = React.memo((props: any) => {
     const row = JSON.parse(props.row);
     const userId = props.postStoreData[props.listId][props.rowIndex].user_id;
-
+    // console.log('render comments', props.row);
     return (
         <CommentItem
             commentIndex={row.index}

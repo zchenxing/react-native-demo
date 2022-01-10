@@ -56,7 +56,9 @@ const PostContent: React.FC<IProps> = (props: IProps) => {
                 </Text>
             </View>
 
-            <Text selectable={true}>{props.postDetail?.content}</Text>
+            <Text selectable={true}>
+                {props.postDetail?.content}
+            </Text>
 
             {props.postDetail?.images && (
                 <>

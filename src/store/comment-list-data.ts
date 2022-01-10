@@ -82,7 +82,7 @@ export class CommentDataStore {
     // ————————————————————————————————————————————————————————————————————————
 
     /**
-     *
+     * 获取评论
      * @param postId
      * @param listId
      * @param loadMore 是否加载更多数据
@@ -155,6 +155,7 @@ export class CommentDataStore {
      * 回复评论
      */
     public sendReplyToComment = async (listId: string) => {
+
         try {
             // 判断回复评论or回复
             const replyToComment: boolean = !this.currentReplyData?.replyId;
@@ -173,9 +174,9 @@ export class CommentDataStore {
                 content: Utils.removeSpaceAndEnter(this.contentText),
             });
 
-
             // 向评论中插入回复
             const commentIndex = this.currentReplyData?.mainCommentIndex || 0;
+
             if (commentIndex > -1) {
                 const data = this.commentStoreData[listId][commentIndex];
 
@@ -220,7 +221,7 @@ export class CommentDataStore {
                     comment.id,
                     this.repliesPage[comment.id] || '',
                 ),
-                apiConfig.pageToken(),
+                apiConfig.pageToken('_id'),
             );
 
 
@@ -268,34 +269,41 @@ export class CommentDataStore {
 
             // 删除评论
             let api = type === ReplyType.Comment ?
-                apis.comment.deleteComment(commentId) :
-                apis.comment.deleteReply(commentId, replyId || '')
+                    apis.comment.deleteComment(commentId) :
+                    apis.comment.deleteReply(commentId, replyId || '')
 
-            const commentData: CommentProps[] = this.commentStoreData[listId]
-            const commentIndex = WorkHelp.getDataSourceIndex(
-                commentData,
+            // 根据listId找到评论系统中对应的评论列表数据
+            const comData: CommentProps[] = this.commentStoreData[listId]
+            // 查找评论行下标
+            const comIndex = WorkHelp.getDataSourceIndex(
+                comData,
                 commentId,
             );
 
-            if (commentIndex > -1) {
+            if (comIndex > -1) {
+                // 删除评论
                 if (type === ReplyType.Comment) {
 
                     await server.delete(api)
-                    commentData.splice(commentIndex, 1)
+                    comData.splice(comIndex, 1)
 
-                    this.commentStoreData[listId] = commentData
+                    this.commentStoreData[listId] = comData
                 }
+                // 删除评论下的回复
                 else if (type === ReplyType.Reply && replyId) {
-                    const replyData: CommentProps[] = this.commentStoreData[listId][commentIndex].replies || []
+                    const replyData: CommentProps[] = this.commentStoreData[listId][comIndex].replies || []
                     const replyIndex = WorkHelp.getDataSourceIndex(
                         replyData,
                         replyId,
                     );
 
                     await server.delete(api)
+                    // 评论下的回复总数减一
+                    this.commentStoreData[listId][comIndex].total_reply -= 1
 
+                    // 回复的数组对象删除相关的回复数据
                     replyData.splice(replyIndex, 1)
-                    this.commentStoreData[listId][commentIndex].replies = replyData
+                    this.commentStoreData[listId][comIndex].replies = replyData
                 }
 
             }

@@ -25,7 +25,10 @@ import Utils from '../../../help';
 import {shareSpeciesTags} from '../../../config/type';
 import { GOOGLE_KEY, isIOS } from "../../../config/contant";
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import ScreenBase from "../../components/screen-base";
+import ScreenBase from '../../components/screen-base';
+import WorkHelp from "../../../help/work";
+import { errorMessage } from "../../../network/error";
+import Toast from "react-native-simple-toast";
 
 interface IState {
     startIndex: number;
@@ -43,7 +46,7 @@ const QuestPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     const {shareId} = props.route.params;
     const inputRef = React.useRef<any>(null);
 
-    const {onPublishShare, resetPublishData} = usePublishDataStore();
+    const {onPublishShare, resetPublishData, draftBox} = usePublishDataStore();
 
     const [state, setState] = useSetState<IState>({
         publishTag: null,
@@ -57,6 +60,11 @@ const QuestPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
     });
 
     React.useEffect(() => {
+        if (draftBox && draftBox.postType === PostType.Entrust) {
+            setState({
+                postContent: draftBox.data.content
+            })
+        }
         resetPublishData();
         getCheckShare();
         getAnimalInfo();
@@ -119,20 +127,19 @@ const QuestPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         lat: number;
     }) => {
 
-        const googleMap = `http://maps.googleapis.com/maps/api/staticmap?maptype=roadmap&zoom=16&center=${values.lat},${values.lng}&size=640x428&markers=anchor:center%7Cicon:https://goo.gl/5y3S82%7C${values.lat},${values.lng}&key=${GOOGLE_KEY}`
-        // 先下载图片到缓存
-        const blob = await ReactNativeBlobUtil.config({
-            fileCache: true,
-            appendExt: 'png',
-        }).fetch('GET', googleMap);
+        try {
+            const url = await WorkHelp.getGoogleMapPicture(values)
+            setState({
+                googleMapPic: url
+            })
+        } catch (err) {
+            Toast.showWithGravity(
+                useLanguage.unable_connect_google,
+                100,
+                Toast.CENTER,
+            );
+        }
 
-        // 获取路径
-        const uri = !isIOS ? 'file://' + blob.data : '' + blob.data;
-
-        console.log(uri);
-        setState({
-            googleMapPic: uri
-        })
     }
 
 
@@ -165,6 +172,7 @@ const QuestPublishScreen: React.FC<NavigateProps> = (props: NavigateProps) => {
         };
 
         onPublishShare(
+            shareId,
             data,
             state.animalData?.imageUrls || [],
             AnimalCardType.QuestType,

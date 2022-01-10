@@ -1,20 +1,19 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import Draggable from "react-native-draggable";
-import { screenHeight, screenWidth } from "../../config/contant";
-import { Card } from "react-native-shadow-cards";
-import LinearGradient from "react-native-linear-gradient";
-import { useLanguage } from "../../language";
-import { themeColor } from "../../assets/styles";
+import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import Draggable from 'react-native-draggable';
+import {screenHeight, screenWidth} from '../../config/contant';
+import {Card} from 'react-native-shadow-cards';
+import LinearGradient from 'react-native-linear-gradient';
+import {useLanguage} from '../../language';
+import {themeColor} from '../../assets/styles';
 
 interface IProps {
-    onPressIn: () => void
-    onRelease: () => void
+    onPressIn: () => void;
+    onRelease: () => void;
 }
 
 const QuestDrag: React.FC<IProps> = (props: IProps) => {
-
-    const [hasAccept, setHasAccept] = React.useState(false)
+    const [hasAccept, setHasAccept] = React.useState(false);
 
     return (
         <Draggable
@@ -24,9 +23,7 @@ const QuestDrag: React.FC<IProps> = (props: IProps) => {
             minY={0}
             maxX={screenWidth}
             maxY={screenHeight}
-            onShortPressRelease={() =>
-                setHasAccept(!hasAccept)
-            }
+            onShortPressRelease={() => setHasAccept(!hasAccept)}
             onPressIn={props.onPressIn}
             onRelease={props.onRelease}>
             <Card style={styles.shadow}>
@@ -46,7 +43,7 @@ const QuestDrag: React.FC<IProps> = (props: IProps) => {
     );
 };
 
-export default QuestDrag;
+export default React.memo(QuestDrag);
 
 const styles = StyleSheet.create({
     questDetail: {
@@ -61,4 +58,4 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         width: 'auto',
     },
-})
+});

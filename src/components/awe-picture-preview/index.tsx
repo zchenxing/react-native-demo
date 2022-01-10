@@ -4,7 +4,6 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import {AwePicturePreviewProps} from './type';
 import {localImages} from '../../assets/images';
 import {screenHeight, screenWidth} from '../../config/contant';
-// import {Image} from 'react-native-elements'
 
 const AwePicturePreview: React.FC<AwePicturePreviewProps> = (
     props: AwePicturePreviewProps,

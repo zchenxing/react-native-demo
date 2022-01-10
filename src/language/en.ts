@@ -25,7 +25,7 @@ export const languageEn = {
     personal_info: 'Personal information',
     nickname: 'Nickname',
     loading: 'Loading',
-    check_connection: 'Please check your connection',
+    check_connection: 'Network is not available',
     no_result_found: 'No related results were found',
     nothing_here: 'Nothing here',
     reply: 'Reply',
@@ -83,6 +83,8 @@ export const languageEn = {
 
     action_sheet_title: 'What do you want to do?',
     confirm_to_unfollow: 'Confirm to unfollow',
+    unable_connect_google: 'Unable to connect to Google services',
+    post_failed: 'Posting failed, Try again later',
 
     x_comments: (total: number) => {
         return `${total} ${total > 1 ? 'comments' : 'comment'}`

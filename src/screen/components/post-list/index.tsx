@@ -204,6 +204,7 @@ const PostList: React.FC<PostListProps> = (props: PostListProps) => {
      * 查看评论
      */
     const onPressComment = React.useCallback((row: any) => {
+
         // 如果有评论，就打开评论
         // 没有评论就截止回复
         if (row.item.total_comment) {
